@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>客服问题看板 · 18899（极简版）</title>
+  <style>
+:root{
+  --bg:#f6f6f7;--surface:#fff;--surface-2:#fafafa;--border:#e8e8eb;--border-strong:#d4d4d8;
+  --text:#18181b;--text-2:#3f3f46;--muted:#71717a;--faint:#a1a1aa;
+  --green:#111;--green-bg:#f5f5f5;--green-bd:#d4d4d4;
+  --amber:#333;--amber-bg:#f5f5f5;--amber-bd:#d4d4d4;
+  --red:#111;--red-bg:#f5f5f5;--red-bd:#999;
+  --gray:#52525b;--gray-bg:#f4f4f5;--gray-bd:#e4e4e7;
+  --blue:#222;--blue-bg:#f5f5f5;--blue-bd:#d4d4d4;
+  --accent:#111;--shadow:none;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body.ui-clean{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:14px;line-height:1.55;color:#111;background:#fff;-webkit-font-smoothing:antialiased;padding-bottom:56px;
+}
+a{color:inherit}
+b{font-weight:600}
+code,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+code{background:#f5f5f5;border:1px solid #e0e0e0;border-radius:4px;padding:1px 5px}
+.muted{color:#666}.small{font-size:12px}.spacer{flex:1}
+.is-hidden{display:none!important}
+
+/* 顶栏（与陈晓娟极简版完全一致） */
+.topbar{position:sticky;top:0;z-index:50;background:#fff;border-bottom:1px solid #e0e0e0}
+.topbar-inner{max-width:960px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.who{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px;flex:none}
+.who-name{font-weight:600;font-size:14px;display:flex;align-items:baseline;gap:6px}
+.who-title{font-size:12px;color:#666}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pill,.chip,.tag{font-size:12px;background:#f5f5f5;color:#333;border:1px solid #dcdcdc;padding:2px 9px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
+
+/* 子导航（按人/部门切换） */
+.subnav{max-width:960px;margin:0 auto;padding:0 20px 8px;display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.subnav a,.subnav button.nav-tab{
+  text-decoration:none;background:transparent;color:#333;border:1px solid transparent;
+  font:inherit;font-size:13px;padding:5px 10px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;
+}
+.subnav a:hover,.subnav button.nav-tab:hover{background:#f5f5f5;color:#111}
+.subnav a.is-active,.subnav button.nav-tab.is-active{background:#111!important;color:#fff!important;font-weight:500}
+.subnav .sep{width:1px;height:16px;background:#e0e0e0;margin:0 4px}
+.nav-count{font-size:11px;line-height:1;padding:2px 6px;border-radius:999px;background:#e5e5e5;color:#111;font-variant-numeric:tabular-nums}
+.subnav .is-active .nav-count{background:#444;color:#fff}
+
+/* 按钮与表单 */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;height:30px;padding:0 11px;
+  border-radius:7px;border:1px solid #bcbcbc;background:#fff;color:#111;font:inherit;font-size:12.5px;
+  font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap;transition:background .12s;
+}
+.btn:hover{background:#f2f2f2}
+.btn-primary,.btn-ok{background:#111!important;border-color:#111!important;color:#fff!important}
+.btn-primary:hover,.btn-ok:hover{background:#000!important}
+.btn-ghost{border-color:transparent;background:transparent;color:#444}
+.btn-ghost:hover{background:#f2f2f2;border-color:transparent;color:#111}
+.btn-sm{height:26px;padding:0 9px;font-size:12px}
+.input,.select,.textarea{
+  height:30px;border:1px solid #bcbcbc;border-radius:7px;padding:0 10px;
+  font:inherit;font-size:12.5px;background:#fff;color:#111;
+}
+.textarea{height:auto;padding:8px 10px;line-height:1.5}
+.input:focus,.select:focus,.textarea:focus{outline:none;border-color:#111}
+
+/* 主体布局（960px 窄屏居中，与陈晓娟极简版一致） */
+.page{max-width:960px;margin:0 auto;padding:20px}
+.block{margin-bottom:24px}
+.clean-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.clean-head-left{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.clean-head h2{font-size:18px;font-weight:700;color:#111}
+.emp-dim{color:#666;font-weight:400;font-size:13px}
+.emp-stream-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+.emp-stream-head h3{font-size:15px;font-weight:600;margin:0;color:#111}
+.emp-stream-act{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.emp-hint{font-size:12px;color:#666;margin:0 0 10px}
+.emp-empty{padding:16px;text-align:center;color:#666;border:1px dashed #ccc;border-radius:8px;margin-bottom:10px;font-size:13px}
+
+/* 极简审核单卡片：一行标题，点击展开 */
+.emp-approval-card{background:#fff;border:1px solid #dcdcdc;border-radius:8px;margin-bottom:8px;overflow:hidden}
+.emp-approval-card.is-rejected{border-color:#111;border-width:1.5px}
+.emp-approval-card.is-approved .emp-t{color:#666;font-weight:500}
+.emp-fold>summary.emp-sum{list-style:none;display:flex;align-items:center;gap:10px;padding:11px 14px;cursor:pointer;user-select:none}
+.emp-fold>summary.emp-sum::-webkit-details-marker{display:none}
+.emp-fold>summary.emp-sum:hover{background:#f7f7f7}
+.emp-fold[open]>summary.emp-sum{border-bottom:1px solid #e6e6e6;background:#fafafa}
+.emp-fold>summary .chev{margin-left:2px;color:#777;flex:none;transition:transform .15s}
+.emp-fold[open]>summary .chev{transform:rotate(90deg);color:#111}
+.emp-no{color:#777;font-size:12px;min-width:22px;font-variant-numeric:tabular-nums}
+.emp-t{flex:1;min-width:0;font-weight:600;font-size:14px;color:#111;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.emp-meta{color:#777;font-size:12px;white-space:nowrap}
+.emp-st{font-size:12px;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.emp-st.is-todo{background:#fff!important;color:#111!important;border:1px solid #999!important}
+.emp-st.is-bad{background:#111!important;color:#fff!important;border:1px solid #111!important}
+.emp-st.is-ok{background:#f2f2f2!important;color:#666!important;border:1px solid #ddd!important}
+
+/* 展开后详情区 */
+.emp-fold-body{padding:12px 14px 14px;display:flex;flex-direction:column;gap:12px;font-size:13px;line-height:1.65;color:#222}
+.emp-sec-h{font-size:12px;color:#666;font-weight:600;margin-bottom:5px;letter-spacing:.04em}
+.emp-ai{font-size:13px}
+.emp-kv{display:flex;gap:10px;padding:2px 0;align-items:baseline}
+.emp-k{flex:none;width:72px;color:#666;font-size:12.5px}
+.emp-v{flex:1;min-width:0;word-break:break-all;color:#111}
+.emp-links{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin-top:6px;font-size:12px}
+.emp-lnk{color:#111;text-decoration:underline;text-decoration-color:#999;cursor:pointer;background:none;border:0;font:inherit;padding:0}
+.emp-lnk:hover{text-decoration-color:#111}
+.emp-chks{display:flex;flex-direction:column;gap:5px}
+.emp-chk-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.55;color:#111}
+.emp-sub{margin-top:6px}
+.emp-sub>summary{cursor:pointer;color:#555;font-size:12px;list-style:none;user-select:none}
+.emp-sub>summary::-webkit-details-marker{display:none}
+.emp-sub>summary::before{content:"+ "}
+.emp-sub[open]>summary::before{content:"− "}
+.emp-std-item{padding:6px 0;border-bottom:1px dashed #e0e0e0;font-size:12px;color:#444;line-height:1.65}
+.emp-rej-bar{padding:8px 10px;border:1px solid #999;border-radius:6px;background:#f7f7f7;font-size:12.5px;color:#111;display:flex;flex-direction:column;gap:4px}
+.emp-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:10px;border-top:1px solid #e6e6e6}
+.emp-foot .input{flex:1;min-width:220px;height:30px;font-size:12.5px}
+
+/* 已处理：隐藏区（默认折叠） */
+.emp-archive{margin-top:14px;border:1px solid #dcdcdc;border-radius:8px;background:#fafafa}
+.emp-archive>summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;align-items:center;gap:8px;color:#444;font-size:13px;font-weight:500;user-select:none}
+.emp-archive>summary::-webkit-details-marker{display:none}
+.emp-archive>summary .chev{margin-left:auto;color:#777;transition:transform .15s}
+.emp-archive[open]>summary .chev{transform:rotate(90deg);color:#111}
+.emp-archive>div{padding:4px 10px 10px}
+.emp-archive .emp-approval-card{background:#fff}
+
+/* 底部参考折叠区与页脚 */
+details.acc{border:1px solid #e0e0e0;border-radius:8px;background:#fff;margin-top:12px}
+details.acc>summary{list-style:none;cursor:pointer;padding:10px 14px;font-size:13px;font-weight:500;color:#333;display:flex;align-items:center;justify-content:space-between;user-select:none}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc[open]>summary{border-bottom:1px solid #e6e6e6;background:#fafafa}
+details.acc .acc-body{padding:12px 14px;font-size:12.5px;color:#444;line-height:1.7}
+.bottombar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e0e0e0;z-index:40}
+.bottombar-inner{max-width:960px;margin:0 auto;padding:8px 20px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#666}
+
+/* 弹窗（黑白灰极简风格） */
+.modal-mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-card{background:#fff;border:1px solid #ccc;border-radius:10px;width:100%;max-width:640px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{padding:12px 16px;border-bottom:1px solid #e6e6e6;display:flex;justify-content:space-between;align-items:center}
+.modal-head h3{font-size:15px;font-weight:600;color:#111}
+.modal-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;font-size:13px;color:#222}
+.modal-foot{padding:10px 16px;border-top:1px solid #e6e6e6;background:#fafafa;display:flex;justify-content:flex-end;gap:8px}
+  </style>
+<script>
+window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
+(function(){
+  if (location.hostname.includes('github.io')) {
+    fetch('./gateway_status.json?t=' + Date.now(), {cache: 'no-store'})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if (d && d.public_https_url) {
+          window.__LIVE_CF_TUNNEL_URL = d.public_https_url.replace(/\/+$/, '');
+        }
+      }).catch(function(){});
+  }
+})();
+</script>
+</head>
+<body class="ui-clean">
+
+  <!-- 1. 顶栏（与陈晓娟 P01 个人工作台极简版同款） -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="who">
+        <span class="avatar">客</span>
+        <div>
+          <div class="who-name">客服问题看板 <span class="mono muted">18899</span></div>
+          <div class="who-title">四店客服聊天巡检 · 三部门闭环督办</div>
+        </div>
+        <span class="pill" id="syncStatusBadge">实时同步</span>
+      </div>
+
+      <div class="top-actions">
+        <button type="button" class="btn btn-sm" onclick="toggleOfflineGrouping()" id="toggleOfflineModeBtn">视图：逐单展开</button>
+        <button type="button" class="btn btn-sm" onclick="openImportModal()">8:00自动采集</button>
+        <button type="button" class="btn btn-sm" onclick="openShareModal()">团队链接</button>
+        <button type="button" class="btn btn-sm" onclick="exportCleanCsv()">导出CSV</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openWeComPushModal()">小钉催办 (<span id="badgeOfflineTodo">0</span>)</button>
+      </div>
+    </div>
+
+    <nav class="subnav">
+      <button type="button" id="role_ALL" class="nav-tab is-active" onclick="setRoleFilter('ALL')">
+        全部待办 <span class="nav-count" id="cnt_all">0</span>
+      </button>
+      <button type="button" id="role_仓库部" class="nav-tab" onclick="setRoleFilter('仓库部')">
+        仓库部 · 许培婷/吴行哲 <span class="nav-count" id="cnt_wh">0</span>
+      </button>
+      <button type="button" id="role_市场部" class="nav-tab" onclick="setRoleFilter('市场部')">
+        市场部 · 林丽媛/尤敏燕 <span class="nav-count" id="cnt_mkt">0</span>
+      </button>
+      <button type="button" id="role_运营部" class="nav-tab" onclick="setRoleFilter('运营部')">
+        运营部 · 唐勇 <span class="nav-count" id="cnt_ops">0</span>
+      </button>
+      <button type="button" id="role_CHECKER" class="nav-tab" onclick="setRoleFilter('CHECKER')">
+        线上AI检查 · 陈晓娟 <span class="nav-count" id="cnt_online">0</span>
+      </button>
+
+      <span class="sep"></span>
+      <select id="storeFilter" onchange="renderBoard()" class="select" style="height:26px;font-size:12px;padding:0 8px">
+        <option value="ALL">全部店铺</option>
+        <option value="天猫得升旗舰店">天猫得升旗舰店</option>
+        <option value="天猫wo居家日用旗舰店">天猫wo居家日用旗舰店</option>
+        <option value="拼多多陈小培的商铺25">拼多多陈小培的商铺25</option>
+        <option value="拼多多得升医疗器械官方旗舰店">拼多多得升医疗器械官方旗舰店</option>
+      </select>
+      <input id="kwInput" oninput="renderBoard()" type="text" placeholder="搜订单号/买家ID/问题..." class="input" style="height:26px;width:165px;font-size:12px" />
+    </nav>
+  </header>
+
+  <!-- 2. 主体区（陈晓娟极简版：一行标题折叠卡片 + 底部已处理隐藏区） -->
+  <main class="page">
+    <section class="block" id="today-dynamic-top-zone">
+      <div class="clean-head">
+        <div class="clean-head-left">
+          <h2>今日待办</h2>
+          <span class="emp-dim">2026-10-30 · 待处理 <b id="col2CountBadge">0</b> 项 · 已处理归档 <b id="archiveCountTop">198</b> 项（已收起）</span>
+        </div>
+        <div class="emp-stream-act">
+          <button type="button" class="btn btn-sm" onclick="syncFromBridge(true)">刷新</button>
+          <button type="button" id="approveAllOnlineBtn" class="btn btn-sm is-hidden" onclick="approveAllOnlineGroups()">线上AI项全部确认</button>
+        </div>
+      </div>
+
+      <section class="block" id="emp-approval-stream">
+        <p class="emp-hint">点击标题展开查看详情，在下方输入框填写具体处理动作后点「提交完成」，通过审核后自动收进下方「已处理」。</p>
+
+        <!-- 线上AI待检查列表（0单时自动为空不占空间） -->
+        <div id="onlineSectionWrap" class="is-hidden" style="margin-bottom:10px">
+          <div class="emp-stream-head" style="margin-bottom:6px">
+            <h3>线上问题（AI已自动修复 · 待确认 <span id="col1CountBadge">0</span>）</h3>
+          </div>
+          <div id="col1Container"></div>
+        </div>
+
+        <!-- 线下三部门待办列表（一行标题，点击展开） -->
+        <div id="col2Container"></div>
+        <div id="col3Container" class="is-hidden"></div>
+        <span id="col3CountBadge" class="is-hidden">0</span>
+
+        <!-- 已处理隐藏区（默认折叠，点击展开回看历史已闭环项） -->
+        <details class="emp-archive" id="emp-approval-archive-box" ontoggle="if(this.open)loadArchivedItems()">
+          <summary>
+            <span>已处理（<b id="emp-app-arch-cnt">198</b>）<span class="emp-dim"> · 已隐藏，点击展开回看</span></span>
+            <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </summary>
+          <div id="archiveContainer">
+            <div class="emp-empty" style="margin:6px 0">正在读取已闭环历史归档...</div>
+          </div>
+        </details>
+      </section>
+    </section>
+
+    <details class="acc">
+      <summary>
+        <span>使用规则与闭环说明（点击展开）</span>
+        <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="acc-body">
+        1. <b>极简操作</b>：点开待办标题 → 查看买家聊天证据与必办动作 → 在底部输入框写明「具体做了什么」（或点快捷短语）→ 点「提交完成」。<br/>
+        2. <b>防敷衍校验</b>：只填“已处理 / 好的 / 收到”会被系统拦截退回；写明具体动作（如已去仓库盘点批次、已在探域补录卡片、已电话回访报价）立即通过并自动收进「已处理」。<br/>
+        3. <b>跨部门自动接力</b>：涉及两个部门的工单，第一部门提交完成后自动流转给下一部门，全部环节完成后自动归档消失。
+      </div>
+    </details>
+  </main>
+
+  <footer class="bottombar">
+    <div class="bottombar-inner">
+      <span>客服问题极简看板 · 内网 <span id="topLanUrlText">http://192.168.1.11:18899</span> · 公网 https://gptweb.desheng.shop/18899</span>
+      <span id="bottomProgText">待处理 0 项</span>
+    </div>
+  </footer>
+
+  <!-- 弹窗 1：更多选项 / 补录订单号 / 批量处理弹窗 -->
+  <div id="actionModal" class="modal-mask is-hidden">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <span id="modalDeptTag" class="pill" style="margin-bottom:4px">部门待办</span>
+          <h3 id="modalTitle">填写处理结果</h3>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="closeModal()">关闭</button>
+      </div>
+      <div class="modal-body">
+        <div style="padding:10px;border:1px solid #e0e0e0;border-radius:6px;background:#fafafa">
+          <div class="small muted">需要做的事（必办动作）：</div>
+          <div id="modalReqAction" style="font-weight:600;margin-top:2px"></div>
+        </div>
+        <div>
+          <div class="small muted" style="margin-bottom:4px">关联客户会话明细（可在此补录/修改订单号）：</div>
+          <div id="modalSubItemsList" style="max-height:180px;overflow-y:auto;border:1px solid #e0e0e0;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:6px"></div>
+        </div>
+        <div>
+          <div class="small muted" style="margin-bottom:4px">快捷填入常用处理动作：</div>
+          <div id="quickFillButtons" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+        </div>
+        <div>
+          <label class="small muted" style="display:block;margin-bottom:4px">具体做了什么（必填，全组共享）：</label>
+          <textarea id="modalStaffInput" rows="3" class="textarea" style="width:100%" placeholder="请写明具体执行结果..."></textarea>
+        </div>
+        <div id="qualityRatioBox" class="is-hidden" style="padding:10px;border:1px solid #e0e0e0;border-radius:6px;background:#fafafa">
+          <div style="font-weight:600;font-size:12.5px;margin-bottom:6px">质量退款占比判定：</div>
+          <div style="display:flex;gap:14px;margin-bottom:8px">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+              <input type="radio" name="ratioNormal" value="正常" onchange="toggleRatioInput()" />
+              <span>正常偶发（占比 &lt; 2%）</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer">
+              <input type="radio" name="ratioNormal" value="异常" onchange="toggleRatioInput()" />
+              <span>批次异常（需改进/换厂）</span>
+            </label>
+          </div>
+          <input id="modalRatioBasis" type="text" class="input is-hidden" style="width:100%" placeholder="正常依据：如近30天售出800单仅退2单（0.25%），留样抽检合格..." />
+          <input id="modalAbnormalPlan" type="text" class="input is-hidden" style="width:100%" placeholder="异常整改：如已通知工厂返工、冻结问题批次库存..." />
+        </div>
+        <div id="aiAuditFeedback" class="is-hidden emp-rej-bar"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-sm" onclick="closeModal()">取消</button>
+        <button type="button" class="btn btn-sm btn-ok" onclick="submitGroupAudit()">提交完成</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 2：团队链接弹窗 -->
+  <div id="shareModal" class="modal-mask is-hidden">
+    <div class="modal-card" style="max-width:520px">
+      <div class="modal-head">
+        <h3>团队共享看板链接</h3>
+        <button type="button" class="btn btn-sm" onclick="closeShareModal()">关闭</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="small muted" style="margin-bottom:4px">1. 办公室局域网直连地址：</div>
+          <div style="display:flex;gap:8px">
+            <input id="shareLanInput" type="text" readonly value="http://192.168.1.11:18899" class="input mono" style="flex:1" />
+            <button type="button" class="btn btn-sm btn-ok" onclick="copyShareUrl('shareLanInput')">复制内网链接</button>
+          </div>
+        </div>
+        <div>
+          <div class="small muted" style="margin-bottom:4px">2. 外网/居家办公永久固定链接：</div>
+          <div style="display:flex;gap:8px">
+            <input id="sharePublicInput" type="text" value="https://gptweb.desheng.shop/18899" class="input mono" style="flex:1" />
+            <button type="button" class="btn btn-sm" onclick="savePublicTunnelUrl()">保存</button>
+            <button type="button" class="btn btn-sm btn-ok" onclick="copyShareUrl('sharePublicInput')">复制外网链接</button>
+          </div>
+        </div>
+        <div id="shareToast" class="small is-hidden" style="color:#111;font-weight:600">已复制到剪贴板</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 3：小钉催办弹窗 -->
+  <div id="wecomModal" class="modal-mask is-hidden">
+    <div class="modal-card" style="max-width:600px">
+      <div class="modal-head">
+        <h3>小钉催办与通知推送（直达责任人钉钉「小钉」）</h3>
+        <button type="button" class="btn btn-sm" onclick="closeWeComModal()">关闭</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label class="small muted">接收责任人（按待办部门自动匹配，可改）：</label>
+            <input id="wxGroupInput" type="text" value="林丽媛, 尤敏燕, 陈晓娟" class="input" style="width:100%;margin-top:3px" />
+          </div>
+          <div>
+            <label class="small muted">通知通道（0弹窗 / 0抢鼠标焦点）：</label>
+            <input id="wxWebhookInput" type="text" readonly value="钉钉官方机器人「小钉」OpenAPI 1对1直达" class="input mono" style="width:100%;margin-top:3px;background:#f5f5f5;color:#555" />
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="display:flex;gap:6px">
+            <button type="button" class="btn btn-sm" onclick="generateWeComMessage('ALL')">催全部未完结</button>
+            <button type="button" class="btn btn-sm" onclick="generateWeComMessage('仓库部')">只催仓库</button>
+            <button type="button" class="btn btn-sm" onclick="generateWeComMessage('市场部')">只催市场</button>
+            <button type="button" class="btn btn-sm" onclick="generateWeComMessage('运营部')">只催运营</button>
+          </div>
+          <span class="small muted">点击左侧按钮自动切换收件人</span>
+        </div>
+        <textarea id="wecomMsgArea" rows="9" class="textarea mono" style="width:100%"></textarea>
+        <div id="wecomPushStatus" class="is-hidden emp-rej-bar"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-sm" onclick="copyWeComTextOnly()">仅复制文字</button>
+        <button type="button" id="btnAutoPushWeCom" class="btn btn-sm btn-ok" onclick="triggerServerWeComPush()">一键通过「小钉」发送催办通知</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗 4：8:00自动采集弹窗 -->
+  <div id="importModal" class="modal-mask is-hidden">
+    <div class="modal-card" style="max-width:600px">
+      <div class="modal-head">
+        <h3>每日 8:00 自动采集昨日聊天记录 & 手动导入</h3>
+        <button type="button" class="btn btn-sm" onclick="closeImportModal()">关闭</button>
+      </div>
+      <div class="modal-body">
+        <div style="padding:10px;border:1px solid #dcdcdc;border-radius:6px;background:#fafafa;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:600">每天早上 08:00 自动抓取昨日四店聊天记录</div>
+            <div class="small muted">自动扫描昨日导出文件 → AI 过滤正常会话 → 问题单入库并通过「小钉」通知各部门责任人</div>
+          </div>
+          <button type="button" id="btnRunAutoCollectNow" class="btn btn-sm btn-ok" onclick="triggerDailyAutoCollectNow()">立即采集昨日记录并通过小钉通知</button>
+        </div>
+        <div id="autoCollectStatus" class="is-hidden emp-rej-bar"></div>
+        <div>
+          <div style="font-weight:600;margin-bottom:4px">手动上传新导出的聊天记录文件（支持 .xlsx / .csv / .json）：</div>
+          <input id="chatFileInput" type="file" accept=".json,.csv,.xlsx,.xls" multiple onchange="handleChatFilesSelect(event)" class="input" style="width:100%;padding-top:3px" />
+        </div>
+        <div id="importPreviewBox" class="is-hidden emp-rej-bar"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-sm" onclick="closeImportModal()">关闭</button>
+        <button type="button" id="btnConfirmImport" class="btn btn-sm btn-ok is-hidden" onclick="confirmImportNewChats()">确认合并入库</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const INITIAL_ITEMS = [{"id":"TASK-177","rowId":"天猫wo居家日用旗舰店#R5","store":"天猫wo居家日用旗舰店","customerId":"小巷的花伞","orderId":"商品ID:617623076928","chatTime":"2026-10-24 22:13:55","hasProblem":"是","track":"online_ai_done","stage":"online_pending_check","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"ONLINE_TANYU_KB_SYNC","groupTitle":"🤖 探域机器人知识库补全（执行标准图/小童链接/厚薄属性/年龄选码）","cleanTitle":"买家索要一层超薄口罩实测执行标准说明，人工说稍等后断联","cleanAction":"向客户补发产品执行标准/检测报告说明，并解释夏季一层超薄透气款工艺成本，挽回询单客户；严禁客服回“稍等”后不回复。","aiOnlineDone":"✅ AI已自动生成探域知识库对应词条（执行标准实拍图/小童链接/厚薄说明/年龄选码表），待人工抽检确认。","keyEvidence":"22:13:57“为什么一层的比三层的都贵”→22:16:33“符合什么各项实测标准 发我看看”→22:17:26人工“稍等我看看”后无下文","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n22:13:55\nhttp://item.taobao.com/item.htm?id=617623076928\n小巷的花伞\n22:13:56\n请在客户端查看原始聊天记录，网页版无法展示\n小巷的花伞\n22:13:56\n亲亲你好~\nwo居家日用旗舰店:圆圆\n22:13:57\n请问有什么可以帮助你的~\nwo居家日用旗舰店:圆圆\n22:13:59\n有券吗\n小巷的花伞\n22:14:03\n亲亲，店铺商品已经是活动让利价且包邮发出啦～目前单件是活动实价，如果拍【2件及以上系统会自动享9.5折优惠】，家里常备消耗品您可以考虑一次拍2件更划算哦，具体折后金额在结算页会自动显示~~\nwo居家日用旗舰店:圆圆\n22:14:04\n您好亲 在的哈\nwo居家日用旗舰店:圆圆\n22:14:08\n多买给便宜点不\n小巷的花伞\n22:14:12\n亲亲，咱们店铺活动是【满2件及以上（含2件、3件或多件）均自动享9.5折优惠】哦~\nwo居家日用旗舰店:圆圆\n22:14:12\n您可以直接把需要的件数一起加入购物车合并提交订单，结算页系统会自动按9.5折立减，无需收货后退差价，最终实付金额以提交订单结算页显示为准哈~~\nwo居家日用旗舰店:圆圆\n22:15:03\n我看也没便宜多少呢\n小巷的花伞\n22:15:05\n/:085\n小巷的花伞\n22:15:09\n亲亲，感谢您一直支持我们~\nwo居家日用旗舰店:圆圆\n22:15:09\n店铺目前支持【满2件及以上享9.5折】优惠哦～您可以把需要的2件商品一起加入购物车或直接拍2件，提交订单结算页系统会自动立减并显示折后实付金额（不同规格单价不同，具体优惠后金额请以结算页显示为准哈）~~\nwo居家日用旗舰店:圆圆\n22:16:07\n有个问题啊\n小巷的花伞\n22:16:12\n亲亲请讲，您说的是哪方面的问题呢？方便说一下具体情况，我这边帮您看看~~\nwo居家日用旗舰店:圆圆\n22:16:14\n为什么你们这种一层的比我买的那种三层的都要贵？\n小巷的花伞\n22:16:23\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\nwo居家日用旗舰店:圆圆\n22:16:55\n符合什么各项实测标准啊\n小巷的花伞\n22:17:00\n发我看看\n小巷的花伞\n22:17:26\n亲亲，稍等我看看~\nwo居家日用旗舰店:圆圆\n22:22:37\n亲亲，喜欢请尽快拍下付款。发货时间是根据付款时间安排的哦，早拍早发货！店铺品质保证，价格优惠，不要犹豫、不要错过哦！~\nwo居家日用旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"待跟进补发标准说明"},{"id":"TASK-178","rowId":"天猫wo居家日用旗舰店#R7","store":"天猫wo居家日用旗舰店","customerId":"婷拽地","orderId":"4367729053406430842","chatTime":"2026-10-24 17:47:48","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["市场部"],"ownerNames":"林丽媛 / 尤敏燕","groupKey":"OFFLINE_MKT_B2B","groupTitle":"📊 市场部大单跟进：老客批量采购/专票阶梯报价回访","cleanTitle":"大单采购询价：机器人/接待异常（回购老客反馈涨价并询盘“买五百个便宜一些呗”，仅机器人回套话无人工跟进大单报价）","cleanAction":"立即由人工客服回访老客，针对500个采购需求提供专属优惠或阶梯改价方案，促成待付款订单3317275382756430842成交；在机器人中配置“五百个/批发/团购/便宜”转人工规则。","aiOnlineDone":"","keyEvidence":"17:48:45“今年的比去年贵这么多”→17:49:16“我买五百个 便宜一些呗”→仅机器人回复满2件9.5折及自动催付","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n17:47:48\n订单号:4367729053406430842 共5件商品,合计￥79.20 交易时间:2025-06-02 20:53:44\n婷拽地\n17:47:49\n亲亲你好~\nwo居家日用旗舰店:圆圆\n17:47:50\n请问有什么可以帮助你的~\nwo居家日用旗舰店:圆圆\n17:47:56\n怎么涨价这么多呀\n婷拽地\n17:48:01\n亲亲，感谢您一直支持我们~\nwo居家日用旗舰店:圆圆\n17:48:01\n店铺目前支持【满2件及以上享9.5折】优惠哦～您可以把需要的2件商品一起加入购物车或直接拍2件，提交订单结算页系统会自动立减并显示折后实付金额（不同规格单价不同，具体优惠后金额请以结算页显示为准哈）~~\nwo居家日用旗舰店:圆圆\n17:48:13\n质量还跟去年的一样吗\n婷拽地\n17:48:20\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\nwo居家日用旗舰店:圆圆\n17:48:49\n我买五百个 便宜一些呗\n婷拽地\n17:48:55\n亲亲，咱们店铺活动是【满2件及以上（含2件、3件或多件）均自动享9.5折优惠】哦~\nwo居家日用旗舰店:圆圆\n17:48:55\n您可以直接把需要的件数一起加入购物车合并提交订单，结算页系统会自动按9.5折立减，无需收货后退差价，最终实付金额以提交订单结算页显示为准哈~~\nwo居家日用旗舰店:圆圆\n17:54:06\n亲亲，喜欢请尽快拍下付款。发货时间是根据付款时间安排的哦，早拍早发货！店铺品质保证，价格优惠，不要犹豫、不要错过哦！~\nwo居家日用旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部"],"doneSteps":[],"initialCsNote":"待人工回访500个大单报价"},{"id":"TASK-181","rowId":"天猫得升旗舰店#R2","store":"天猫得升旗舰店","customerId":"tb310851928","orderId":"","chatTime":"2026-10-25 22:42:03","hasProblem":"是","track":"online_ai_done","stage":"online_pending_check","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"ONLINE_TANYU_KB_SYNC","groupTitle":"🤖 探域机器人知识库补全（执行标准图/小童链接/厚薄属性/年龄选码）","cleanTitle":"买家询问儿童医用口罩执行标准并要看图片，机器人误发婴儿尺码图","cleanAction":"由人工客服向客户补发对应儿童医用口罩的外包装执行标准实拍图及注册证图；优化机器人上下文关联，避免将“看执行标准图片”误识别为“看婴儿尺码图”。","aiOnlineDone":"✅ AI已自动生成探域知识库对应词条（执行标准实拍图/小童链接/厚薄说明/年龄选码表），待人工抽检确认。","keyEvidence":"22:42:03问“你们的商品执行标准是”→22:42:22问“我可以看看图片吗”→22:42:29机器人误发“0-6月婴幼儿尺码对照图”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-25\n22:42:03\n你们的商品执行标准是\ntb310851928\n22:42:04\n请在客户端查看原始聊天记录，网页版无法展示\ntb310851928\n22:42:04\n亲亲你好~\n得升旗舰店:圆圆\n22:42:05\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n22:42:08\n亲亲，我们这款儿童医用口罩执行标准是YY/T 0969-2013，防护性很好，咱们提供退换包邮费服务，放心买~~\n得升旗舰店:圆圆\n22:42:22\n我可以看看图片吗\ntb310851928\n22:42:29\n亲亲，可以的哈~这是咱们这款婴幼儿3D医用口罩的尺码尺寸参数对照图，您可以看看： 如图：0-6月/16斤以内平铺约长8.3cm×宽8.8cm；6月-3岁/16-30斤平铺约长8.9cm×宽9.4cm，最大可戴到40斤左右~~\n得升旗舰店:圆圆\n22:42:29\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"待补发执行标准/外包装实拍图"},{"id":"TASK-182","rowId":"天猫得升旗舰店#R3","store":"天猫得升旗舰店","customerId":"zhangshuang阿双阿双","orderId":"商品ID:733571628933","chatTime":"2026-10-25 22:14:59","hasProblem":"是","track":"online_ai_done","stage":"online_pending_check","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"ONLINE_TANYU_KB_SYNC","groupTitle":"🤖 探域机器人知识库补全（执行标准图/小童链接/厚薄属性/年龄选码）","cleanTitle":"买家追问“小童有吗”，机器人答非所问未发送4-8岁小童款链接","cleanAction":"立即向客户补发店内4-8岁小中童口罩商品链接；在机器人大童款知识库中配置“小童有吗/小童链接”自动发送对应小童款链接。","aiOnlineDone":"✅ AI已自动生成探域知识库对应词条（执行标准实拍图/小童链接/厚薄说明/年龄选码表），待人工抽检确认。","keyEvidence":"22:15:10机器人建议“4-8岁建议选小童款”→22:15:29客户问“小童有吗”→22:15:36机器人答非所问“严选亲肤材质”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-25\n22:14:59\nhttps://item.taobao.com/item.htm?id=733571628933\nzhangshuang阿双阿双\n22:15:00\n请在客户端查看原始聊天记录，网页版无法展示\nzhangshuang阿双阿双\n22:15:00\n亲亲你好~\n得升旗舰店:圆圆\n22:15:01\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n22:15:05\n多大的\nzhangshuang阿双阿双\n22:15:10\n亲亲，这款医用儿童口罩适用8到12岁的大童哦～如果宝宝是4-8岁小中童，建议选小童款；8-12岁大童就选这款大童款比较合适哈~\n得升旗舰店:圆圆\n22:15:10\n咱们提供退换包邮费服务，收到不合适随时免费退换～~\n得升旗舰店:圆圆\n22:15:29\n小童有吗\nzhangshuang阿双阿双\n22:15:36\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"待向客户补发小童款链接"},{"id":"TASK-183","rowId":"天猫得升旗舰店#R12","store":"天猫得升旗舰店","customerId":"jady22394369","orderId":"商品ID:1094405013897","chatTime":"2026-10-23 22:21:28","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["运营部","市场部"],"ownerNames":"唐勇 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_OPS_CERT_FIX","groupTitle":"⚙️ 运营+市场部：核查并替换商品详情页过期《医疗器械注册证》图片","cleanTitle":"商品详情页医疗器械注册证图片过期投诉（1094405013897）","cleanAction":"1.运营唐勇核查并替换详情页中的过期医疗器械注册证图片；2.市场部向买家补发最新有效注册证","aiOnlineDone":"","keyEvidence":"10-24 14:14“注册证过期了亲”→14:31人工“晚点给您留言”未兑现→10-25 12:09问“儿童36码可以穿吗”→机器人答非所问致客户发“？”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-23\n22:21:28\nhttps://item.taobao.com/item.htm?id=1094405013897\njady22394369\n22:21:29\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n22:21:29\n亲亲你好~\n得升旗舰店:圆圆\n22:21:30\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n22:21:52\n日本品牌吗\njady22394369\n22:21:59\n亲亲，是的哦～得升トクマス是日本品牌，咱们店铺是官方授权品牌旗舰店，专注自主研发，品质有保障的哈～~\n得升旗舰店:圆圆\n22:22:33\n日本品质吗\njady22394369\n22:22:38\n亲亲，得升トクマス是日本品牌，店铺为官方授权品牌旗舰店、天猫品质商家~\n得升旗舰店:圆圆\n22:22:38\n品牌20年专注沉淀，拥有155+专利认证，畅销全球32国，官方旗舰品质，专注自主研发，品质有保障的哈～~\n得升旗舰店:圆圆\n22:23:22\n包装是日本的吗\njady22394369\n22:23:52\n亲亲稍等~\n得升旗舰店:圆圆\n22:24:02\n不是呢\n得升旗舰店:圆圆\n22:29:07\n发顺丰吗\njady22394369\n22:29:13\n亲亲，咱们店铺目前主要发圆通和中通快递，极少数地区会自动匹配发邮政哦~\n得升旗舰店:圆圆\n22:29:13\n仓库会根据您的具体订单地址，自动为您择优安排运送速度最快的快递发出，暂时不支持指定顺丰呢~咱们提供【退换包邮费】服务，放心买~~\n得升旗舰店:圆圆\n23:43:43\nhttps://item.taobao.com/item.htm?id=1094405757222\njady22394369\n23:43:44\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n23:44:08\n您好亲 在的哈\n得升旗舰店:圆圆\n23:44:08\n是日本品牌吗\njady22394369\n23:44:22\n是的哈，得升トクマス是日本品牌哦~\n得升旗舰店:圆圆\n23:57:40\nhttps://item.taobao.com/item.htm?id=1094405757222\njady22394369\n23:57:40\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n23:57:48\n是日本品牌吗\njady22394369\n23:57:52\n亲亲，咱们品牌标识为得升トクマス，是日本特许厅申请号：商顾2026-094683，商标申请信息不代表产品原产地哦，商品为官方正品，支持现货速发，品质有保障~~\n得升旗舰店:圆圆\n23:58:16\n质量怎么样\njady22394369\n23:58:24\n亲亲，耳塞采用高密PU聚氨酯吸音棉，60秒慢回弹材质，柔贴耳道、久戴不胀，搭配仿耳道弧形设计和细密微气孔，能层层衰减声波振动、物理降噪，静眠隔音效果不错哦～现为官方正品，现货速发，品质有保障~~\n得升旗舰店:圆圆\n23:58:47\n不喜欢可以包邮退换吗\njady22394369\n23:58:51\n亲亲，咱们提供【退换包邮费】服务，可以放心~如果收到后觉得不喜欢或不合适，都可以联系我们处理哦～目前店铺暂未单独开通运费险，但退换货包邮，售后这块您放心，有问题我们都会积极处理的~~\n得升旗舰店:圆圆\n2026-10-24\n00:00:15\n转人工\njady22394369\n00:00:45\n亲亲稍等~\n得升旗舰店:圆圆\n00:00:50\n亲，以系统提示为准，有参加活动的款是会有赠送运费险的，平时没活动就没有运费险了\n得升旗舰店:圆圆\n00:00:55\n没有运费险的\n得升旗舰店:圆圆\n00:01:04\n？\njady22394369\n00:01:11\n亲亲，目前店铺确实暂未单独开通运费险呢，不过我们支持退换货包邮，售后这块您可以放心，有问题我们都会积极处理的~~\n得升旗舰店:服务助手\n00:03:03\n发顺丰\njady22394369\n00:03:09\n亲亲，咱们店铺默认主要发圆通和中通快递（极少数地区邮政），仓库会根据您的地址自动择优安排；如果您比较急用需要发顺丰，咱们支持发【顺丰到付】哦，下单后留言告知客服为您备注安排即可哈~~\n得升旗舰店:服务助手\n00:03:18\n好的\njady22394369\n00:03:24\n好的亲亲，下单后留言告知客服为您备注安排顺丰到付即可~~\n得升旗舰店:服务助手\n00:23:57\nhttps://item.taobao.com/item.htm?id=1095471652873\njady22394369\n00:23:57\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n00:24:09\n有送球框吗\njady22394369\n00:24:13\n亲，咱们家不同款式配件不一样的哦～带篮筐的套装款是含【免打孔挂墙篮筐】的，其他布套款和裸球款额外赠送的是便携收纳网兜~\n得升旗舰店:服务助手\n00:24:13\n您方便说一下想要哪一款吗？~\n得升旗舰店:服务助手\n10:42:55\nhttps://item.taobao.com/item.htm?id=1095492124100\njady22394369\n10:42:56\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n10:43:16\n150能穿到哪里\njady22394369\n10:43:49\n您好亲 在的哈\n得升旗舰店:圆圆\n10:44:09\n？\njady22394369\n10:45:40\n请稍等 立刻为您查询 查询需要一定时间请耐心等候哦\n得升旗舰店:圆圆\n10:54:39\n亲亲，身高150cm穿这款大概到膝盖正下方1~2指的位置（小腿最上方、刚好不过膝盖）哦！✨ 这款是高弹梯度压力面料，包裹性很好不会往下掉，您穿的时候如果觉得稍微有点高，也可以往脚踝方向轻轻拉顺一点来调节高度，完全不会卡膝盖窝，而且小个子穿这个长度视觉上超级显小腿细长哒~\n得升旗舰店:圆圆\n11:04:48\n是日本品牌对吗\njady22394369\n11:04:56\n亲亲，咱们这款是得升品牌（商顾2026-094683商标申请信息，不代表产品原产地）哦～相关资质为日本特许厅申请号：商顾2026-094683，商标申请信息不代表产品原产地哈~\n得升旗舰店:圆圆\n11:05:26\n什么意思没看明白\njady22394369\n11:05:33\n亲亲，简单说就是：这款是“得升品牌（商顾2026-094683商标申请信息，不代表产品原产地）”，相关的日本特许厅申请号是商顾2026-094683，但这个商标申请信息只代表商标注册情况，并不代表袜子的实际生产产地哦～~\n得升旗舰店:圆圆\n11:05:59\n能发顺丰吗\njady22394369\n11:06:04\n亲亲，咱们店铺默认主要发圆通和中通快递，少数地区邮政；如果您比较急用需要发顺丰，咱们支持发【顺丰到付】哦，下单后留言告知客服为您备注安排即可哈~~\n得升旗舰店:圆圆\n14:13:36\njady22394369\n14:13:36\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n得升旗舰店:圆圆\n14:13:46\n注册证过期了\njady22394369\n14:13:54\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n14:14:26\n注册证过期了亲\njady22394369\n14:15:47\n您好亲 在的哈\n得升旗舰店:圆圆\n14:15:48\n亲亲， 麻烦您稍等一下， 我这边帮您看看哦。\n得升旗舰店:圆圆\n14:31:12\n嗯\njady22394369\n14:31:42\n稍等呢亲亲 晚点回复之后给您留言呢\n得升旗舰店:圆圆\n2026-10-25\n12:07:45\nhttps://item.taobao.com/item.htm?id=1092607887657\njady22394369\n12:07:45\n请在客户端查看原始聊天记录，网页版无法展示\njady22394369\n12:08:15\n亲亲稍等~\n得升旗舰店:圆圆\n12:08:22\n欢迎光临，很高兴能够为您服务！\n得升旗舰店:圆圆\n12:09:35\n儿童36码可以穿吗\njady22394369\n12:09:43\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n12:09:58\n？\njady22394369\n12:10:03\n亲亲，这款运动压力小腿袜所有规格都是均码，适配35-40码哦，36码是可以穿的哈~~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["运营部","市场部"],"doneSteps":[],"initialCsNote":"10.25已答复36码可穿，但10.24过期注册证问题仍未闭环"},{"id":"TASK-184","rowId":"天猫得升旗舰店#R13","store":"天猫得升旗舰店","customerId":"t_1504013400093_0937","orderId":"","chatTime":"2026-10-25 12:03:36","hasProblem":"是","track":"online_ai_done","stage":"online_pending_check","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"ONLINE_TANYU_KB_SYNC","groupTitle":"🤖 探域机器人知识库补全（执行标准图/小童链接/厚薄属性/年龄选码）","cleanTitle":"买家咨询口罩厚薄属性，机器人答非所问回“严选亲肤材质”","cleanAction":"由人工客服回复客户说明该链接口罩的具体层数与厚薄透气属性；在机器人知识库中补全“厚的/薄的/厚度”对应解答话术。","aiOnlineDone":"✅ AI已自动生成探域知识库对应词条（执行标准实拍图/小童链接/厚薄说明/年龄选码表），待人工抽检确认。","keyEvidence":"12:03:36客户问“这个是厚的吧？”→12:03:45机器人答非所问“严选亲肤材质，符合详情页各项实测标准”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-25\n12:03:36\n这个是厚的吧？\nt_1504013400093_0937\n12:03:37\n请在客户端查看原始聊天记录，网页版无法展示\nt_1504013400093_0937\n12:03:37\n亲亲你好~\n得升旗舰店:圆圆\n12:03:38\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n12:03:45\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"待跟进说明厚薄属性"},{"id":"TASK-185","rowId":"天猫得升旗舰店#R24","store":"天猫得升旗舰店","customerId":"mirhoney","orderId":"","chatTime":"2026-10-25 09:07:48","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","运营部"],"ownerNames":"许培婷 / 吴行哲 / 唐勇","groupKey":"OFFLINE_OPS_OOS","groupTitle":"⚙️ 仓库+运营：缺货花色实物清点与千牛后台断货SKU下架","cleanTitle":"下单图案缺货：客服联系换款待确认 & 后台断货花色需锁0库存","cleanAction":"1.仓库清点该花色实际库存并跟进买家换款发货；2.运营唐勇在千牛后台立即将断货图案SKU锁0库存","aiOnlineDone":"","keyEvidence":"09:07:48客服丽媛“你好亲亲，你下单这款图案刚好没有，这边给你换个图案你看可以吗”→待客户确认","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-25\n09:07:48\n你好亲亲，你下单这款图案刚好没有，这边给你换个图案你看可以吗\n得升旗舰店:丽媛\n09:09:00\n得升旗舰店:丽媛\n没有更多内容了","originalDepts":["仓库部","运营部"],"doneSteps":[],"initialCsNote":"待客户确认更换图案并安排发货"},{"id":"TASK-186","rowId":"天猫得升旗舰店#R29","store":"天猫得升旗舰店","customerId":"营造钱途","orderId":"商品ID:1090378336474","chatTime":"2026-10-24 21:37:48","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"OFFLINE_MKT_MEASURE","groupTitle":"📊 市场+运营：实测口罩长宽尺寸并同步详情页与探域知识库","cleanTitle":"买家询问莫兰迪医用外科口罩尺寸，知识库与详情页缺失长宽参数","cleanAction":"1.市场部实测莫兰迪外科口罩长宽尺寸并补发买家；2.运营部同步更新至详情页尺寸表与探域词库","aiOnlineDone":"","keyEvidence":"21:37:54客户问“多大”→21:37:56机器人答非所问“严选亲肤材质，符合各项实测标准”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n21:37:48\nhttp://item.taobao.com/item.htm?id=1090378336474\n营造钱途\n21:37:49\n请在客户端查看原始聊天记录，网页版无法展示\n营造钱途\n21:37:49\n亲亲你好~\n得升旗舰店:圆圆\n21:37:50\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n21:37:58\n你好，这口罩规格多少\n营造钱途\n21:38:03\n亲亲，这款医用外科口罩莫兰迪系列是成人款，规格为30片独立包装哦，加宽耳带不勒耳，采用升级医用外科熔喷布，正规医疗品质药监注册，可以放心选购哈~~\n得升旗舰店:圆圆\n21:38:11\n多大\n营造钱途\n21:38:19\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"待补发尺寸参数"},{"id":"TASK-187","rowId":"天猫得升旗舰店#R31","store":"天猫得升旗舰店","customerId":"不吵不闹i安分守己","orderId":"商品ID:1048804479108","chatTime":"2026-10-24 20:28:04","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","市场部"],"ownerNames":"许培婷 / 吴行哲 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_WH_WRONG","groupTitle":"📦 仓库+市场部：错发尺码/漏发调节扣核查与免费补发出单号闭环","cleanTitle":"严重错发投诉：买家反馈连续两次补发均发错XS小码（需紧急补发S码）","cleanAction":"1.仓库核查实物包装尺码标示并安排优先补发正确规格、回填快递单号；2.市场部回访安抚买家","aiOnlineDone":"","keyEvidence":"20:28:39“补发的也是小的 两次发的都是小的”→20:29:23“三岁2个月 体重28斤 但是有点小”→机器人连续3次复读选码模板无人工接手","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n20:28:04\n补发的也是小的\n不吵不闹i安分守己\n20:28:04\n请在客户端查看原始聊天记录，网页版无法展示\n不吵不闹i安分守己\n20:28:05\n亲亲你好~\n得升旗舰店:圆圆\n20:28:06\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n20:28:10\n亲亲，咱们当前这个链接的口罩最大选项一般可以给宝宝戴到40斤左右，三岁以上宝宝如果体型/脸型不是特别大，可以优先选择当前链接里的最大码哦～如果您担心宝宝脸型偏大、怕戴着不够宽松，也可以看看这款更适合大宝宝/大童的口罩链接： 如果方便的话，您可以把宝宝的年龄、体重和脸型情况发我一下，我帮您对照推荐更合适的口罩尺码哈～~\n得升旗舰店:圆圆\n20:28:10\nhttps://detail.tmall.com/item.htm?id=1048804479108\n得升旗舰店:圆圆\n20:28:23\n两次发的都是小的\n不吵不闹i安分守己\n20:28:36\n亲亲，非常抱歉给您带来困扰～咱们这款口罩小码【0-6月/16斤以内】平铺长约8.3cm×宽8.8cm，中码【6月-3岁/16-30斤】平铺长约8.9cm×宽9.4cm~\n得升旗舰店:圆圆\n20:28:36\n麻烦您把宝宝的年龄和体重发我一下，我帮您对照确认合适的尺码哈～~\n得升旗舰店:圆圆\n20:30:15\n三岁2个月\n不吵不闹i安分守己\n20:30:19\n请在客户端查看原始聊天记录，网页版无法展示\n不吵不闹i安分守己\n20:30:28\n亲亲，咱们当前这个链接的口罩最大选项一般可以给宝宝戴到40斤左右，三岁以上宝宝如果体型/脸型不是特别大，可以优先选择当前链接里的最大码【16-30斤 / 6月-3岁】哦～这个码平铺长约8.9cm×宽9.4cm，最大可以戴到40斤左右~\n得升旗舰店:圆圆\n20:30:28\n如果您担心宝宝脸型偏大、怕戴着不够宽松，也可以看看这款更适合大宝宝/大童的口罩链接：~\n得升旗舰店:圆圆\n20:30:28\n咱们有【退换包邮费】服务，收到试戴不合适随时免费退换，您放心~~\n得升旗舰店:圆圆\n20:30:28\nhttps://detail.tmall.com/item.htm?id=1048804479108\n得升旗舰店:圆圆\n20:32:18\n体重28斤\n不吵不闹i安分守己\n20:32:26\n亲亲，根据宝宝三岁两个月、体重28斤的情况，建议选择【6月-3岁 / 16-30斤（XS码）】哦～这个码平铺长约8.9cm×宽9.4cm，最大可以戴到40斤左右，宝宝28斤戴着是合适的~ 咱们有【退换包邮费】服务，收到可以先试戴，不合适随时免费退换，您放心~~\n得升旗舰店:圆圆\n20:32:48\n但是有点小\n不吵不闹i安分守己\n20:32:58\n亲亲，非常抱歉给您带来困扰～咱们这款XS码平铺长约8.9cm×宽9.4cm，最大一般可以戴到40斤左右，28斤的宝宝正常是可以戴的；如果宝宝脸型偏大或觉得耳朵处偏紧，建议可以看看这款更适合大宝宝/大童的口罩链接： 咱们有【退换包邮费】服务，收到试戴不合适随时免费退换，您放心～~\n得升旗舰店:圆圆\n20:32:58\nhttps://detail.tmall.com/item.htm?id=1048804479108\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["仓库部","市场部"],"doneSteps":[],"initialCsNote":"待人工紧急回访补发S码"},{"id":"TASK-189","rowId":"天猫得升旗舰店#R39","store":"天猫得升旗舰店","customerId":"王亚飞1124","orderId":"3316966465110002784","chatTime":"2026-10-24 16:47:52","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部"],"ownerNames":"许培婷 / 吴行哲","groupKey":"OFFLINE_WH_LOGISTICS","groupTitle":"📦 仓库线下催件/拦截：联系圆通快递网点核实派送或退回","cleanTitle":"快递派送异常：买家投诉圆通派送超时未达（3316966465110002784），仅机器人回套话","cleanAction":"仓库联系圆通网点催促派送订单 3316966465110002784，并将网点反馈结果告知买家","aiOnlineDone":"","keyEvidence":"16:47:20“圆通快递真垃圾 派送一天都不到”→仅机器人回复套话，无人工核实物流单号催派","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n16:47:52\n订单号:3316966465110002784 共1件商品,合计￥13.85 交易时间:2026-10-21 15:58:46\n王亚飞1124\n16:47:52\n请在客户端查看原始聊天记录，网页版无法展示\n王亚飞1124\n16:47:53\n亲亲你好~\n得升旗舰店:圆圆\n16:47:54\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n16:48:09\n圆通快递真垃圾 派送一天都不到\n王亚飞1124\n16:48:14\n亲亲，不好意思让您久等了～快递运输会受中转、站点扫描和派送排队影响，物流页面会持续更新~\n得升旗舰店:圆圆\n16:48:14\n请在客户端查看原始聊天记录，网页版无法展示\n王亚飞1124\n16:48:14\n我这边也会帮您关注并催促尽快派送~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["仓库部"],"doneSteps":[],"initialCsNote":"待人工核实圆通网点催派"},{"id":"TASK-190","rowId":"天猫得升旗舰店#R64","store":"天猫得升旗舰店","customerId":"tb9626916585","orderId":"商品ID:919406144515","chatTime":"2026-10-23 10:34:49","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["市场部"],"ownerNames":"林丽媛 / 尤敏燕","groupKey":"OFFLINE_MKT_FOLLOWUP","groupTitle":"📊 市场部客服售后跟进：异常会话回访与挽单闭环","cleanTitle":"机器人/接待异常","cleanAction":"【高风险优先跟进】立即核实该客户订单状态，若客户对包装字样敏感且仓库无法涂抹，主动联系客户确认是否正常发货；整顿客服“立刻为您查询”后挂起超5小时的严重超时行为。","aiOnlineDone":"","keyEvidence":"10:36:03“已下单 无痕发货”→10:37:33“记号笔涂掉”→10:37:50“请稍等 立刻为您查询”→16:01:22“不支持的亲”（超时5小时24分）","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-23\n10:34:49\nhttp://item.taobao.com/item.htm?id=919406144515\ntb9626916585\n10:34:49\n请在客户端查看原始聊天记录，网页版无法展示\ntb9626916585\n10:34:49\n亲亲你好~\n得升旗舰店:圆圆\n10:34:50\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n10:34:54\n可以无痕发货吗？没有淘宝字样和图案\ntb9626916585\n10:34:55\n请在客户端查看原始聊天记录，网页版无法展示\n得升旗舰店:圆圆\n10:35:25\n请在客户端查看原始聊天记录，网页版无法展示\ntb9626916585\n10:35:25\n亲亲稍等~\n得升旗舰店:圆圆\n10:36:03\n已下单\ntb9626916585\n10:36:10\n无痕发货 没有淘宝字样和图案\ntb9626916585\n10:37:16\n您好亲 在的哈\n得升旗舰店:圆圆\n10:37:21\n没办法无痕发货的哦\n得升旗舰店:圆圆\n10:37:33\n记号笔涂掉\ntb9626916585\n10:37:36\n/:-F\ntb9626916585\n10:37:50\n请稍等 立刻为您查询 查询需要一定时间请耐心等候哦\n得升旗舰店:圆圆\n16:01:22\n不支持的亲\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部"],"doneSteps":[],"initialCsNote":""},{"id":"TASK-192","rowId":"天猫得升旗舰店#R76","store":"天猫得升旗舰店","customerId":"tb075020990","orderId":"","chatTime":"2026-10-23 09:49:45","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["市场部"],"ownerNames":"林丽媛 / 尤敏燕","groupKey":"OFFLINE_MKT_FOLLOWUP","groupTitle":"📊 市场部客服售后跟进：异常会话回访与挽单闭环","cleanTitle":"处理跟进异常","cleanAction":"【优先跟进】跟进该客户售后仅退款单状态，规范客服协商补偿话术（严禁先报补偿10元紧接着又改口8元引发客户反感）。","aiOnlineDone":"","keyEvidence":"09:49:46“您申请退货退款吧”→09:51:49“给您补偿10元，您撤销一下仅退款”→09:52:17“给您补偿8元，您撤销一下仅退款”（客户未回复）","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-23\n09:49:45\n请在客户端查看原始聊天记录，网页版无法展示\n得升旗舰店:红包得力的摇篮\n09:49:46\n亲亲，您申请退货退款吧\n得升旗舰店:红包得力的摇篮\n09:49:53\n亲亲您好\n得升旗舰店:红包得力的摇篮\n09:50:06\n您看这边给您申请补偿可以吗\n得升旗舰店:红包得力的摇篮\n09:51:49\n给您补偿10元，您撤销一下仅退款，或者您也可以退货退款，原因选择不喜欢不想要，退回来的运费我们承担\n得升旗舰店:红包得力的摇篮\n09:52:17\n给您补偿8元，您撤销一下仅退款，或者您也可以退货退款，原因选择不喜欢不想要，退回来的运费我们承担，麻烦您啦亲亲\n得升旗舰店:红包得力的摇篮\n没有更多内容了","originalDepts":["市场部"],"doneSteps":[],"initialCsNote":"客人申请仅退款，联系客人不接，已留言处理未回复"},{"id":"TASK-193","rowId":"拼多多陈小培的商铺25#R15","store":"拼多多陈小培的商铺25","customerId":"m***","orderId":"","chatTime":"2026-10-24 00:38:56","hasProblem":"是","track":"online_ai_done","stage":"online_pending_check","depts":["市场部","运营部"],"ownerNames":"林丽媛 / 尤敏燕 / 唐勇","groupKey":"ONLINE_TANYU_KB_SYNC","groupTitle":"🤖 探域机器人知识库补全（执行标准图/小童链接/厚薄属性/年龄选码）","cleanTitle":"拼多多买家凌晨问“两岁半用什么码”，机器人零响应致客流失","cleanAction":"1）立即在拼多多机器人知识库中补全“两岁半/几岁/什么码/多大码”24小时自动选码推荐话术；2）整改早班客服接手夜间留言时先发“稍等”拖延12分钟的低效接待习惯。","aiOnlineDone":"✅ AI已自动生成探域知识库对应词条（执行标准实拍图/小童链接/厚薄说明/年龄选码表），待人工抽检确认。","keyEvidence":"00:39:11客户问“这个口罩两岁半用什么码啊”→机器人0响应→11:22:47人工“稍等帮您看看”→11:34:30才问“多少斤呢 孩子”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"系统消息\n2026-10-24 00:38:56\n\n[常见问题列表]\n\nm***\n2026-10-24 00:39:11\n\n这个口罩两岁半用什么码啊\n\n系统消息\n2026-10-24 00:39:11\n\n[当前用户来自 商品详情页]\n\n系统消息\n2026-10-24 11:22:25\n\n主账号 将该会话转移给 拼多多wo圆圆，请及时处理\n\n拼多多wo圆圆\n2026-10-24 11:22:47\n\n亲亲， 麻烦您稍等一下， 我这边帮您看看哦。\n\n拼多多wo圆圆\n2026-10-24 11:24:43\n\n您好亲 在的哈\n\n拼多多wo圆圆\n2026-10-24 11:34:30\n\n多少斤呢 孩子\n\n拼多多wo圆圆\n2026-10-24 11:34:34\n\n建议看下这个链接的呢","originalDepts":["市场部","运营部"],"doneSteps":[],"initialCsNote":"客户已流失，需补齐PDD机器人选码词库"},{"id":"TASK-194","rowId":"拼多多陈小培的商铺25#R21","store":"拼多多陈小培的商铺25","customerId":"不***","orderId":"","chatTime":"2026-10-24 16:03:05","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["市场部"],"ownerNames":"林丽媛 / 尤敏燕","groupKey":"OFFLINE_MKT_QUALITY","groupTitle":"📊 市场部线下抽检与挽单：尺码偏差回访补发（严防拼多多平台介入）","cleanTitle":"【高危防介入】老客反馈买大一码收到和去年一样大，客服说稍等后彻底断联","cleanAction":"立即在拼多多后台联系客户“不***”，核实所发尺码是否发错或版型偏小，主动安排免退货免费补发大一码或协商补偿，严防客户发起平台介入退款影响店铺纠纷率！","aiOnlineDone":"","keyEvidence":"16:05:02“我买的比去年大一个尺码 回来和去年的一样大”→16:05:36人工“麻烦您稍等一下我这边帮您看看哦”→16:05:38系统警告“避免平台介入退款”→此后0回复！","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"系统消息\n2026-10-24 16:03:05\n\n[常见问题列表]\n\n不***\n2026-10-24 16:03:19\n系统消息\n2026-10-24 16:03:20\n\n[当前用户来自 商品详情页]\n\n拼多多wo圆圆\n2026-10-24 16:03:21\n\n亲亲你好~\n\n拼多多wo圆圆\n2026-10-24 16:03:21\n\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n\n拼多多wo圆圆\n2026-10-24 16:03:22\n\n请问有什么可以帮助你的~\n\n不***\n2026-10-24 16:03:36\n\n这是几岁的？\n\n拼多多wo圆圆\n2026-10-24 16:03:40\n\n亲亲，这款是【医用婴儿口罩0-6月12新生幼儿医疗医护一次性0一2岁儿童宝宝专用】的【医用-太空小熊】款，适用于【1-2岁】的宝宝哦～我们还有【退换包邮费】保障，收到可以先试戴，您放心~~\n\n不***\n2026-10-24 16:04:12\n\n怎么和去年买的大小一样呢\n\n拼多多wo圆圆\n2026-10-24 16:04:18\n\n亲亲，这款【医用婴儿口罩0-6月12新生幼儿医疗医护一次性0一2岁儿童宝宝专用】的【医用-太空小熊】款就是适用于1-2岁宝宝的规格哦～商品版型与去年一致，所以大小相同是正常的呢~\n\n拼多多wo圆圆\n2026-10-24 16:04:18\n\n如果您觉得尺寸不合适，咱们有【退换包邮费】保障，收到试戴不合适随时免费退换~~\n\n不***\n2026-10-24 16:04:50\n\n我已经买了好久了\n\n系统消息\n2026-10-24 16:04:51\n\n您好像还没有配置消费者问到的常见问题回答，为了提升您的接待效率、减少顾客流失，建议您尽快完善此配置 立即配置\n\n拼多多wo圆圆\n2026-10-24 16:04:56\n\n亲亲，您是觉得口罩戴起来不太合适，还是收到后一直没拆封呢？咱们这款是医用-太空小熊（1-2岁）款，适合1-2岁宝宝~\n\n拼多多wo圆圆\n2026-10-24 16:04:56\n\n如果试戴后发现尺寸不合适，咱们有【退换包邮费】保障，收到后拆封试戴不合适随时免费退换~~~\n\n不***\n2026-10-24 16:05:02\n\n我买的比去年大一个尺码\n\n拼多多wo圆圆\n2026-10-24 16:05:11\n\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n\n不***\n2026-10-24 16:05:33\n\n回来和去年的一样大\n\n拼多多wo圆圆\n2026-10-24 16:05:36\n\n亲亲， 麻烦您稍等一下， 我这边帮您看看哦。\n\n系统消息\n2026-10-24 16:05:38\n\n请尽快解决售后问题，避免平台介入退款","originalDepts":["市场部"],"doneSteps":[],"initialCsNote":"高危未完结：客服说稍等后未回复，急需回访处理"},{"id":"TASK-195","rowId":"拼多多得升医疗器械官方旗舰店#R3","store":"拼多多得升医疗器械官方旗舰店","customerId":"🙋***","orderId":"","chatTime":"2026-10-23 14:35:54","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["运营部"],"ownerNames":"唐勇","groupKey":"OFFLINE_OPS_SKU_LABEL","groupTitle":"⚙️ 运营部后台优化：拼多多SKU选项名称统一标注「年龄段+XS/XXS字母码」","cleanTitle":"买家困惑“怎么1-2岁还是xs/xxs”尺码代号对应关系，机器人连问3次体重","cleanAction":"运营唐勇在拼多多后台SKU规格名称中统一标注「年龄段+字母码」，并在机器人词库补齐对应说明","aiOnlineDone":"","keyEvidence":"10-23 14:36“怎么1-2岁还是xs”“xxs”→机器人连续3次机械索要年龄体重无人工解释","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"系统消息\n2026-10-23 14:35:54\n\n[常见问题列表]\n\n🙋***\n2026-10-23 14:35:55\n\nhttps://mobile.yangkeduo.com/goods.html?goods_id=455323403922&_oak_rcto=YWLdz0hNWm5BGKX98m2_GUlTFSKnsjkJN3xBkFcndYkb8H6d4B_HdJ_JT2du769UMHE&page_from=101&_oak_actype=null&_oak_sub_actype=null\n\n拼多多得升圆圆\n2026-10-23 14:35:56\n\n亲亲你好~\n\n拼多多得升圆圆\n2026-10-23 14:35:57\n\n请问有什么可以帮助你的~\n\n🙋***\n2026-10-23 14:36:12\n\n怎么1-2岁还是cc’d\n\n系统消息\n2026-10-23 14:36:13\n\n[当前用户来自 商品详情页]\n\n拼多多得升圆圆\n2026-10-23 14:36:17\n\n亲亲，咱们家是有【1-2岁】这个规格的哦，适合23-29斤左右的宝宝~\n\n拼多多得升圆圆\n2026-10-23 14:36:17\n\n每个宝宝发育不同，光看月龄不够准，建议按体重来选～您方便告诉我宝宝多大、体重多少吗？我帮您推荐更合适的尺码❤~\n\n🙋***\n2026-10-23 14:36:27\n\nxx s\n\n拼多多得升圆圆\n2026-10-23 14:36:30\n\n亲亲，您说的“xx s”我这边没太明白哦～您是想咨询口罩尺码吗？麻烦告诉我宝宝多大或体重多少，我帮您推荐更合适的尺码❤~~\n\n🙋***\n2026-10-23 14:36:33\n\nXs\n\n拼多多得升圆圆\n2026-10-23 14:36:36\n\n亲亲麻烦告诉我宝宝年龄或体重哦，我帮您推荐更合适的尺码❤~","originalDepts":["运营部"],"doneSteps":[],"initialCsNote":"需优化机器人对XS/XXS尺码代号的解答"},{"id":"TASK-196","rowId":"拼多多得升医疗器械官方旗舰店#R4","store":"拼多多得升医疗器械官方旗舰店","customerId":"石***","orderId":"","chatTime":"2026-10-23 18:55:31","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","市场部"],"ownerNames":"许培婷 / 吴行哲 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_WH_WRONG","groupTitle":"📦 仓库+市场部：错发尺码/漏发调节扣核查与免费补发出单号闭环","cleanTitle":"漏发调节扣投诉：买家买带调节扣款收到无调节扣，客服说确认后中断","cleanAction":"1.仓库核查实物包装尺码标示并安排优先补发正确规格、回填快递单号；2.市场部回访安抚买家","aiOnlineDone":"","keyEvidence":"10-23 18:56“我买的带调节扣的 没有调节扣”→18:57:04客户发实物图→18:57:30客服“亲亲，我给您确认一下~”后无下文","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"石***\n2026-10-23 18:55:31\n\n你好\n\n拼多多得升圆圆\n2026-10-23 18:55:33\n\n亲亲你好~\n\n拼多多得升圆圆\n2026-10-23 18:55:34\n\n请问有什么可以帮助你的~\n\n石***\n2026-10-23 18:55:35\n\n口罩收到了\n\n拼多多得升圆圆\n2026-10-23 18:55:36\n\n在的呢，请问有什么可以帮到您的呢？😊~\n\n拼多多得升圆圆\n2026-10-23 18:55:41\n\n好的呢，祝您使用愉快！~\n\n石***\n2026-10-23 18:56:17\n\n没有调节扣\n\n拼多多得升圆圆\n2026-10-23 18:56:21\n\n亲，非常抱歉给您带来不好的体验，您反馈的问题这边已经了解了，我马上帮您处理~\n\n拼多多得升圆圆\n2026-10-23 18:56:21\n\n这边先给您申请补偿3元作为歉意，您能接受的话回复【同意】；如果不能接受，我继续帮您处理下一步~\n\n石***\n2026-10-23 18:56:25\n\n我买的带调节扣的\n\n拼多多得升圆圆\n2026-10-23 18:56:30\n\n亲，您这边反馈的是收到的商品没有调节扣，与您购买的带调节扣款式不一致，这边已经看明白了~\n\n拼多多得升圆圆\n2026-10-23 18:56:30\n\n刚刚给您的是第一步处理方案，如果您不能接受，我继续帮您处理下一步~\n\n石***\n2026-10-23 18:56:33\n\n不同意\n\n拼多多得升圆圆\n2026-10-23 18:56:38\n\n亲，这边给您直接安排免费补发，原商品不用退回，这样处理会更省事~~\n\n系统消息\n2026-10-23 18:56:39\n\n该订单已有收货信息，您可前往官方打单页直接打单补寄\n\n系统消息\n2026-10-23 18:56:40\n\n平台已帮您梳理售后问题，以便于您更好地解决\n\n石***\n2026-10-23 18:56:43\n\n为了就是可以调节\n\n拼多多得升圆圆\n2026-10-23 18:56:46\n\n亲亲辛苦您这边拍一下照片或者视频 这边看下呢\n\n石***\n2026-10-23 18:57:04\n拼多多得升圆圆\n2026-10-23 18:57:30\n\n亲亲，我给您确认一下~","originalDepts":["仓库部","市场部"],"doneSteps":[],"initialCsNote":"高优未完结：待联系客户补发带调节扣款"},{"id":"TASK-197","rowId":"拼多多得升医疗器械官方旗舰店#R5","store":"拼多多得升医疗器械官方旗舰店","customerId":"哆***","orderId":"","chatTime":"2026-10-24 09:21:09","hasProblem":"是","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","市场部"],"ownerNames":"许培婷 / 吴行哲 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_WH_WRONG","groupTitle":"📦 仓库+市场部：错发尺码/漏发调节扣核查与免费补发出单号闭环","cleanTitle":"二次发错尺码投诉：买家质问“怎么又发错了？我不是要大号的吗？”","cleanAction":"1.仓库核查实物包装尺码标示并安排优先补发正确规格、回填快递单号；2.市场部回访安抚买家","aiOnlineDone":"","keyEvidence":"09:21:29“怎么又发错了？盒子都一模一样。我不是要大号的吗？”→09:22:14客户“好，别再发错了”→09:22:16人工仅回“亲 1-2岁的就是xs的哦”未确认补发哪个大码","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"哆***\n2026-10-24 09:21:09\n\n在\n\n哆***\n2026-10-24 09:21:10\n\n？\n\n拼多多得升圆圆\n2026-10-24 09:21:10\n\n亲亲你好~\n\n拼多多得升圆圆\n2026-10-24 09:21:11\n\n请问有什么可以帮助你的~\n\n拼多多得升圆圆\n2026-10-24 09:21:14\n\n您好，我在的，请问有什么可以帮您？~\n\n哆***\n2026-10-24 09:21:29\n\n怎么又发错了？\n\n拼多多得升圆圆\n2026-10-24 09:21:34\n\n亲，非常抱歉给您带来不好的体验，您反馈的问题这边已经了解了，我马上帮您处理~\n\n拼多多得升圆圆\n2026-10-24 09:21:34\n\n这边先给您申请补偿3元作为歉意，您能接受的话回复【同意】；如果不能接受，我继续帮您处理下一步~\n\n哆***\n2026-10-24 09:21:36\n哆***\n2026-10-24 09:21:41\n\n盒子都一模一样。\n\n哆***\n2026-10-24 09:21:48\n\n我不是要大号的吗？\n\n拼多多得升圆圆\n2026-10-24 09:21:48\n\n亲，非常抱歉给您带来不好的体验，您反馈的是收到商品与预期不一致的问题，这边已经看明白了~\n\n拼多多得升圆圆\n2026-10-24 09:21:49\n\n刚刚给您的是第一步处理方案，如果您不能接受，我继续帮您处理下一步~\n\n哆***\n2026-10-24 09:21:58\n\n不接受\n\n系统消息\n2026-10-24 09:22:03\n\n平台已帮您梳理售后问题，以便于您更好地解决\n\n拼多多得升圆圆\n2026-10-24 09:22:03\n\n亲，这边给您直接安排免费补发，原商品不用退回，这样处理会更省事~\n\n拼多多得升圆圆\n2026-10-24 09:22:04\n\n您看这样可以吗？~\n\n哆***\n2026-10-24 09:22:14\n\n好，别再发错了\n\n系统消息\n2026-10-24 09:22:15\n\n是否需要拼多多帮您向商家申请补寄？\n\n拼多多得升圆圆\n2026-10-24 09:22:16\n\n亲 1-2岁的就是xs的哦","originalDepts":["仓库部","市场部"],"doneSteps":[],"initialCsNote":"待确认具体大号尺码后安排补寄"},{"id":"TASK-211","rowId":"天猫得升旗舰店#R32","store":"天猫得升旗舰店","customerId":"wq363156447","orderId":"5127378951031115135","chatTime":"2026-10-24 20:18:03","hasProblem":"待人工判断","track":"offline_human_todo","stage":"offline_todo","depts":["市场部"],"ownerNames":"林丽媛 / 尤敏燕","groupKey":"OFFLINE_MKT_QUALITY","groupTitle":"📊 市场部线下抽检与挽单：尺码偏差回访补发（严防拼多多平台介入）","cleanTitle":"尺码换货跟进：实付44.59元反馈口罩小了想换，机器人话术跳跃待人工确认补发方案","cleanAction":"人工联系客户明确换码处理方式（因试戴仅1个，可协商退回未拆封盒或直接免费补发1盒大一码），修正机器人对“嗯嗯好的”自动触发财务打款话术的逻辑漏洞。","aiOnlineDone":"","keyEvidence":"20:18:56“小了能换么 我试了一个影响么”→20:19:54分流话术→20:20:23客户“嗯嗯 好的”→20:20:25机器人“财务会在24小时内安排到位”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n20:18:03\n订单号:5127378951031115135 共2件商品,合计￥44.59 交易时间:2026-10-20 23:39:01\nwq363156447\n20:18:03\n请在客户端查看原始聊天记录，网页版无法展示\nwq363156447\n20:18:04\n亲亲你好~\n得升旗舰店:圆圆\n20:18:05\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n20:18:07\n你好\nwq363156447\n20:18:12\n在的呢，请问有什么可以帮到您的呢？~\n得升旗舰店:圆圆\n20:18:13\n小了能换么\nwq363156447\n20:18:18\n亲，非常抱歉给您带来不好的体验，您反馈的问题这边已经了解了，我马上帮您处理~\n得升旗舰店:圆圆\n20:18:18\n亲，这边先给您申请补偿3元作为歉意，您能接受的话回复【同意】；如果不能接受，我继续帮您处理下一步~\n得升旗舰店:圆圆\n20:18:46\n能换么\nwq363156447\n20:18:50\n亲亲明白您的意思~\n得升旗舰店:圆圆\n20:18:50\n因为直接换货流程往返时间比较慢，为了不耽误您使用，如果订单符合免费补发条件，这边直接给您登记免费补发对应的新尺码；如果需要退回原商品更换，您可以直接点击订单【申请售后】→【退货退款】（原因选【不想要】，享退货包运费），同时重新拍下需要的尺码，这样最快最省心哈～~\n得升旗舰店:圆圆\n20:19:25\n嗯嗯，好的\nwq363156447\n20:19:30\n亲，这边已经帮您登记处理，财务会在24小时内安排到位，请您留意。~\n得升旗舰店:圆圆\n20:19:39\n我试了一个，影响么\nwq363156447\n20:19:44\n亲亲完全可以退换的~\n得升旗舰店:圆圆\n20:19:44\n咱们店铺支持免费试戴体验，您拆开试戴的那一片不用特意找原包装袋，直接放回盒子里或者留着都可以，完全不影响整盒退换货和【退换包邮费】保障哈～如果您需要换码或退货退款，随时告诉我一声就行~~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["市场部"],"doneSteps":[],"initialCsNote":"待确认补发或退货重拍"},{"id":"TASK-212","rowId":"天猫得升旗舰店#R40","store":"天猫得升旗舰店","customerId":"viva302","orderId":"5127819192185005008","chatTime":"2026-10-24 08:33:20","hasProblem":"待人工判断","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","市场部"],"ownerNames":"许培婷 / 吴行哲 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_WH_WRONG","groupTitle":"📦 仓库+市场部：错发尺码/漏发调节扣核查与免费补发出单号闭环","cleanTitle":"尺码偏小换码：已承诺免费补发大一码（5127819192185005008），待仓库打单出单号","cleanAction":"1.仓库核查实物包装尺码标示并安排优先补发正确规格、回填快递单号；2.市场部回访安抚买家","aiOnlineDone":"","keyEvidence":"08:33:50“这个口罩带着小 能给换更大的吗”→16:13:59客户确认订单5127819192185005008→待发出补发单号","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-24\n08:33:20\n订单号: 5127819192185005008 共1件商品 , 合计￥13.85元 交易时间: 2026-10-21 13:33:10\nviva302\n08:33:21\n请在客户端查看原始聊天记录，网页版无法展示\nviva302\n08:33:21\n亲亲你好~\n得升旗舰店:圆圆\n08:33:22\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n08:33:46\n这个口罩带着小\nviva302\n08:33:56\n亲亲，实在对不住呀~\n得升旗舰店:圆圆\n08:33:56\n您反馈的口罩佩戴偏小的问题这边已经了解了，为了不耽误使用，您看这盒能不能将就先用着？我马上给您申请补偿【3元】作为歉意，如果方案可行请回复【同意】，如果不能接受，请直接回复【不行】~\n得升旗舰店:圆圆\n08:34:02\n能给换更大的吗\nviva302\n08:34:06\n亲，这边给您直接安排免费补发，原商品不用退回，这样处理会更省事。~\n得升旗舰店:圆圆\n08:34:58\n能直接邮大码？\nviva302\n08:35:04\n亲，这边已经帮您登记处理，免费补发一份，原商品不用退回，财务会在24小时内安排到位，请您留意~\n得升旗舰店:圆圆\n16:13:52\n我确认一下，我不用退回，直接给我大号的口罩，是这样吗\nviva302\n16:13:58\n亲亲明白您的意思~\n得升旗舰店:圆圆\n16:13:58\n因为直接换货流程往返时间较慢，为了不耽误您使用，这边直接给您登记免费补发对应的大一码新商品，原商品不用退回，这样处理会更省事哈～后续请留意新的物流信息~\n得升旗舰店:圆圆\n16:14:10\n好\nviva302\n16:14:14\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\n得升旗舰店:圆圆\n没有更多内容了","originalDepts":["仓库部","市场部"],"doneSteps":[],"initialCsNote":"已承诺免费补发大一码，待出单号"},{"id":"TASK-213","rowId":"天猫得升旗舰店#R48","store":"天猫得升旗舰店","customerId":"锦艳888","orderId":"3316967617080036871","chatTime":"2026-10-23 19:38:50","hasProblem":"待人工判断","track":"offline_human_todo","stage":"offline_todo","depts":["仓库部","市场部"],"ownerNames":"许培婷 / 吴行哲 / 林丽媛 / 尤敏燕","groupKey":"OFFLINE_WH_WRONG","groupTitle":"📦 仓库+市场部：错发尺码/漏发调节扣核查与免费补发出单号闭环","cleanTitle":"尺码退换挽单：已主动联系提议免费补发大码并取消退货（3316967617080036871）","cleanAction":"1.仓库核查实物包装尺码标示并安排优先补发正确规格、回填快递单号；2.市场部回访安抚买家","aiOnlineDone":"","keyEvidence":"10-23晚引导退货重拍→10-24 10:56客服主动留言“这边给您重新补发一盒大码的可以吗，退货退款取消一下”","staffResult":"","isNormalRatio":"","normalRatioBasis":"","abnormalPlan":"","chatContent":"2026-10-23\n19:38:50\n订单号:3316967617080036871 共1件商品,合计￥25.50 交易时间:2026-10-21 08:07:27\n锦艳888\n19:38:50\n请在客户端查看原始聊天记录，网页版无法展示\n锦艳888\n19:38:50\n亲亲你好~\n得升旗舰店:圆圆\n19:38:51\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n19:39:06\n换货需要承担运动吗\n锦艳888\n19:39:08\n请在客户端查看原始聊天记录，网页版无法展示\n锦艳888\n19:39:35\n没有运费险的\n得升旗舰店:圆圆\n19:39:36\n运费自理的\n得升旗舰店:圆圆\n19:41:49\n不是显示包邮退？\n锦艳888\n19:41:49\n请在客户端查看原始聊天记录，网页版无法展示\n锦艳888\n19:41:57\n亲亲，咱们这款口罩是支持试戴5片不满意包邮退的哦～如果您对订单有疑虑，订单若有退货包邮服务，系统会帮您报销寄回的运费；若没有该服务，您寄回的运费先垫付，之后我们会给您报销，您放心～~\n得升旗舰店:圆圆\n19:42:06\n订单号:3316967617080036871 共1件商品,合计￥25.50 交易时间:2026-10-21 08:07:27\n锦艳888\n19:42:06\n请在客户端查看原始聊天记录，网页版无法展示\n锦艳888\n19:42:20\n号小了，得换个大一个号的\n锦艳888\n19:42:24\n请在客户端查看原始聊天记录，网页版无法展示\n锦艳888\n19:42:25\n亲，非常抱歉给您带来不好的体验，您反馈的问题这边已经了解了，我马上帮您处理~\n得升旗舰店:圆圆\n19:42:25\n亲，这边先给您申请补偿3元作为歉意，您能接受的话回复【同意】；如果不能接受，我继续帮您处理下一步~\n得升旗舰店:圆圆\n19:42:43\n我得退了重新拍个大的\n锦艳888\n19:42:48\n亲，麻烦您申请退货退款，原因选择【不想要】~\n得升旗舰店:圆圆\n19:42:48\n如果订单有退货包邮服务，系统会自动报销寄回运费；如果没有，您先垫付，后续我们给您报销~\n得升旗舰店:圆圆\n19:43:20\n5个来月的宝宝，号小了，我重新下单一个，把这个退了\n锦艳888\n19:43:24\n亲亲，您这边这样操作就可以哦～打开订单详情页 → 点击【申请售后】→ 选择【退货退款】→ 原因选择【不想要】→ 提交申请即可~\n得升旗舰店:圆圆\n19:43:24\n提交成功后我们这边就能看到，会尽快帮您处理哈～~\n得升旗舰店:圆圆\n19:43:30\n运费你们承担\n锦艳888\n19:43:39\n亲亲，您申请退货退款选择【不想要】就可以哦～如果订单有退货包邮服务，系统会自动报销您寄回的运费；如果没有这个服务，您寄回的运费先垫付，后续我们给您报销，您放心～~\n得升旗舰店:圆圆\n2026-10-24\n10:56:01\n您好亲亲，您看这边给您重新补发一盒大码的可以吗，退货退款取消一下亲亲\n得升旗舰店:红包得力的摇篮\n没有更多内容了","originalDepts":["仓库部","市场部"],"doneSteps":[],"initialCsNote":"10.24已主动联系提议免费补发大码"}];
+    const BUILD_VERSION_TS = 1793329672700;
+    const STORAGE_KEY = 'desheng_cs_v35_workflow_items';
+    const BUILD_VER_KEY = 'desheng_cs_v35_build_ver';
+    const CHEVRON_SVG = '<svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+    function filterActiveOnly(arr) {
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(x => x && x.stage !== 'closed_passed' && x.track !== 'normal_auto_archived');
+    }
+
+    const EMOJI_RE = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}-\u{2B55}\u{2300}-\u{23FF}\u{FE0F}\u{200D}\u{2611}\u{FFFD}]/gu;
+    function stripEmoji(s) {
+      return String(s || '').replace(EMOJI_RE, '').replace(/\s+/g, ' ').trim();
+    }
+
+    function shortCleanTitle(item) {
+      const storeShort = String(item.store || '')
+        .replace('天猫得升旗舰店', '得升')
+        .replace('天猫wo居家日用旗舰店', 'wo店')
+        .replace('拼多多陈小培的商铺25', '拼多多25')
+        .replace('拼多多得升医疗器械官方旗舰店', '拼多多得升');
+      const rawTitle = stripEmoji(item.cleanTitle || item.groupTitle || '客服待办问题');
+      const tail4 = String(item.customerId || '').slice(-4);
+      const out = (storeShort ? (storeShort + ' · ') : '') + rawTitle + (tail4 ? ('（' + tail4 + '）') : '');
+      return out.length <= 46 ? out : (out.slice(0, 45) + '…');
+    }
+
+    let items = [];
+    try {
+      const savedVer = Number(localStorage.getItem(BUILD_VER_KEY) || '0');
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && savedVer === BUILD_VERSION_TS) {
+        const parsed = filterActiveOnly(JSON.parse(saved));
+        items = parsed.length > 0 ? parsed : filterActiveOnly(INITIAL_ITEMS);
+      } else {
+        items = filterActiveOnly(INITIAL_ITEMS);
+        localStorage.setItem(BUILD_VER_KEY, String(BUILD_VERSION_TS));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      }
+    } catch (e) {
+      items = filterActiveOnly(INITIAL_ITEMS);
+    }
+
+    let currentRole = 'ALL';
+    let offlineGroupedMode = false; // 默认逐单展开（与陈晓娟极简版 1 件事 = 1 行标题完全一致）
+    let activeGroupKey = null;
+    let activeSingleId = null;
+    const inlineDrafts = {};
+    const openFolds = new Set();
+
+    let BRIDGE_BASE = (window.location.protocol.startsWith('http') && (window.location.port === '18899' || window.location.port === '8788' || window.location.hostname.includes('desheng.shop') || window.location.hostname.includes('trycloudflare.com')))
+      ? window.location.origin
+      : 'http://127.0.0.1:18899';
+    let bridgeOnline = false;
+    let lastServerUpdatedAt = 0;
+    let serverConfig = {
+      groupName: '服务改进群',
+      webhookUrl: '',
+      lanUrl: 'http://192.168.1.11:18899',
+      publicTunnelUrl: 'https://gptweb.desheng.shop/18899'
+    };
+
+    function isUserTypingInline() {
+      const el = document.activeElement;
+      if (!el) return false;
+      const tag = (el.tagName || '').toUpperCase();
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') {
+        if (el.id && el.id.startsWith('inline_input_')) return true;
+      }
+      return false;
+    }
+
+    function recordFoldToggle(foldKey, isOpen) {
+      if (isOpen) openFolds.add(foldKey);
+      else openFolds.delete(foldKey);
+    }
+
+    async function syncFromBridge(forceRender = false) {
+      const candidates = [BRIDGE_BASE, 'http://127.0.0.1:18899', 'http://192.168.1.11:18899'];
+      for (const base of candidates) {
+        try {
+          const res = await fetch(base + '/api/data', { cache: 'no-store' });
+          if (res.ok) {
+            const data = await res.json();
+            BRIDGE_BASE = base;
+            bridgeOnline = true;
+            updateSyncBadge(true, data.lanUrl);
+            if (data.items && Array.isArray(data.items)) {
+              if (forceRender || !lastServerUpdatedAt || data.updatedAt !== lastServerUpdatedAt) {
+                lastServerUpdatedAt = data.updatedAt || Date.now();
+                items = filterActiveOnly(data.items);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+                if (!isUserTypingInline() || forceRender) {
+                  renderBoard();
+                }
+              }
+            }
+            return;
+          }
+        } catch (err) {}
+      }
+      bridgeOnline = false;
+      updateSyncBadge(false);
+    }
+
+    async function loadServerConfig() {
+      try {
+        const res = await fetch(BRIDGE_BASE + '/api/config', { cache: 'no-store' });
+        if (res.ok) {
+          const d = await res.json();
+          if (d.config) serverConfig = Object.assign(serverConfig, d.config);
+          if (d.lanUrl) serverConfig.lanUrl = d.lanUrl;
+          const topLan = document.getElementById('topLanUrlText');
+          if (topLan) topLan.textContent = serverConfig.lanUrl;
+          const lanInp = document.getElementById('shareLanInput');
+          if (lanInp) lanInp.value = serverConfig.lanUrl;
+          const pubInp = document.getElementById('sharePublicInput');
+          if (pubInp && serverConfig.publicTunnelUrl) pubInp.value = serverConfig.publicTunnelUrl;
+        }
+      } catch (e) {}
+    }
+
+    function updateSyncBadge(online, lanUrl) {
+      const badge = document.getElementById('syncStatusBadge');
+      if (!badge) return;
+      if (online) {
+        badge.textContent = '实时同步';
+        if (lanUrl) {
+          serverConfig.lanUrl = lanUrl;
+          const topLan = document.getElementById('topLanUrlText');
+          if (topLan) topLan.textContent = lanUrl;
+        }
+      } else {
+        badge.textContent = '本地缓存';
+      }
+    }
+
+    async function saveSingleItem(item) {
+      items = filterActiveOnly(items);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if (bridgeOnline && item && item.id) {
+        try {
+          const res = await fetch(BRIDGE_BASE + '/api/item-update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item })
+          });
+          if (res.ok) {
+            const d = await res.json();
+            if (d.updatedAt) lastServerUpdatedAt = d.updatedAt;
+          }
+        } catch (e) {}
+      }
+    }
+
+    function saveAllItems() {
+      const payloadItems = items;
+      items = filterActiveOnly(items);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      if (bridgeOnline) {
+        fetch(BRIDGE_BASE + '/api/data', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: payloadItems })
+        }).then(r => r.json()).then(d => {
+          if (d && d.updatedAt) lastServerUpdatedAt = d.updatedAt;
+        }).catch(() => {});
+      }
+    }
+
+    function setRoleFilter(role) {
+      currentRole = role;
+      ['ALL', 'CHECKER', '仓库部', '市场部', '运营部'].forEach(r => {
+        const btn = document.getElementById('role_' + r);
+        if (!btn) return;
+        if (r === role) btn.classList.add('is-active');
+        else btn.classList.remove('is-active');
+      });
+      renderBoard();
+    }
+
+    function toggleOfflineGrouping() {
+      offlineGroupedMode = !offlineGroupedMode;
+      const btn = document.getElementById('toggleOfflineModeBtn');
+      if (btn) btn.textContent = offlineGroupedMode ? '视图：同类合并' : '视图：逐单展开';
+      renderBoard();
+    }
+
+    function getFilteredItems() {
+      const storeVal = document.getElementById('storeFilter').value;
+      const kw = (document.getElementById('kwInput').value || '').trim().toLowerCase();
+
+      return items.filter(x => {
+        if (storeVal !== 'ALL' && x.store !== storeVal) return false;
+        if (currentRole === '仓库部' && !(x.depts || []).includes('仓库部')) return false;
+        if (currentRole === '市场部' && !(x.depts || []).includes('市场部')) return false;
+        if (currentRole === '运营部' && !(x.depts || []).includes('运营部')) return false;
+        if (kw) {
+          const hay = (x.rowId + ' ' + x.customerId + ' ' + (x.orderId || '') + ' ' + x.cleanTitle + ' ' + x.cleanAction + ' ' + x.aiOnlineDone + ' ' + x.staffResult).toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+    }
+
+    function recordInlineDraft(key, val) {
+      inlineDrafts[key] = val;
+    }
+
+    function fillQuickInline(inputId, draftKey, text) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      const cur = inp.value.trim();
+      inp.value = cur ? (cur + '；' + text) : text;
+      inlineDrafts[draftKey] = inp.value;
+      inp.focus();
+    }
+
+    function getQuickPhrasesForDepts(depts) {
+      const d = depts || [];
+      if (d.includes('仓库部')) {
+        return [
+          '已去仓库盘点实物批次，隔离2025.12旧批次并锁定发2026新批次',
+          '已清点仓库该花色实际库存，严禁未沟通强行换款发货',
+          '已核对订单并安排仓库补发正确商品'
+        ];
+      }
+      if (d.includes('运营部')) {
+        return [
+          '已核对库存并在千牛后台下架断货花色SKU',
+          '已将实测长宽尺寸表与卡其色实拍图更新至商品详情页'
+        ];
+      }
+      return [
+        '已线下抽检留样复盘（核查克重/气味/耳绳/尺码），并在探域更新安抚退换话术',
+        '已核算300盒专票阶梯底价并完成客户电话回访跟进',
+        '已实测尺寸/拍实拍图上传探域知识库'
+      ];
+    }
+
+    function renderBoard() {
+      const allOfflineTodo = items.filter(x => x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
+      const allOnlineTodo = items.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
+      const totalPending = allOfflineTodo.length + allOnlineTodo.length;
+
+      document.getElementById('badgeOfflineTodo').textContent = allOfflineTodo.length;
+      if (document.getElementById('cnt_all')) document.getElementById('cnt_all').textContent = totalPending;
+      document.getElementById('cnt_wh').textContent = allOfflineTodo.filter(x => (x.depts || []).includes('仓库部')).length;
+      document.getElementById('cnt_mkt').textContent = allOfflineTodo.filter(x => (x.depts || []).includes('市场部')).length;
+      document.getElementById('cnt_ops').textContent = allOfflineTodo.filter(x => (x.depts || []).includes('运营部')).length;
+      if (document.getElementById('cnt_online')) document.getElementById('cnt_online').textContent = allOnlineTodo.length;
+      if (document.getElementById('bottomProgText')) document.getElementById('bottomProgText').textContent = '待处理 ' + totalPending + ' 项';
+
+      const filtered = getFilteredItems();
+
+      // 1. 线上AI待确认区（0单时自动隐藏）
+      const col1Items = filtered.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
+      const col1Groups = {};
+      col1Items.forEach(x => {
+        const gKey = x.groupKey || 'ONLINE_OTHER';
+        if (!col1Groups[gKey]) {
+          col1Groups[gKey] = {
+            groupKey: gKey,
+            groupTitle: stripEmoji(x.groupTitle || x.cleanTitle),
+            aiOnlineDone: stripEmoji(x.aiOnlineDone),
+            list: []
+          };
+        }
+        col1Groups[gKey].list.push(x);
+      });
+      const groupArr1 = Object.values(col1Groups);
+      document.getElementById('col1CountBadge').textContent = col1Items.length + '单';
+
+      const onlineWrap = document.getElementById('onlineSectionWrap');
+      const approveAllBtn = document.getElementById('approveAllOnlineBtn');
+      const col1El = document.getElementById('col1Container');
+      if (groupArr1.length === 0 && currentRole !== 'CHECKER') {
+        if (onlineWrap) onlineWrap.classList.add('is-hidden');
+        if (approveAllBtn) approveAllBtn.classList.add('is-hidden');
+        col1El.innerHTML = '';
+      } else {
+        if (onlineWrap) onlineWrap.classList.remove('is-hidden');
+        if (approveAllBtn) {
+          if (groupArr1.length > 0) approveAllBtn.classList.remove('is-hidden');
+          else approveAllBtn.classList.add('is-hidden');
+        }
+        if (groupArr1.length === 0) {
+          col1El.innerHTML = '<div class="emp-empty">所有线上AI处理项均已确认通过。</div>';
+        } else {
+          col1El.innerHTML = groupArr1.map((g, idx) => {
+            const seq = String(idx + 1).padStart(2, '0');
+            const fKey = 'ON_' + g.groupKey;
+            const openAttr = openFolds.has(fKey) ? ' open' : '';
+            return `
+              <article class="emp-approval-card">
+                <details class="emp-fold"${openAttr} ontoggle="recordFoldToggle('${fKey}', this.open)">
+                  <summary class="emp-sum">
+                    <span class="emp-no">${seq}</span>
+                    <span class="emp-t">${escapeHtml(g.groupTitle)}（${g.list.length}单）</span>
+                    <span class="emp-meta">线上AI自愈 · 陈晓娟确认</span>
+                    <span class="chip emp-st is-todo">待确认</span>
+                    ${CHEVRON_SVG}
+                  </summary>
+                  <div class="emp-fold-body">
+                    <div class="emp-sec">
+                      <div class="emp-sec-h">AI 已完成修复</div>
+                      <div class="emp-ai">
+                        <div class="emp-kv"><span class="emp-k">修复内容</span><span class="emp-v">${escapeHtml(g.aiOnlineDone)}</span></div>
+                        <div class="emp-kv"><span class="emp-k">涉及会话</span><span class="emp-v">${g.list.map(s => escapeHtml(s.store + ' · ' + s.customerId)).join('；')}</span></div>
+                      </div>
+                    </div>
+                    <div class="emp-foot">
+                      <span class="small muted" style="flex:1">确认探域机器人话术已生效即可点右侧按钮归档</span>
+                      <button type="button" class="btn btn-sm btn-ok" onclick="approveOnlineGroup('${g.groupKey}')">通过</button>
+                    </div>
+                  </div>
+                </details>
+              </article>`;
+          }).join('');
+        }
+      }
+
+      // 2. 线下待办列表（陈晓娟极简版：一行标题折叠卡片）
+      const col2Items = (currentRole === 'CHECKER') ? [] : filtered.filter(x => x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
+      const col2Groups = {};
+      col2Items.forEach(x => {
+        const gKey = offlineGroupedMode ? (x.groupKey || x.id) : x.id;
+        if (!col2Groups[gKey]) {
+          col2Groups[gKey] = {
+            groupKey: gKey,
+            isSingle: !offlineGroupedMode,
+            singleId: x.id,
+            groupTitle: offlineGroupedMode ? stripEmoji(x.groupTitle || x.cleanTitle) : shortCleanTitle(x),
+            depts: x.depts || [],
+            ownerNames: x.ownerNames || '',
+            cleanAction: stripEmoji(x.cleanAction),
+            list: []
+          };
+        }
+        col2Groups[gKey].list.push(x);
+      });
+      const groupArr2 = Object.values(col2Groups);
+      document.getElementById('col2CountBadge').textContent = String(col2Items.length);
+
+      const col2El = document.getElementById('col2Container');
+      if (groupArr2.length === 0) {
+        col2El.innerHTML = '<div class="emp-empty">当前筛选下待办已全部清零。</div>';
+      } else {
+        col2El.innerHTML = groupArr2.map((g, idx) => {
+          const seq = String(idx + 1).padStart(2, '0');
+          const hasRejected = g.list.some(x => x.stage === 'offline_rejected');
+          const rejectedReason = (g.list.find(x => x.rejectReason) || {}).rejectReason || '';
+          const doneSteps = (g.list.find(x => x.doneSteps && x.doneSteps.length > 0) || {}).doneSteps || [];
+          const deptStr = (g.depts || []).join('/') || '待办';
+          const firstItem = g.list[0] || {};
+          const shortDate = String(firstItem.chatTime || '').slice(5, 16) || '今日';
+
+          const draftKey = g.isSingle ? ('S_' + g.singleId) : ('G_' + g.groupKey);
+          const inputId = 'inline_input_' + draftKey.replace(/[^a-zA-Z0-9_]/g, '_');
+          const existingVal = inlineDrafts[draftKey] !== undefined
+            ? inlineDrafts[draftKey]
+            : ((firstItem.staffResult || '').trim());
+          const quickPhrases = getQuickPhrasesForDepts(g.depts);
+          const openAttr = (openFolds.has(draftKey) || hasRejected) ? ' open' : '';
+
+          const titleText = g.isSingle
+            ? g.groupTitle
+            : (g.groupTitle + '（共 ' + g.list.length + ' 单）');
+
+          const badgeHtml = hasRejected
+            ? '<span class="chip emp-st is-bad">已驳回</span>'
+            : (doneSteps.length > 0
+                ? '<span class="chip emp-st is-todo">接力待办</span>'
+                : '<span class="chip emp-st is-todo">待处理</span>');
+
+          const rowsKvHtml = g.list.map(sub => {
+            const ord = (sub.orderId || '').trim();
+            const ordHtml = ord
+              ? `<code>${escapeHtml(ord)}</code> <button type="button" class="btn btn-sm" style="height:22px;padding:0 7px;font-size:11px;margin-left:4px" onclick="copyOrderId('${escapeHtml(ord)}', event)">复制订单号</button>`
+              : `<span class="muted">未提取到订单号</span> <button type="button" class="emp-lnk" style="margin-left:6px" onclick="openGroupModal('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'})">补录订单号</button>`;
+            return `
+              <div style="padding:6px 0;border-bottom:1px dashed #e6e6e6">
+                <div class="emp-kv"><span class="emp-k">店铺/买家</span><span class="emp-v">${escapeHtml(sub.store)} · <span class="mono">${escapeHtml(sub.customerId)}</span>（${escapeHtml(sub.rowId)} · ${escapeHtml(sub.chatTime || '')}）</span></div>
+                <div class="emp-kv"><span class="emp-k">订单号</span><span class="emp-v">${ordHtml}</span></div>
+                <div class="emp-kv"><span class="emp-k">问题摘要</span><span class="emp-v"><b>${escapeHtml(stripEmoji(sub.cleanTitle))}</b></span></div>
+                ${sub.keyEvidence ? `<div class="emp-kv"><span class="emp-k">聊天证据</span><span class="emp-v">${escapeHtml(stripEmoji(sub.keyEvidence))}</span></div>` : ''}
+                ${sub.chatContent ? `
+                  <details class="emp-sub">
+                    <summary>原始聊天记录</summary>
+                    <div class="emp-std-item mono" style="white-space:pre-wrap;max-height:180px;overflow-y:auto">${escapeHtml(sub.chatContent.trim())}</div>
+                  </details>` : ''}
+              </div>`;
+          }).join('');
+
+          const handoffHtml = doneSteps.length > 0 ? `
+            <div class="emp-rej-bar" style="border-color:#bcbcbc;background:#fafafa">
+              <div><b>上一部门已完成交接：</b></div>
+              ${doneSteps.map(st => `<div>· [${escapeHtml(st.dept)} · ${escapeHtml(st.ownerNames || '')}]：${escapeHtml(st.result)}（${escapeHtml(st.time || '')}）</div>`).join('')}
+            </div>` : '';
+
+          const rejectHtml = hasRejected ? `
+            <div class="emp-rej-bar">
+              <div><b>审核退回原因：</b>${escapeHtml(stripEmoji(rejectedReason))}</div>
+            </div>` : '';
+
+          return `
+            <article class="emp-approval-card${hasRejected ? ' is-rejected' : ''}" id="card_${draftKey}">
+              <details class="emp-fold"${openAttr} ontoggle="recordFoldToggle('${draftKey}', this.open)">
+                <summary class="emp-sum">
+                  <span class="emp-no">${seq}</span>
+                  <span class="emp-t" title="${escapeHtml(titleText)}">${escapeHtml(titleText)}</span>
+                  <span class="emp-meta">${escapeHtml(deptStr)} · ${escapeHtml(g.ownerNames)} · ${escapeHtml(shortDate)}</span>
+                  ${badgeHtml}
+                  ${CHEVRON_SVG}
+                </summary>
+                <div class="emp-fold-body">
+                  ${handoffHtml}
+                  ${rejectHtml}
+                  <div class="emp-sec">
+                    <div class="emp-sec-h">问题与订单明细</div>
+                    <div class="emp-ai">${rowsKvHtml}</div>
+                  </div>
+                  <div class="emp-sec">
+                    <div class="emp-sec-h">需要你处理（${escapeHtml(deptStr)} · ${escapeHtml(g.ownerNames)}）</div>
+                    <div class="emp-chks">
+                      <div class="emp-chk-item"><span><b>必办动作：</b>${escapeHtml(g.cleanAction)}</span></div>
+                    </div>
+                    <div class="emp-links">
+                      <span class="muted">快捷填入：</span>
+                      ${quickPhrases.map(p => `
+                        <button type="button" class="btn btn-sm" style="height:24px;font-size:11.5px" onclick="fillQuickInline('${inputId}', '${draftKey}', '${escapeHtml(p)}')">+ ${escapeHtml(p.length > 24 ? p.slice(0, 24) + '…' : p)}</button>
+                      `).join('')}
+                    </div>
+                  </div>
+                  <div class="emp-foot">
+                    <input id="${inputId}" type="text" value="${escapeHtml(existingVal)}"
+                      oninput="recordInlineDraft('${draftKey}', this.value)"
+                      onkeydown="if(event.key==='Enter'){event.preventDefault();submitInlineGroup('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'}, '${inputId}', '${draftKey}');}"
+                      placeholder="填写具体处理结果（禁填“已处理/收到”空话，回车或点右侧按钮提交）..."
+                      class="input" />
+                    <button type="button" class="btn btn-sm" onclick="openGroupModal('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'})">更多选项</button>
+                    <button type="button" class="btn btn-sm btn-ok" onclick="submitInlineGroup('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'}, '${inputId}', '${draftKey}')">提交完成</button>
+                  </div>
+                </div>
+              </details>
+            </article>`;
+        }).join('');
+      }
+    }
+
+    async function loadArchivedItems() {
+      const box = document.getElementById('archiveContainer');
+      if (!box) return;
+      try {
+        const res = await fetch(BRIDGE_BASE + '/api/archive', { cache: 'no-store' });
+        if (res.ok) {
+          const d = await res.json();
+          const list = Array.isArray(d.items) ? d.items : [];
+          if (document.getElementById('emp-app-arch-cnt')) document.getElementById('emp-app-arch-cnt').textContent = String(list.length);
+          if (document.getElementById('archiveCountTop')) document.getElementById('archiveCountTop').textContent = String(list.length);
+          if (list.length === 0) {
+            box.innerHTML = '<div class="emp-empty">暂无已归档历史记录。</div>';
+            return;
+          }
+          box.innerHTML = list.slice().reverse().slice(0, 80).map((x, i) => {
+            const seq = String(i + 1).padStart(2, '0');
+            const title = shortCleanTitle(x);
+            const resTxt = stripEmoji(x.staffResult || x.aiOnlineDone || '已闭环归档');
+            return `
+              <article class="emp-approval-card is-approved">
+                <details class="emp-fold">
+                  <summary class="emp-sum">
+                    <span class="emp-no">${seq}</span>
+                    <span class="emp-t">${escapeHtml(title)}</span>
+                    <span class="emp-meta">${escapeHtml(x.ownerNames || 'AI自愈')}</span>
+                    <span class="chip emp-st is-ok">已处理</span>
+                    ${CHEVRON_SVG}
+                  </summary>
+                  <div class="emp-fold-body">
+                    <div class="emp-kv"><span class="emp-k">店铺/买家</span><span class="emp-v">${escapeHtml(x.store || '')} · ${escapeHtml(x.customerId || '')}</span></div>
+                    ${x.orderId ? `<div class="emp-kv"><span class="emp-k">订单号</span><span class="emp-v mono">${escapeHtml(x.orderId)}</span></div>` : ''}
+                    <div class="emp-kv"><span class="emp-k">处理结果</span><span class="emp-v">${escapeHtml(resTxt)}</span></div>
+                  </div>
+                </details>
+              </article>`;
+          }).join('');
+        }
+      } catch (e) {
+        box.innerHTML = '<div class="emp-empty">无法连接本地服务读取历史归档库。</div>';
+      }
+    }
+
+    async function submitInlineGroup(groupKey, singleId, inputId, draftKey) {
+      const inp = document.getElementById(inputId);
+      const val = inp ? inp.value.trim() : '';
+      const groupItems = singleId
+        ? items.filter(x => x.id === singleId)
+        : items.filter(x => x.groupKey === groupKey && x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
+      if (groupItems.length === 0) return;
+
+      const audit = runStrictAiAudit(groupItems[0], val, '正常', '日常合理范围偶发跟进', '');
+      if (!audit.pass) {
+        groupItems.forEach(x => {
+          x.staffResult = val;
+          x.stage = 'offline_rejected';
+          x.rejectReason = stripEmoji(audit.reason);
+        });
+        saveAllItems();
+        renderBoard();
+        return;
+      }
+
+      const deptOwnerMap = {
+        '仓库部': '许培婷 / 吴行哲',
+        '市场部': '林丽媛 / 尤敏燕',
+        '运营部': '唐勇'
+      };
+      const curDepts = groupItems[0].depts || [];
+      const curDeptName = curDepts[0] || '本部门';
+      const nowTimeStr = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+      for (const x of groupItems) {
+        if (!x.doneSteps) x.doneSteps = [];
+        x.doneSteps.push({
+          dept: curDeptName,
+          ownerNames: x.ownerNames || deptOwnerMap[curDeptName] || '',
+          result: val,
+          time: nowTimeStr
+        });
+        const remainingDepts = (x.depts || []).slice(1);
+        if (remainingDepts.length > 0) {
+          const nextDept = remainingDepts[0];
+          x.depts = remainingDepts;
+          x.ownerNames = deptOwnerMap[nextDept] || nextDept;
+          x.stage = 'offline_todo';
+          x.staffResult = '';
+          x.rejectReason = '';
+          await saveSingleItem(x);
+        } else {
+          x.staffResult = x.doneSteps.map(s => '[' + s.dept + '] ' + s.result).join(' -> ');
+          x.stage = 'closed_passed';
+          x.rejectReason = '';
+          await saveSingleItem(x);
+        }
+      }
+      delete inlineDrafts[draftKey];
+      openFolds.delete(draftKey);
+      items = filterActiveOnly(items);
+      renderBoard();
+    }
+
+    function approveOnlineGroup(groupKey) {
+      const list = items.filter(x => x.groupKey === groupKey && x.track === 'online_ai_done');
+      list.forEach(x => {
+        x.stage = 'closed_passed';
+        saveSingleItem(x);
+      });
+      items = filterActiveOnly(items);
+      renderBoard();
+    }
+
+    function approveAllOnlineGroups() {
+      const pending = items.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
+      pending.forEach(x => { x.stage = 'closed_passed'; });
+      saveAllItems();
+      renderBoard();
+    }
+
+    function openGroupModal(groupKey, singleId = null) {
+      activeGroupKey = groupKey;
+      activeSingleId = singleId;
+      const groupItems = singleId
+        ? items.filter(x => x.id === singleId)
+        : items.filter(x => x.groupKey === groupKey && x.track === 'offline_human_todo');
+      if (groupItems.length === 0) return;
+      const first = groupItems[0];
+
+      document.getElementById('modalDeptTag').textContent = (first.depts || []).join(' + ') + ' · 负责人：' + first.ownerNames;
+      document.getElementById('modalTitle').textContent = singleId
+        ? (stripEmoji(first.cleanTitle) + ' (' + first.customerId + ')')
+        : (stripEmoji(first.groupTitle || first.cleanTitle) + '（共 ' + groupItems.length + ' 单）');
+      document.getElementById('modalReqAction').textContent = stripEmoji(first.cleanAction);
+
+      document.getElementById('modalSubItemsList').innerHTML = groupItems.map(sub => `
+        <div style="padding:6px;border-bottom:1px dashed #e0e0e0">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap">
+            <span><b>${escapeHtml(sub.store)}</b> · <span class="mono">${escapeHtml(sub.customerId)}</span> (${escapeHtml(sub.rowId)})</span>
+            <div style="display:flex;align-items:center;gap:4px">
+              <span class="small muted">订单号:</span>
+              <input type="text" value="${escapeHtml(sub.orderId || '')}" placeholder="输入订单号自动保存"
+                onchange="updateItemOrderId('${sub.id}', this.value)"
+                class="input mono" style="height:24px;width:165px;font-size:11.5px" />
+            </div>
+          </div>
+          <div class="small muted" style="margin-top:2px">${escapeHtml(stripEmoji(sub.keyEvidence || sub.cleanTitle))}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('modalStaffInput').value = first.staffResult || '';
+      document.getElementById('modalRatioBasis').value = first.normalRatioBasis || '';
+      document.getElementById('modalAbnormalPlan').value = first.abnormalPlan || '';
+
+      const qfContainer = document.getElementById('quickFillButtons');
+      const phrases = getQuickPhrasesForDepts(first.depts);
+      qfContainer.innerHTML = phrases.map(p => `
+        <button type="button" onclick="fillQuickPhrase('${escapeHtml(p)}')" class="btn btn-sm">+ ${escapeHtml(p)}</button>
+      `).join('');
+
+      const qBox = document.getElementById('qualityRatioBox');
+      if (groupKey === 'OFFLINE_MKT_QUALITY') {
+        qBox.classList.remove('is-hidden');
+        const radios = document.querySelectorAll('input[name="ratioNormal"]');
+        radios.forEach(r => { r.checked = (r.value === (first.isNormalRatio || '正常')); });
+        toggleRatioInput();
+      } else {
+        qBox.classList.add('is-hidden');
+      }
+
+      const fb = document.getElementById('aiAuditFeedback');
+      if (first.stage === 'offline_rejected' && first.rejectReason) {
+        fb.classList.remove('is-hidden');
+        fb.textContent = first.rejectReason;
+      } else {
+        fb.classList.add('is-hidden');
+      }
+
+      document.getElementById('actionModal').classList.remove('is-hidden');
+    }
+
+    function fillQuickPhrase(text) {
+      const inp = document.getElementById('modalStaffInput');
+      const cur = inp.value.trim();
+      inp.value = cur ? (cur + '；' + text) : text;
+    }
+
+    function closeModal() {
+      document.getElementById('actionModal').classList.add('is-hidden');
+      activeGroupKey = null;
+      activeSingleId = null;
+    }
+
+    function copyOrderId(orderId, evt) {
+      if (evt) evt.stopPropagation();
+      if (!orderId) return;
+      navigator.clipboard.writeText(orderId).catch(() => {});
+      if (evt && evt.currentTarget) {
+        const btn = evt.currentTarget;
+        const orig = btn.innerHTML;
+        btn.textContent = '已复制';
+        setTimeout(() => { btn.innerHTML = orig; }, 1200);
+      }
+    }
+
+    function updateItemOrderId(itemId, newOrderId) {
+      const item = items.find(x => x.id === itemId);
+      if (!item) return;
+      item.orderId = (newOrderId || '').trim();
+      saveSingleItem(item);
+      renderBoard();
+    }
+
+    function toggleRatioInput() {
+      const checked = document.querySelector('input[name="ratioNormal"]:checked');
+      const val = checked ? checked.value : '';
+      const basisEl = document.getElementById('modalRatioBasis');
+      const planEl = document.getElementById('modalAbnormalPlan');
+      if (val === '正常') {
+        basisEl.classList.remove('is-hidden');
+        planEl.classList.add('is-hidden');
+      } else if (val === '异常') {
+        basisEl.classList.add('is-hidden');
+        planEl.classList.remove('is-hidden');
+      } else {
+        basisEl.classList.add('is-hidden');
+        planEl.classList.add('is-hidden');
+      }
+    }
+
+    function runStrictAiAudit(firstItem, staffText, ratioVal, basisText, planText) {
+      const t = (staffText || '').trim();
+      if (!t || t.length < 4) {
+        return { pass: false, reason: '退回：处理结果不能少于4个字，请写明具体执行动作。' };
+      }
+      const perfunctoryRe = /^(已处理|处理好了|好了|收到|ok|OK|知道了|已解决|已交代|已沟通|已核实|已反馈|看过了|弄好了|可以|没问题)[。！!，,\s]*$/;
+      if (perfunctoryRe.test(t)) {
+        return { pass: false, reason: '退回：检测到只填了「' + t + '」空话，请写明具体处理动作（如：已去仓库核对批次、已在探域新增话术等）。' };
+      }
+      const depts = firstItem.depts || [];
+      if (depts.includes('仓库部')) {
+        if (!/(盘点|核对|清点|隔离|批次|库存|下架|补发|寄回|退回|单号|快递|拦截|仓库|现货|新批次|换款)/.test(t)) {
+          return { pass: false, reason: '退回：仓库部工单需写明实物库存清点、批次隔离或补发/退回快递核对结果。' };
+        }
+      }
+      if (depts.includes('运营部')) {
+        if (!/(千牛|下架|后台|SKU|详情|主图|尺寸表|实拍|上传|修改|更新|库存)/.test(t)) {
+          return { pass: false, reason: '退回：运营部工单需写明千牛后台SKU下架或详情页/尺寸图更新动作。' };
+        }
+      }
+      if (firstItem.groupKey === 'OFFLINE_MKT_QUALITY' && !ratioVal) {
+        return { pass: false, reason: '退回：质量反馈需勾选【正常偶发】或【批次异常】。' };
+      }
+      return { pass: true, reason: '审核通过' };
+    }
+
+    async function submitGroupAudit() {
+      if (!activeGroupKey && !activeSingleId) return;
+      const groupItems = activeSingleId
+        ? items.filter(x => x.id === activeSingleId)
+        : items.filter(x => x.groupKey === activeGroupKey && x.track === 'offline_human_todo');
+      if (groupItems.length === 0) return;
+
+      const staffText = document.getElementById('modalStaffInput').value;
+      const checked = document.querySelector('input[name="ratioNormal"]:checked');
+      const ratioVal = checked ? checked.value : '正常';
+      const basisText = document.getElementById('modalRatioBasis').value || '常规偶发';
+      const planText = document.getElementById('modalAbnormalPlan').value;
+
+      const audit = runStrictAiAudit(groupItems[0], staffText, ratioVal, basisText, planText);
+      const fb = document.getElementById('aiAuditFeedback');
+
+      if (!audit.pass) {
+        groupItems.forEach(x => {
+          x.staffResult = staffText.trim();
+          x.isNormalRatio = ratioVal;
+          x.normalRatioBasis = basisText.trim();
+          x.abnormalPlan = planText.trim();
+          x.stage = 'offline_rejected';
+          x.rejectReason = audit.reason;
+        });
+        fb.classList.remove('is-hidden');
+        fb.textContent = audit.reason;
+        saveAllItems();
+        renderBoard();
+        return;
+      }
+
+      const deptOwnerMap = {
+        '仓库部': '许培婷 / 吴行哲',
+        '市场部': '林丽媛 / 尤敏燕',
+        '运营部': '唐勇'
+      };
+      const curDepts = groupItems[0].depts || [];
+      const curDeptName = curDepts[0] || '本部门';
+      const nowTimeStr = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+
+      for (const x of groupItems) {
+        if (!x.doneSteps) x.doneSteps = [];
+        x.doneSteps.push({
+          dept: curDeptName,
+          ownerNames: x.ownerNames || deptOwnerMap[curDeptName] || '',
+          result: staffText.trim(),
+          time: nowTimeStr
+        });
+
+        const remainingDepts = (x.depts || []).slice(1);
+        if (remainingDepts.length > 0) {
+          const nextDept = remainingDepts[0];
+          x.depts = remainingDepts;
+          x.ownerNames = deptOwnerMap[nextDept] || nextDept;
+          x.stage = 'offline_todo';
+          x.staffResult = '';
+          x.rejectReason = '';
+          await saveSingleItem(x);
+        } else {
+          x.staffResult = x.doneSteps.map(s => '[' + s.dept + '] ' + s.result).join(' -> ');
+          x.isNormalRatio = ratioVal;
+          x.normalRatioBasis = basisText.trim();
+          x.abnormalPlan = planText.trim();
+          x.stage = 'closed_passed';
+          x.rejectReason = '';
+          await saveSingleItem(x);
+        }
+      }
+
+      items = filterActiveOnly(items);
+      closeModal();
+      renderBoard();
+    }
+
+    function openShareModal() {
+      loadServerConfig();
+      document.getElementById('shareModal').classList.remove('is-hidden');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.add('is-hidden');
+    }
+
+    function copyShareUrl(inputId) {
+      const inp = document.getElementById(inputId);
+      if (!inp) return;
+      inp.select();
+      navigator.clipboard.writeText(inp.value).catch(() => {});
+      const toast = document.getElementById('shareToast');
+      toast.classList.remove('is-hidden');
+      setTimeout(() => toast.classList.add('is-hidden'), 2000);
+    }
+
+    async function savePublicTunnelUrl() {
+      const pubUrl = document.getElementById('sharePublicInput').value.trim();
+      serverConfig.publicTunnelUrl = pubUrl;
+      if (bridgeOnline) {
+        try {
+          await fetch(BRIDGE_BASE + '/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ publicTunnelUrl: pubUrl })
+          });
+        } catch (e) {}
+      }
+    }
+
+    let currentPushDept = 'ALL';
+
+    function openWeComPushModal(defaultDept = 'ALL') {
+      loadServerConfig();
+      generateWeComMessage(defaultDept);
+      document.getElementById('wecomPushStatus').classList.add('is-hidden');
+      document.getElementById('wecomModal').classList.remove('is-hidden');
+    }
+
+    function closeWeComModal() {
+      document.getElementById('wecomModal').classList.add('is-hidden');
+    }
+
+    function generateWeComMessage(targetDept) {
+      currentPushDept = targetDept || 'ALL';
+      const onlineItems = items.filter(x => x.track === 'online_ai_done' && x.stage !== 'closed_passed');
+      const todoList = items.filter(x => x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
+      const filtered = currentPushDept === 'ALL' ? todoList : todoList.filter(x => (x.depts || []).includes(currentPushDept));
+
+      const whItems = filtered.filter(x => (x.depts || []).includes('仓库部'));
+      const mktItems = filtered.filter(x => (x.depts || []).includes('市场部'));
+      const opsItems = filtered.filter(x => (x.depts || []).includes('运营部'));
+
+      // 按当前有待办的部门动态锁定钉钉「小钉」收件人
+      let targetPersons = [];
+      if (currentPushDept === '仓库部') {
+        targetPersons = ['许培婷', '吴行哲'];
+      } else if (currentPushDept === '市场部') {
+        targetPersons = ['林丽媛', '尤敏燕'];
+      } else if (currentPushDept === '运营部') {
+        targetPersons = ['唐勇'];
+      } else {
+        if (whItems.length > 0) targetPersons.push('许培婷', '吴行哲');
+        if (mktItems.length > 0) targetPersons.push('林丽媛', '尤敏燕');
+        if (opsItems.length > 0) targetPersons.push('唐勇');
+        targetPersons.push('陈晓娟');
+      }
+      const targetInp = document.getElementById('wxGroupInput');
+      if (targetInp) targetInp.value = targetPersons.join(', ');
+
+      const days = serverConfig.collectDaysRange || 3;
+      const pubUrl = serverConfig.publicTunnelUrl || 'https://gptweb.desheng.shop/18899';
+      const lanUrl = serverConfig.lanUrl || 'http://192.168.1.11:18899';
+
+      const lines = [];
+      lines.push('📋【每日08:00全平台近' + days + '天客服聊天看板待办】');
+      if (currentPushDept === 'ALL') {
+        lines.push('🤖 线上AI已自愈：' + onlineItems.length + '单 ➔ @陈晓娟 @林丽媛 请在看板点【通过】');
+      }
+      if (whItems.length > 0) {
+        lines.push('📦 仓库部线下待办：' + whItems.length + '单 ➔ @许培婷 @吴行哲');
+      }
+      if (mktItems.length > 0) {
+        lines.push('📊 市场部线下待办：' + mktItems.length + '单 ➔ @林丽媛 @尤敏燕');
+      }
+      if (opsItems.length > 0) {
+        lines.push('⚙️ 运营部线下待办：' + opsItems.length + '单 ➔ @唐勇');
+      }
+      lines.push('----------------------------------------');
+      lines.push('✍️ 请直接点开看板进入本部门处理（写明具体动作）：');
+      lines.push('🌐 跨网/手机直连：' + pubUrl);
+      lines.push('🏠 同路由器直连：' + lanUrl);
+      document.getElementById('wecomMsgArea').value = lines.join('\n');
+    }
+
+    function copyWeComTextOnly() {
+      const area = document.getElementById('wecomMsgArea');
+      area.select();
+      navigator.clipboard.writeText(area.value).catch(() => {});
+      const st = document.getElementById('wecomPushStatus');
+      st.classList.remove('is-hidden');
+      st.textContent = '小钉催办通知文案已复制到剪贴板。';
+    }
+
+    async function triggerServerWeComPush() {
+      const msg = document.getElementById('wecomMsgArea').value.trim();
+      const rawTargets = (document.getElementById('wxGroupInput').value || '').trim();
+      const targetList = Array.from(new Set(rawTargets.split(/[,，、/\s]+/).map(s => s.trim()).filter(Boolean)));
+      const recipients = targetList.length > 0 ? targetList : ['陈晓娟'];
+      const st = document.getElementById('wecomPushStatus');
+      const btn = document.getElementById('btnAutoPushWeCom');
+
+      if (!msg) return;
+
+      st.classList.remove('is-hidden');
+      st.textContent = '正在通过钉钉「小钉」机器人 1对1 发送给：' + recipients.join('、') + '...';
+      btn.disabled = true;
+
+      const sentOk = [];
+      const sentErr = [];
+      try {
+        for (const person of recipients) {
+          const res = await fetch(BRIDGE_BASE + '/api/wecom-push', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: msg, message: msg, target: person, dept: currentPushDept })
+          });
+          const d = await res.json();
+          if (d && d.ok) {
+            sentOk.push(person);
+          } else {
+            sentErr.push(person + '(' + ((d && (d.error || d.stderr)) || '失败') + ')');
+          }
+        }
+        if (sentOk.length > 0) {
+          st.textContent = '发送成功：已通过钉钉「小钉」1对1直达 ' + sentOk.join('、') + (sentErr.length > 0 ? ('；异常：' + sentErr.join('，')) : '');
+        } else {
+          st.textContent = '小钉发送返回异常：' + sentErr.join('；') + '（文案已复制，可直接粘贴）';
+          navigator.clipboard.writeText(msg).catch(() => {});
+        }
+      } catch (e) {
+        st.textContent = '本地服务未响应，已自动复制文案到剪贴板。';
+        navigator.clipboard.writeText(msg).catch(() => {});
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    let pendingImportRecords = [];
+    function openImportModal() {
+      pendingImportRecords = [];
+      document.getElementById('importPreviewBox').classList.add('is-hidden');
+      document.getElementById('btnConfirmImport').classList.add('is-hidden');
+      document.getElementById('autoCollectStatus').classList.add('is-hidden');
+      document.getElementById('importModal').classList.remove('is-hidden');
+    }
+
+    function closeImportModal() {
+      document.getElementById('importModal').classList.add('is-hidden');
+    }
+
+    async function triggerDailyAutoCollectNow() {
+      const st = document.getElementById('autoCollectStatus');
+      const btn = document.getElementById('btnRunAutoCollectNow');
+      st.classList.remove('is-hidden');
+      st.textContent = '正在扫描昨日四店聊天记录并执行 AI 分流与钉钉「小钉」通知推送...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(BRIDGE_BASE + '/api/run-daily-collect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pushWeCom: true })
+        });
+        const d = await res.json();
+        if (d.ok) {
+          await syncFromBridge(true);
+          st.textContent = '自动采集完成：扫描 ' + (d.scannedFiles || 0) + ' 个文件，新增问题单 ' + (d.addedProblemCount || 0) + ' 条，已通过「小钉」通知责任人。';
+        } else {
+          st.textContent = '采集返回异常：' + (d.error || '未知错误');
+        }
+      } catch (e) {
+        st.textContent = '无法连接本地 18899 服务端口。';
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function classifyRawChatRecord(raw) {
+      const store = raw.store || raw['店铺'] || raw['所属店铺'] || '天猫得升旗舰店';
+      const customerId = raw.customerId || raw['买家ID'] || raw['客户ID'] || raw['买家昵称'] || ('买家_' + Math.floor(Math.random() * 9000 + 1000));
+      const chatTime = raw.chatTime || raw['聊天时间'] || raw['时间'] || new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const chatContent = raw.chatContent || raw['聊天内容'] || raw['会话内容'] || raw['完整聊天记录'] || '';
+      const initialNote = raw.initialCsNote || raw['客服备注'] || raw['问题原因'] || '';
+      let orderId = raw.orderId || raw['订单号'] || raw['关联订单号'] || '';
+      if (!orderId && chatContent) {
+        const om = String(chatContent).match(/(?:订单号|订单编号)[：:\s]*([0-9]{15,22})/) || String(chatContent).match(/\b(33[0-9]{17}|[0-9]{6}-[0-9]{15})\b/);
+        if (om) orderId = om[1];
+      }
+      const combined = (chatContent + ' ' + initialNote).toLowerCase();
+
+      if (!/(退货|退款|太薄|溥了|味道|臭|异味|耳绳|断|发错|缺货|没货|旧批次|2025|尺寸|多大|图片|实拍|专票|对公|300盒|批发|改地址|拦截|丢件|少发|漏发|投诉|差评)/.test(combined)) {
+        return null;
+      }
+
+      if (/(2025|旧批次|去年|生产日期)/.test(combined)) {
+        return {
+          store, customerId, orderId, chatTime, chatContent, hasProblem: '是',
+          track: 'offline_human_todo', stage: 'offline_todo',
+          depts: ['仓库部'], ownerNames: '许培婷 / 吴行哲',
+          groupKey: 'OFFLINE_WH_BATCH',
+          groupTitle: '仓库部批次盘点：排查2025旧批次库存并物理隔离',
+          cleanTitle: '发2025年旧批次货导致退货',
+          cleanAction: '去仓库实地盘点对应商品批次，将2025旧批次下架隔离，锁定发2026新批次',
+          keyEvidence: initialNote || chatContent.slice(0, 120)
+        };
+      }
+      if (/(缺货|断码|换款|发错|少发|漏发)/.test(combined)) {
+        return {
+          store, customerId, orderId, chatTime, chatContent, hasProblem: '是',
+          track: 'offline_human_todo', stage: 'offline_todo',
+          depts: ['仓库部', '运营部'], ownerNames: '许培婷 / 吴行哲 / 唐勇',
+          groupKey: 'OFFLINE_WH_OPS_STOCK',
+          groupTitle: '仓库+运营库存联动：清点断货花色并在千牛后台下架对应SKU',
+          cleanTitle: '缺货未下架/发错款退货',
+          cleanAction: '1.仓库清点实际库存并补发；2.运营唐勇在千牛后台立即下架断货SKU',
+          keyEvidence: initialNote || chatContent.slice(0, 120)
+        };
+      }
+      if (/(300盒|批发|团购|专票|对公)/.test(combined)) {
+        return {
+          store, customerId, orderId, chatTime, chatContent, hasProblem: '是',
+          track: 'offline_human_todo', stage: 'offline_todo',
+          depts: ['市场部'], ownerNames: '林丽媛 / 尤敏燕',
+          groupKey: 'OFFLINE_MKT_B2B',
+          groupTitle: '市场部大单跟进：大客户专票对公阶梯报价电话回访',
+          cleanTitle: '大客户团购/专票询单待跟进',
+          cleanAction: '核算阶梯底价与专票税点，主动电话/旺旺回访客户促成大单成交',
+          keyEvidence: initialNote || chatContent.slice(0, 120)
+        };
+      }
+      if (/(太薄|溥了|味道|臭|异味|耳绳|断|偏小|质量|扎脸)/.test(combined)) {
+        return {
+          store, customerId, orderId, chatTime, chatContent, hasProblem: '是',
+          track: 'offline_human_todo', stage: 'offline_todo',
+          depts: ['市场部'], ownerNames: '林丽媛 / 尤敏燕',
+          groupKey: 'OFFLINE_MKT_QUALITY',
+          groupTitle: '市场部线下抽检：实物偏薄/异味/耳绳不齐/尺码偏小留样复盘',
+          cleanTitle: '买家反馈实物质量问题退货',
+          cleanAction: '线下抽检对应批次实物留样，核算近30天客诉占比是否正常并更新探域安抚话术',
+          keyEvidence: initialNote || chatContent.slice(0, 120)
+        };
+      }
+      return {
+        store, customerId, orderId, chatTime, chatContent, hasProblem: '是',
+        track: 'online_ai_done', stage: 'online_pending_check',
+        depts: [], ownerNames: 'AI自动修复 (陈晓娟检查)',
+        groupKey: 'ONLINE_AI_AUTO',
+        groupTitle: '探域机器人自动应答优化（AI已自动补齐话术）',
+        cleanTitle: '客服机器人应答优化',
+        cleanAction: '陈晓娟抽检确认即可',
+        aiOnlineDone: 'AI已自动同步探域知识库标准应答话术与转人工兜底规则。',
+        keyEvidence: initialNote || chatContent.slice(0, 120)
+      };
+    }
+
+    async function handleChatFilesSelect(evt) {
+      const files = Array.from(evt.target.files || []);
+      if (files.length === 0) return;
+      pendingImportRecords = [];
+
+      for (const file of files) {
+        const text = await file.text();
+        if (file.name.endsWith('.json')) {
+          try {
+            const arr = JSON.parse(text);
+            if (Array.isArray(arr)) {
+              arr.forEach(r => {
+                const c = classifyRawChatRecord(r);
+                if (c) pendingImportRecords.push(c);
+              });
+            }
+          } catch (e) {}
+        } else {
+          const lines = text.split(/\r?\n/).filter(l => l.trim());
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',');
+            if (cols.length >= 3) {
+              const c = classifyRawChatRecord({
+                store: cols[0],
+                customerId: cols[1],
+                chatTime: cols[2],
+                chatContent: cols.slice(3).join(' ')
+              });
+              if (c) pendingImportRecords.push(c);
+            }
+          }
+        }
+      }
+
+      const box = document.getElementById('importPreviewBox');
+      const btn = document.getElementById('btnConfirmImport');
+      box.classList.remove('is-hidden');
+      box.textContent = '解析完成：共识别出 ' + pendingImportRecords.length + ' 条需跟进异常会话（正常咨询已自动过滤）。';
+      if (pendingImportRecords.length > 0) btn.classList.remove('is-hidden');
+    }
+
+    function confirmImportNewChats() {
+      if (pendingImportRecords.length === 0) return;
+      let maxNum = items.reduce((m, x) => {
+        const match = String(x.id || '').match(/(\d+)/);
+        return match ? Math.max(m, Number(match[1])) : m;
+      }, 100);
+
+      pendingImportRecords.forEach(rec => {
+        maxNum++;
+        items.unshift(Object.assign({
+          id: 'TASK-' + String(maxNum).padStart(3, '0'),
+          rowId: rec.store + '#NEW' + maxNum,
+          staffResult: '',
+          isNormalRatio: '',
+          normalRatioBasis: '',
+          abnormalPlan: '',
+          doneSteps: []
+        }, rec));
+      });
+
+      saveAllItems();
+      closeImportModal();
+      renderBoard();
+    }
+
+    function exportCleanCsv() {
+      const headers = ['任务ID','原表行号','店铺','买家ID','订单号','分流轨道','当前状态','负责部门','具体负责人','归并事项','问题摘要','必办动作','实际处理结果'];
+      const rows = items.map(x => [
+        x.id, x.rowId, x.store, x.customerId, x.orderId || '', x.track, x.stage,
+        (x.depts || []).join('/'), x.ownerNames, stripEmoji(x.groupTitle || ''), stripEmoji(x.cleanTitle), stripEmoji(x.cleanAction),
+        stripEmoji(x.staffResult || x.aiOnlineDone || '')
+      ].map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(','));
+
+      const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = '得升客服问题极简看板_' + new Date().toISOString().slice(0,10) + '.csv';
+      a.click();
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    renderBoard();
+    syncFromBridge();
+    loadServerConfig();
+    setInterval(() => syncFromBridge(false), 3500);
+  </script>
+</body>
+</html>
