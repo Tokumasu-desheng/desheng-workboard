@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>得升旗舰店 · REXL 选品至1688寻源《每日三合一选品定标看板》(2026-10-31 accio_sourcing_probe.py 100%全量重探对版版)</title>
+  <title>得升旗舰店 · REXL 选品至1688寻源《每日三合一选品定标看板》(2026-10-31 主品+ERR-37增益组合配件1688全链接穿透版)</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -25,7 +25,7 @@
       color: var(--text);
       line-height: 1.6;
     }
-    .container { max-width: 1620px; margin: 0 auto; }
+    .container { max-width: 1660px; margin: 0 auto; }
     .header {
       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
       border: 1px solid var(--border);
@@ -80,7 +80,7 @@
     th { background: rgba(15, 23, 42, 0.8); color: var(--accent); font-weight: 700; }
     tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
     code { background: rgba(15, 23, 42, 0.7); padding: 2px 5px; border-radius: 4px; color: #bae6fd; font-family: Consolas, monospace; }
-    a.tb-link, a.ali-link {
+    a.tb-link, a.ali-link, a.acc-link {
       display: inline-flex;
       align-items: center;
       gap: 3px;
@@ -111,6 +111,15 @@
       background: #d97706;
       color: #fff;
     }
+    a.acc-link {
+      background: rgba(34, 197, 94, 0.18);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.5);
+    }
+    a.acc-link:hover {
+      background: #16a34a;
+      color: #fff;
+    }
     .title-hint { color: #cbd5e1; font-size: 12px; display: block; margin-bottom: 4px; }
     .tag-accept { color: var(--green); font-weight: 700; }
     .price { color: var(--rose); font-weight: 700; }
@@ -124,27 +133,27 @@
   <div class="container">
     <div class="header">
       <h1>👑 得升旗舰店 · REXL 选品至 1688 寻源《每日三合一选品定标看板》</h1>
-      <div class="sub">生成日期：2026-10-31 ｜ 状态：<span class="tag-accept">100% 采用 `accio_sourcing_probe.py` (`extract-tmall-sku` 白底SKU原图提取 + `probe-1688-candidates` 9221端口实盘穿透) 全量重探 49 条 1688 货源链接：逐一锁死「货号 + 颜色/尺码SKU结构 + 三维真实好评率（店铺好评率 vs 单品好评率 vs 四星/五星供应链品质达标率/履约率/回头率）+ REXL ≥72% 净毛利门槛」</span></div>
+      <div class="sub">生成日期：2026-10-31 ｜ 状态：<span class="tag-accept">100% 采用 `accio_sourcing_probe.py` 全量穿透 64 条 1688 货源链接（含 49 条主品源头厂 + 15 条「ERR-37 增益组合配件/升级款」专属 1688 源头厂）：每项主品与每一款增益组合配件均附带可点击直达 1688 链接、货号、SKU 规格与三维真实好评率</span></div>
       <div class="badges">
-        <span class="badge green">✅ `extract-tmall-sku` 白底SKU原图以图搜图（杜绝模特外景主图误召回冲锋衣）</span>
-        <span class="badge green">✅ `probe-1688-candidates` 49条1688链接全量穿透（货号/SKU/三维好评率100%实测）</span>
-        <span class="badge">🔵 蓝色标签 = 点击直达天猫/淘宝实测在售竞品页</span>
-        <span class="badge amber">🟠 橙色标签 = 点击直达 `accio_sourcing_probe.py` 实盘核验 1688 源头厂</span>
-        <span class="badge amber">🆕 ERR-37 增益(gain)/升级(upgrade)加层硬闸门</span>
+        <span class="badge green">✅ `extract-tmall-sku` 白底SKU原图以图搜图</span>
+        <span class="badge green">✅ 主品 49 厂 + 增益组合配件 15 厂 = 64 条 1688 链接 100% 实盘穿透</span>
+        <span class="badge">🔵 蓝色标签 = 天猫/淘宝在售竞品链接</span>
+        <span class="badge amber">🟠 橙色标签 = 主品 1688 源头厂链接</span>
+        <span class="badge green">🟢 绿色标签 = ERR-37 增益组合配件/升级款专属 1688 货源链接</span>
         <span class="badge green">💰 B路折后对折后 2.7~3.0倍 & 净毛利 ≥ 72%</span>
       </div>
     </div>
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="showTab('t1', this)">🔥 一、今日P0定标立项 (2款4链·Accio探针实测)</button>
-      <button class="tab-btn" onclick="showTab('t2', this)">📊 二、12款晋级一表通审总表 (49厂三维好评率穿透)</button>
-      <button class="tab-btn" onclick="showTab('t3', this)">🧩 三、重点款逐SKU级 `accio_sourcing_probe.py` 对版明细</button>
+      <button class="tab-btn active" onclick="showTab('t1', this)">🔥 一、今日P0定标立项 (含增益组合1688链接)</button>
+      <button class="tab-btn" onclick="showTab('t2', this)">📊 二、12款晋级一表通审总表 (主品+增益组合全链接)</button>
+      <button class="tab-btn" onclick="showTab('t3', this)">🧩 三、重点款逐SKU对版 & 12款增益组合配件1688专表</button>
       <button class="tab-btn" onclick="showTab('t4', this)">🛡️ 四、第0步已建档/在售款 1688 探针源头库</button>
     </div>
 
     <!-- TAB 1 -->
     <div id="t1" class="card">
-      <h2>一、 今日定标立项 P0 组合（2 款产品 = 4 条天猫双100分 AB 双生链接 · `accio_sourcing_probe.py` 白底SKU搜同款+三维好评率穿透）</h2>
+      <h2>一、 今日定标立项 P0 组合（2 款产品 = 4 条天猫双100分 AB 双生链接 · 主品与 ERR-37 增益组合均配齐 1688 源头厂链接）</h2>
       <table>
         <thead>
           <tr>
@@ -152,8 +161,8 @@
             <th>AB 赛马角色与首图底栏选框</th>
             <th>主品与实测有效天猫/淘宝竞品链接（点击直达）</th>
             <th>天猫竞品真实价格与核心 SKU 结构</th>
-            <th>`accio_sourcing_probe.py` 严选 1688 源头厂（货号+三维好评率实测）</th>
-            <th>ERR-37 增益/升级加层 SKU</th>
+            <th>`accio_sourcing_probe.py` 严选主品 1688 源头厂（点击直达）</th>
+            <th>ERR-37 增益/升级加层 SKU 及对应 1688 货源链接（点击直达）</th>
             <th>我方折后到手价 / 千牛一口价 / 折后毛利</th>
           </tr>
         </thead>
@@ -172,16 +181,21 @@
               <b>李宁 `1003635269192` 天猫价 ¥44.00</b>（`931骑士黑/公主粉`、`567潮流黑/粉灰` S~XL）
             </td>
             <td rowspan="2">
-              <strong>【REXL `1080669558825` 白底SKU原图 1:1 同模盾牌7色源头厂】</strong><br>
-              <strong>① S1首选(店铺好评率 98.6%·品质达标率 100%·履约率 100%·复购 37.29%)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/908792234196.html" target="_blank" rel="noopener noreferrer">1688 908792234196 ↗</a> 辛集市亿德福手套厂（货号<code>5</code>/分指手套｜7色<code>透气网盾牌男黑/男绿/男深灰/女黑/女绿/女浅灰/女粉</code> <b>¥8.00~¥8.90/双</b>，毛利 <b>86.8%~88.1%</b>）<br>
-              <strong>② S2备选A(四星供应链·单品好评率 98.7%/4.9分·明确均码7色·回头率 60%)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">1688 909288241506 ↗</a> 辛集市迈瑟尔服饰有限公司（货号<code>翻盖露二指骑行手套</code>｜7色<code>男士黑/灰/绿+女士黑/灰/粉/绿</code>×<code>均码</code> <b>¥10.00~¥10.90/双</b>，毛利 <b>83.8%~85.1%</b>）<br>
-              <strong>③ S2备选B(五星供应链·诚信5.0满分AAA级TOP 5%·品质100%·履约99.5%)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/1026437611307.html" target="_blank" rel="noopener noreferrer">1688 1026437611307 ↗</a> 辛集市宏博制衣厂（货号<code>盾牌网布长指</code>/翻盖款｜7色1:1对齐 <b>¥9.00/双</b>，毛利 <b>86.6%</b>）<br>
-              <strong>④ 李宁931/567分码同模厂</strong>：<a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯（五星供应链·货号<code>931</code>·42个SKU <b>¥12.00~¥15.50</b>） / <a class="ali-link" href="https://detail.1688.com/offer/588046670139.html" target="_blank" rel="noopener noreferrer">1688 588046670139 ↗</a> 辛集昕晴（四星·单品好评率96%·100+评价 <b>¥5.00</b>）
+              <strong>① S1首选(店铺好评率 98.6%·品质100%·履约100%·复购37.29%)</strong>：<br>
+              <a class="ali-link" href="https://detail.1688.com/offer/908792234196.html" target="_blank" rel="noopener noreferrer">1688 908792234196 ↗</a> 辛集市亿德福手套厂（货号<code>5</code>/分指手套｜7色<code>透气网盾牌男黑/男绿/男深灰/女黑/女绿/女浅灰/女粉</code> <b>¥8.00~¥8.90/双</b>）<br>
+              <strong>② S2备选A(四星供应链·单品好评率 98.7%/4.9分·明确均码7色·回头率60%)</strong>：<br>
+              <a class="ali-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">1688 909288241506 ↗</a> 辛集市迈瑟尔服饰（货号<code>翻盖露二指骑行手套</code>｜7色×<code>均码</code> <b>¥10.00~¥10.90/双</b>）<br>
+              <strong>③ S2备选B(五星供应链·诚信5.0满分AAA级TOP 5%·品质100%)</strong>：<br>
+              <a class="ali-link" href="https://detail.1688.com/offer/1026437611307.html" target="_blank" rel="noopener noreferrer">1688 1026437611307 ↗</a> 辛集市宏博制衣厂（货号<code>盾牌网布长指</code>｜7色1:1对齐 <b>¥9.00/双</b>）<br>
+              <strong>④ 李宁931同模厂</strong>：<a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯 (<b>¥12.00</b>) / <a class="ali-link" href="https://detail.1688.com/offer/588046670139.html" target="_blank" rel="noopener noreferrer">1688 588046670139 ↗</a> 辛集昕晴 (<b>¥5.00</b>)
             </td>
-            <td rowspan="2">① <strong>升级独立SKU</strong>：<code>透气网盾牌翻盖两用款</code>（半指露二指+防风翻盖一秒切换，成本 ¥8.90~¥10.90 → 折后 ¥67.20）<br>② <strong>增益组合装</strong>：透气网盾牌手套 + 战术防丢快挂登山扣（成本 ¥9.80 → 折后 ¥69.80）</td>
+            <td rowspan="2">
+              <strong>① 升级独立SKU 1（翻盖露二指防风半指两用款）</strong>：<br>
+              直采 <a class="acc-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">升级款 909288241506 ↗</a> 辛集迈瑟尔（单品好评率98.7%｜<code>翻盖露二指</code> ¥10.00）或 <a class="acc-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">升级01B 1018623862377 ↗</a> 辛集克莱特斯（<code>升级01B加厚掌垫</code> ¥15.50）<br>
+              <strong>② 增益组合装（手套 + 户外防丢快挂登山扣夹）</strong>：<br>
+              • 配件厂A(单品好评率 100%·四星供应链)：<a class="acc-link" href="https://detail.1688.com/offer/964778104969.html" target="_blank" rel="noopener noreferrer">防丢扣 964778104969 ↗</a> 东阳市新跃家居（货号<code>大手套夹</code> 铝材登山扣+手套夹6色 <b>¥1.20/个</b>）<br>
+              • 配件厂B(四星供应链·品质100%·复购36.11%)：<a class="acc-link" href="https://detail.1688.com/offer/864571428325.html" target="_blank" rel="noopener noreferrer">战术夹 864571428325 ↗</a> 惠州市风译户外（货号<code>H-018</code> POM防掉手套夹4色 <b>¥0.65/个</b>）
+            </td>
             <td>折后 <span class="price">¥67.20</span> (对标REXL)<br>一口价 ¥79.10<br>毛利 <span class="margin">83.78%~88.10%</span></td>
           </tr>
           <tr>
@@ -200,15 +214,21 @@
             <td rowspan="2">天猫价 <b>¥22.00 ~ ¥46.90</b>（75个SKU，S~XXL）<br>核心SKU：<br>• <code>无袖无领加绒单层</code> ¥22<br>• <code>无袖有领加绒单层</code> ¥25<br>• <code>无袖无领加绒加厚</code> ¥31<br>• <code>无袖有领加绒加厚</code> ¥32<br>• <code>短袖有领全绒加厚</code> ¥46.9</td>
             <td rowspan="2">
               <strong>① S1首选(店铺好评率 99.6%·品质100%·复购100%·20个多色多码SKU)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/1092869220038.html" target="_blank" rel="noopener noreferrer">1688 1092869220038 ↗</a> 崇川区昊诚服饰厂（货号<code>A-11529-JD-A15</code>｜5色×<code>2XL~5XL</code>多色多码德绒坎肩 <b>¥15.00~¥18.00/件</b>，毛利 <b>74.6%~78.3%</b>）<br>
-              <strong>② S2备选A(五星供应链·单品好评率 100%·品质100%·履约100%·回头率62.5%)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">1688 741474382972 ↗</a> 衡水松康医疗器械有限公司（货号<code>SK-954</code>｜加绒加厚有领护颈款 <b>¥29.00/件</b>）<br>
-              <strong>③ S2备选B(四星供应链·品质99.9%·履约99.5%·M/L/XL分码走量)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/1005441362746.html" target="_blank" rel="noopener noreferrer">1688 1005441362746 ↗</a> 义乌市鑫特针织有限公司（货号<code>HJ</code>｜<code>M码/L码/XL码</code>单层/加厚走量款 <b>¥16.00~¥16.95/件</b>）<br>
-              <strong>④ ERR-37艾草热敷升级款源头(五星供应链·单品好评率 95.6%·40+评价)</strong>：<br>
-              <a class="ali-link" href="https://detail.1688.com/offer/822603758346.html" target="_blank" rel="noopener noreferrer">1688 822603758346 ↗</a> 新乐市致源电热科技有限公司（货号<code>2024-MHCKHJ001</code>｜11个SKU九档三键艾绒/海盐热敷护肩 <b>¥22.00~¥25.00</b>）
+              <a class="ali-link" href="https://detail.1688.com/offer/1092869220038.html" target="_blank" rel="noopener noreferrer">1688 1092869220038 ↗</a> 崇川区昊诚服饰厂（货号<code>A-11529-JD-A15</code>｜5色×<code>2XL~5XL</code>德绒坎肩 <b>¥15.00~¥18.00/件</b>）<br>
+              <strong>② S2备选A(五星供应链·单品好评率 100%·品质100%·回头率62.5%)</strong>：<br>
+              <a class="ali-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">1688 741474382972 ↗</a> 衡水松康医疗器械（货号<code>SK-954</code>｜有领护颈加厚款 <b>¥29.00/件</b>）<br>
+              <strong>③ S2备选B(四星供应链·品质99.9%·履约99.5%·M/L/XL分码)</strong>：<br>
+              <a class="ali-link" href="https://detail.1688.com/offer/1005441362746.html" target="_blank" rel="noopener noreferrer">1688 1005441362746 ↗</a> 义乌市鑫特针织（货号<code>HJ</code>｜<code>M/L/XL</code>单层/加厚走量款 <b>¥16.00~¥16.95/件</b>）
             </td>
-            <td rowspan="2">① <strong>升级独立SKU 1</strong>：九档三键艾草/海盐温控热敷理疗护肩款（新乐致源成本 ¥22.00 → 折后 ¥89.00，毛利 75.3%）<br>② <strong>升级独立SKU 2</strong>：有领护颈+全绒加厚锁温款（衡水松康成本 ¥29.00 → 折后 ¥99.00）</td>
+            <td rowspan="2">
+              <strong>① 升级独立SKU 1（九档三键艾草/海盐电热敷理疗护肩款）</strong>：<br>
+              直采 <a class="acc-link" href="https://detail.1688.com/offer/822603758346.html" target="_blank" rel="noopener noreferrer">电热敷款 822603758346 ↗</a> 新乐市致源电热科技（<code>五星供应链</code>·<b>单品好评率 95.6% [40+评价]</b>·品质100%｜货号<code>2024-MHCKHJ001</code> 11个SKU九档艾绒/海盐热敷护肩 <b>¥22.00</b> → 折后 ¥89.00）<br>
+              <strong>② 升级独立SKU 2（有领护颈全绒加厚锁温款）</strong>：<br>
+              直采 <a class="acc-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">有领全绒 741474382972 ↗</a> 衡水松康医疗（<code>五星供应链</code>·<b>单品好评率 100%</b>｜货号<code>SK-954</code> <b>¥29.00</b> → 折后 ¥99.00）<br>
+              <strong>③ 增益组合装（德绒护肩坎肩 + 艾草肩周自发热贴12贴盒装）</strong>：<br>
+              • 配件厂A(五星供应链·品质100%)：<a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">艾草贴 1003178936762 ↗</a> 河南张仲景生物科技（肩周颈椎热敷穴位贴 <b>¥1.20/盒</b>）<br>
+              • 配件厂B(五星供应链·履约100%)：<a class="acc-link" href="https://detail.1688.com/offer/1063248859129.html" target="_blank" rel="noopener noreferrer">蕲艾贴 1063248859129 ↗</a> 湖北艾都供应链（蕲艾肩周暖贴 <b>¥1.50/盒</b>）
+            </td>
             <td>折后 <span class="price">¥59.00</span> (单层2.7x)<br>一口价 ¥69.40<br>毛利 <span class="margin">71.27%~75.28%</span></td>
           </tr>
           <tr>
@@ -222,16 +242,16 @@
 
     <!-- TAB 2 -->
     <div id="t2" class="card hidden">
-      <h2>二、 12 款爆款「天猫/淘宝竞品链接 + `accio_sourcing_probe.py` 3家1688源头厂（货号/SKU/三维好评率实盘穿透）+ 定价毛利」一表通审总表</h2>
+      <h2>二、 12 款爆款「天猫/淘宝竞品链接 + 主品 3 家 1688 源头厂 + ERR-37 增益/升级组合专属 1688 源头厂」一表通审总表</h2>
       <table>
         <thead>
           <tr>
             <th>排期与款号</th>
             <th>实测有效淘宝/天猫竞品链接 & 真实 SKU 结构</th>
-            <th>Accio 探针货源 1（S1 首选源头厂 · 货号 & 三维好评率）</th>
-            <th>Accio 探针货源 2 & 货源 3（S2 备选源头厂 · 货号 & 三维好评率）</th>
+            <th>Accio 探针主品货源 1（S1 首选源头厂）</th>
+            <th>Accio 探针主品货源 2 & 货源 3（S2 备选源头厂）</th>
             <th>1:1对版</th>
-            <th>ERR-37 增益(gain)/升级(upgrade)加层方案</th>
+            <th>ERR-37 增益(gain)/升级(upgrade)方案及对应 1688 货源链接（点击直达）</th>
             <th>B路折后价 / 千牛一口价 / 折后毛利</th>
           </tr>
         </thead>
@@ -246,17 +266,22 @@
             </td>
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/908792234196.html" target="_blank" rel="noopener noreferrer">1688 908792234196 ↗</a><br>
-              <b>辛集市亿德福手套厂</b> (货号：<code>5</code> / 分指手套)<br>
-              <b>店铺好评率 98.6%</b> ｜ 品质达标率 100% ｜ 履约率 100% ｜ 复购率 37.29%<br>
-              SKU直配：7色<code>透气网盾牌男黑/男绿/男深灰/女黑/女绿/女浅灰/女粉</code> <b>¥8.00~¥8.90</b>
+              <b>辛集市亿德福手套厂</b> (货号：<code>5</code>)<br>
+              <b>店铺好评率 98.6%</b> ｜ 品质100% ｜ 履约100% ｜ 复购37.29%<br>
+              7色<code>透气网盾牌</code> <b>¥8.00~¥8.90</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">1688 909288241506 ↗</a> <b>辛集市迈瑟尔服饰</b>（<code>四星供应链</code>·<b>单品好评率 98.7%/4.9分</b>·品质99.8%·回头率60%｜货号<code>翻盖露二指骑行手套</code> 7色×<code>均码</code> <b>¥10.00~¥10.90</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/1026437611307.html" target="_blank" rel="noopener noreferrer">1688 1026437611307 ↗</a> <b>辛集市宏博制衣厂</b>（<code>五星供应链</code>·<b>诚信5.0满分AAA级TOP 5%</b>·品质100%·履约99.5%｜货号<code>盾牌网布长指</code> 7色 <b>¥9.00</b>）<br>
-              ④ 李宁931同源：<a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯 (<b>¥12.00</b>) / <a class="ali-link" href="https://detail.1688.com/offer/588046670139.html" target="_blank" rel="noopener noreferrer">1688 588046670139 ↗</a> 辛集昕晴 (<b>¥5.00</b>)
+              ② <a class="ali-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">1688 909288241506 ↗</a> <b>辛集迈瑟尔</b>（<code>四星供应链</code>·<b>单品好评率 98.7%</b>·7色×<code>均码</code> <b>¥10.00~¥10.90</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/1026437611307.html" target="_blank" rel="noopener noreferrer">1688 1026437611307 ↗</a> <b>辛集宏博制衣厂</b>（<code>五星供应链</code>·<b>5.0满分AAA</b>·7色 <b>¥9.00</b>）<br>
+              ④ 李宁931：<a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯 (<b>¥12.00</b>) / <a class="ali-link" href="https://detail.1688.com/offer/588046670139.html" target="_blank" rel="noopener noreferrer">1688 588046670139 ↗</a> 辛集昕晴 (<b>¥5.00</b>)
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td>① <b>升级独立SKU</b>：透气网盾牌翻盖露二指两用款 (成本¥8.90~¥10.90)<br>② <b>增益组合装</b>：盾牌半指手套+战术防丢快挂扣 (成本¥9.80)</td>
+            <td>
+              ① <b>升级独立SKU</b>：<a class="acc-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">翻盖两用款 909288241506 ↗</a> (¥10.00) / <a class="acc-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">升级01B款 1018623862377 ↗</a> (¥15.50)<br>
+              ② <b>增益组合配件（户外手套防丢快挂扣）</b>：<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/964778104969.html" target="_blank" rel="noopener noreferrer">防丢扣 964778104969 ↗</a> 东阳新跃（四星·<b>单品好评率100%</b>·铝材登山扣夹6色 <b>¥1.20</b>）<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/864571428325.html" target="_blank" rel="noopener noreferrer">战术夹 864571428325 ↗</a> 惠州风译（四星·品质100%·货号<code>H-018</code> <b>¥0.65</b>）
+            </td>
             <td>REXL对标款：<span class="price">¥67.20</span> / ¥79.10 (<span class="margin">83.8%~88.1%</span>)<br>931分码款：<span class="price">¥44.00</span> / ¥51.80 (<span class="margin">72.7%</span>)</td>
           </tr>
           <tr>
@@ -269,16 +294,19 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1092869220038.html" target="_blank" rel="noopener noreferrer">1688 1092869220038 ↗</a><br>
               <b>崇川区昊诚服饰厂</b> (货号：<code>A-11529-JD-A15</code>)<br>
-              <b>店铺好评率 99.6%</b> ｜ 品质达标率 100% ｜ 服务分 4.5 ｜ 单品复购率 100%<br>
-              SKU直配：20个SKU（5色×<code>2XL~5XL</code>德绒保暖护肩坎肩）<b>¥15.00~¥18.00/件</b>
+              <b>店铺好评率 99.6%</b> ｜ 品质100% ｜ 复购100%<br>
+              20个SKU（5色×<code>2XL~5XL</code>）<b>¥15.00~¥18.00</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">1688 741474382972 ↗</a> <b>衡水松康医疗器械</b>（<code>五星供应链</code>·<b>单品好评率 100%</b>·品质100%·履约100%·回头率62.5%｜货号<code>SK-954</code>有领加厚 <b>¥29.00</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/1005441362746.html" target="_blank" rel="noopener noreferrer">1688 1005441362746 ↗</a> <b>义乌市鑫特针织</b>（<code>四星供应链</code>·品质99.9%·履约99.5%·回头率52.7%｜货号<code>HJ</code> M/L/XL分码 <b>¥16.00~¥16.95</b>）<br>
-              ④ 艾草热敷升级款：<a class="ali-link" href="https://detail.1688.com/offer/822603758346.html" target="_blank" rel="noopener noreferrer">1688 822603758346 ↗</a> 新乐致源电热（<code>五星供应链</code>·<b>单品好评率 95.6%</b>·11款九档热敷 <b>¥22.00</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">1688 741474382972 ↗</a> <b>衡水松康医疗</b>（<code>五星供应链</code>·<b>单品好评率 100%</b>·货号<code>SK-954</code> <b>¥29.00</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/1005441362746.html" target="_blank" rel="noopener noreferrer">1688 1005441362746 ↗</a> <b>义乌鑫特针织</b>（<code>四星供应链</code>·货号<code>HJ</code> M/L/XL <b>¥16.00</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td>① <b>升级独立SKU 1</b>：九档三键艾草/海盐热敷护肩款 (致源¥22.00)<br>② <b>升级独立SKU 2</b>：有领护颈全绒加厚锁温款 (松康¥29.00)</td>
+            <td>
+              ① <b>升级独立SKU 1（九档艾草/海盐电热敷护肩）</b>：<a class="acc-link" href="https://detail.1688.com/offer/822603758346.html" target="_blank" rel="noopener noreferrer">电热敷款 822603758346 ↗</a> 新乐致源电热（五星·<b>单品好评率95.6%</b>·11款SKU <b>¥22.00</b>）<br>
+              ② <b>升级独立SKU 2（有领全绒加厚款）</b>：<a class="acc-link" href="https://detail.1688.com/offer/741474382972.html" target="_blank" rel="noopener noreferrer">有领全绒 741474382972 ↗</a> 衡水松康 (<b>¥29.00</b>)<br>
+              ③ <b>增益组合配件（艾草肩周自发热贴12贴/盒）</b>：<a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">艾草贴 1003178936762 ↗</a> 河南张仲景生物（五星·品质100% <b>¥1.20/盒</b>） / <a class="acc-link" href="https://detail.1688.com/offer/1063248859129.html" target="_blank" rel="noopener noreferrer">蕲艾贴 1063248859129 ↗</a> 湖北艾都（五星·履约100% <b>¥1.50/盒</b>）
+            </td>
             <td>单层：<span class="price">¥59.00</span> / ¥69.40 (<span class="margin">71.3%~74.6%</span>)<br>热敷款：<span class="price">¥89.00</span> / ¥104.70 (<span class="margin">75.3%</span>)</td>
           </tr>
           <tr>
@@ -286,21 +314,23 @@
             <td>
               母本(国货严选·保定发货)：<a class="tb-link" href="https://detail.tmall.com/item.htm?id=1071121100266" target="_blank" rel="noopener noreferrer">天猫 1071121100266 ↗</a> (¥44.44)<br>
               REXL坐垫：<a class="tb-link" href="https://detail.tmall.com/item.htm?id=1075435849048" target="_blank" rel="noopener noreferrer">rexl 1075435849048 ↗</a><br>
-              SKU：<code>44*40*37cm</code> 五分区记忆棉坐靠一体垫 × 8色 / REXL牛角记忆棉坐垫
+              SKU：<code>44*40*37cm</code> 五分区记忆棉坐靠一体垫 × 8色 / REXL牛角坐垫
             </td>
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1033874625035.html" target="_blank" rel="noopener noreferrer">1688 1033874625035 ↗</a><br>
-              <b>蠡县逸景家居用品有限公司</b> (保定同城｜货号：<code>高腰座垫</code>)<br>
-              <code>四星供应链</code> ｜ 品质达标率 100% ｜ 履约率 98.7% ｜ 回头率 49.6%<br>
-              SKU直配：6色<code>【升级加高】40*44*37cm</code>一体垫 <b>¥27.00~¥27.50</b>
+              <b>蠡县逸景家居用品有限公司</b> (货号：<code>高腰座垫</code>)<br>
+              <code>四星供应链</code> ｜ 品质100% ｜ 履约98.7%<br>
+              6色<code>【升级加高】40*44*37cm</code> <b>¥27.00~¥27.50</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/994747512683.html" target="_blank" rel="noopener noreferrer">1688 994747512683 ↗</a> <b>蠡县卡美奇商贸</b>（保定同城·<b>店铺好评率 96.8%</b>·<b>单品好评率 100% [30+条评价]</b>·品质100%｜货号<code>贝壳一体美臀坐垫</code> 8色 <b>¥26.00~¥26.50</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/1015458155944.html" target="_blank" rel="noopener noreferrer">1688 1015458155944 ↗</a> <b>永康市锘衍工贸</b>（<code>五星供应链</code>·品质99.8%·履约99.2%｜货号<code>1006665670</code> <code>贝壳款44*40*37cm</code> <b>¥30.00</b>）<br>
-              ④ REXL牛角坐垫同模：<a class="ali-link" href="https://detail.1688.com/offer/870750426337.html" target="_blank" rel="noopener noreferrer">1688 870750426337 ↗</a> 南通悦莱思（<code>五星供应链</code>·品质100%·履约99.9%·复购33.89%｜货号<code>牛角坐垫</code> 14款SKU <b>¥23.00</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/994747512683.html" target="_blank" rel="noopener noreferrer">1688 994747512683 ↗</a> <b>蠡县卡美奇商贸</b>（<b>店铺好评率 96.8%</b>·<b>单品好评率 100%</b>·货号<code>贝壳一体美臀坐垫</code> <b>¥26.00</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/1015458155944.html" target="_blank" rel="noopener noreferrer">1688 1015458155944 ↗</a> <b>永康锘衍工贸</b>（<code>五星供应链</code>·<code>贝壳款44*40*37cm</code> <b>¥30.00</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>升级独立SKU</b>：升级加高贝壳五分区记忆棉 + 可拆洗透气网眼外套 + 绑带防滑底款 (成本¥26.00~¥27.50)</td>
+            <td>
+              ① <b>升级独立SKU（升级加高贝壳五分区一体垫 40×44×37cm）</b>：<a class="acc-link" href="https://detail.1688.com/offer/1033874625035.html" target="_blank" rel="noopener noreferrer">加高一体垫 1033874625035 ↗</a> 保定逸景 (<b>¥27.00</b>) / <a class="acc-link" href="https://detail.1688.com/offer/1015458155944.html" target="_blank" rel="noopener noreferrer">贝壳一体垫 1015458155944 ↗</a> 永康锘衍 (<b>¥30.00</b>)<br>
+              ② <b>增益/子母组合SKU（REXL同款牛角护尾椎单坐垫 40×36×11cm）</b>：<a class="acc-link" href="https://detail.1688.com/offer/870750426337.html" target="_blank" rel="noopener noreferrer">牛角坐垫 870750426337 ↗</a> 南通悦莱思（五星供应链·品质100%·复购33.89%·货号<code>牛角坐垫</code>含内衬/无内衬14个SKU <b>¥23.00</b>）
+            </td>
             <td>主力：<span class="price">¥98.00</span> / ¥115.30 (<span class="margin">71.94%~73.47%</span>)<br>双件装：<span class="price">¥178.00</span> / ¥209.40 (<span class="margin">70.22%</span>)</td>
           </tr>
           <tr>
@@ -312,16 +342,20 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/744741842827.html" target="_blank" rel="noopener noreferrer">1688 744741842827 ↗</a><br>
               <b>温州致奕贸易有限公司</b> (温州同城1:1母本源头厂)<br>
-              <code>四星供应链</code> ｜ 品质达标率 99.9% ｜ 履约率 99.0% ｜ <b>单品复购率 55.41%</b><br>
-              SKU 1:1直配：<b>21个SKU与天猫母本一字不差</b>（<code>混色5/10/20片装</code>+<code>送清洗液组合</code>）单片<b>¥0.47</b>，套组<b>¥2.45~¥6.50</b>
+              <code>四星供应链</code> ｜ 品质99.9% ｜ <b>单品复购率 55.41%</b><br>
+              <b>21个SKU与天猫母本一字不差</b> 单片<b>¥0.47</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/551814195976.html" target="_blank" rel="noopener noreferrer">1688 551814195976 ↗</a> <b>新河县新兴眼镜盒厂</b>（<code>五星供应链</code>·<b>单品好评率 95.0% [40+条评价]</b>·品质99.7%·复购41.67%｜货号<code>麂皮绒</code>多色 <b>¥0.25~¥0.40/片</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/633463314685.html" target="_blank" rel="noopener noreferrer">1688 633463314685 ↗</a> <b>丹阳市启源光学眼镜</b>（<code>四星供应链</code>·品质100%·履约100%·回头率61.8%·单品30+评价｜货号<code>058</code>纳米防雾 <b>¥1.00~¥1.20/片</b>）<br>
-              ④ <a class="ali-link" href="https://detail.1688.com/offer/618549593552.html" target="_blank" rel="noopener noreferrer">1688 618549593552 ↗</a> 新河毅阳眼镜盒厂（<code>五星供应链</code>·品质99.9%·履约100%·回头率59.3%）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/551814195976.html" target="_blank" rel="noopener noreferrer">1688 551814195976 ↗</a> <b>新河县新兴眼镜盒厂</b>（<code>五星供应链</code>·<b>单品好评率 95.0% [40+条评价]</b>·复购41.67%｜货号<code>麂皮绒</code> <b>¥0.25~¥0.40/片</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/633463314685.html" target="_blank" rel="noopener noreferrer">1688 633463314685 ↗</a> <b>丹阳启源光学</b>（<code>四星供应链</code>·品质100%·回头率61.8%｜货号<code>058</code>纳米防雾 <b>¥1.00~¥1.20/片</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：升级麂皮绒防雾眼镜布5片/10片/20片装 + 植物温和镜片清洗液 + 密封收纳袋 (温州致奕原厂直配)</td>
+            <td>
+              ① <b>原厂自带「眼镜布5/10/20片+送清洗液」组合装</b>：<a class="acc-link" href="https://detail.1688.com/offer/744741842827.html" target="_blank" rel="noopener noreferrer">原厂清洗液套组 744741842827 ↗</a> 温州致奕（自带<code>混色5/10/20片装+送清洗液</code>原生SKU <b>¥2.45~¥6.50</b>）<br>
+              ② <b>独立增益配件（30ml便携眼镜防雾清洁喷雾剂）</b>：<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/654463222162.html" target="_blank" rel="noopener noreferrer">防雾喷雾 654463222162 ↗</a> 义乌麦里（四星·<b>单品好评率99.7% [1600+评价]</b>·货号<code>防雾剂</code> 30ml便携装 <b>¥2.00/瓶</b>）<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/855115845751.html" target="_blank" rel="noopener noreferrer">防雾套装 855115845751 ↗</a> 义乌锦沁（四星·品质100%·90ml防雾剂+麂皮巾套装）
+            </td>
             <td>5片装：<span class="price">¥29.80</span> / ¥35.10 (<span class="margin">79.2%~91.8%</span>)<br>清洗液套组：<span class="price">¥39.80</span> / ¥46.80 (<span class="margin">83.7%</span>)</td>
           </tr>
           <tr>
@@ -333,15 +367,20 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1068957187060.html" target="_blank" rel="noopener noreferrer">1688 1068957187060 ↗</a><br>
               <b>广州利安德户外运动用品有限公司</b> (货号：<code>047</code>)<br>
-              <code>四星供应链</code> ｜ <b>单品好评率 100% (10+条评价)</b> ｜ 品质100% ｜ 履约100%<br>
-              SKU 1:1直配：23个SKU（海豚哨5色 <b>¥6.00~¥9.76</b>、二代升级款 <b>¥12.46</b>、买一送一2套 <b>¥13.81</b>）
+              <code>四星供应链</code> ｜ <b>单品好评率 100% (10+评价)</b> ｜ 品质100%<br>
+              23个SKU全覆盖 <b>¥6.00~¥13.81</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/775930396793.html" target="_blank" rel="noopener noreferrer">1688 775930396793 ↗</a> / <a class="ali-link" href="https://detail.1688.com/offer/863142022940.html" target="_blank" rel="noopener noreferrer">1688 863142022940 ↗</a> <b>义乌市聚莱电商</b>（<code>四星供应链</code>·品质99.6%·履约99.8%·<b>单品复购率 40.31%</b>｜全15款SKU 1:1同源 <b>¥0.70~¥1.99</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/38746974929.html" target="_blank" rel="noopener noreferrer">1688 38746974929 ↗</a> <b>金华市星核体育</b>（<code>四星供应链</code>·品质99.9%·单品60+条评价·回头率55.5%｜货号<code>6301</code>无核高音哨 <b>¥2.00~¥2.50</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/775930396793.html" target="_blank" rel="noopener noreferrer">1688 775930396793 ↗</a> / <a class="ali-link" href="https://detail.1688.com/offer/863142022940.html" target="_blank" rel="noopener noreferrer">1688 863142022940 ↗</a> <b>义乌聚莱电商</b>（<code>四星供应链</code>·复购40.31%｜全15款SKU 1:1同源 <b>¥0.70~¥1.99</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/38746974929.html" target="_blank" rel="noopener noreferrer">1688 38746974929 ↗</a> <b>金华星核体育</b>（<code>四星供应链</code>·单品60+评价｜货号<code>6301</code> <b>¥2.00~¥2.50</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td>① <b>增益组合装</b>：二代升级海豚哨 + 食品级硅胶护齿咬嘴2个 + 挂绳 + 收纳盒<br>② <b>组合双只装</b>：【买一送一】双色2只装</td>
+            <td>
+              ① <b>原厂自带「二代升级款(含护齿咬嘴+挂绳+收纳盒) & 买一送一2只装」</b>：<a class="acc-link" href="https://detail.1688.com/offer/1068957187060.html" target="_blank" rel="noopener noreferrer">二代套组 1068957187060 ↗</a> 广州利安德 / <a class="acc-link" href="https://detail.1688.com/offer/775930396793.html" target="_blank" rel="noopener noreferrer">双只装 775930396793 ↗</a> 义乌聚莱<br>
+              ② <b>独立增益升级款（带硅胶护齿套+指环夹裁判口哨套组）</b>：<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/40318093182.html" target="_blank" rel="noopener noreferrer">护齿指环哨 40318093182 ↗</a> 义乌极风体育（四星·<b>单品好评率100% [50+评价]</b>·复购50%·货号<code>乃力NL-81</code> <b>¥3.00/套</b>）<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/816834631685.html" target="_blank" rel="noopener noreferrer">护齿哨 816834631685 ↗</a> 义乌动泰体育（五星供应链·品质100%·货号<code>MK-3028</code> <b>¥3.00/套</b>）
+            </td>
             <td>单只装：<span class="price">¥25.00</span> / ¥29.40 (<span class="margin">90.0%</span>)<br>买一送一：<span class="price">¥39.80</span> / ¥46.80 (<span class="margin">87.4%</span>)</td>
           </tr>
           <tr>
@@ -353,15 +392,20 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/906307641493.html" target="_blank" rel="noopener noreferrer">1688 906307641493 ↗</a><br>
               <b>义乌市云湃日用品有限公司</b> (货号：<code>A12035</code>)<br>
-              <code>四星供应链</code> ｜ <b>单品好评率 100% (10+条评价)</b> ｜ 品质99.9% ｜ 履约99.7%<br>
-              SKU直配：水滴/椭圆/D型海绵鼻托贴 16副/40副袋装送镊子 成套约<b>¥0.95</b>
+              <code>四星供应链</code> ｜ <b>单品好评率 100% (10+评价)</b> ｜ 品质99.9%<br>
+              袋装送镊子套组约<b>¥0.95</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/605034920928.html" target="_blank" rel="noopener noreferrer">1688 605034920928 ↗</a> <b>丹阳视澄眼镜</b>（<code>五星供应链</code>·品质100%·履约99.9%·<b>回头率 70.3%</b>·复购21.9%｜货号<code>BT011</code> 11个SKU椭圆/D型/水滴×1.0/1.5mm 约<b>¥0.20/副</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/657207591375.html" target="_blank" rel="noopener noreferrer">1688 657207591375 ↗</a> <b>丹阳欧彼利眼镜</b>（<code>四星供应链</code>·品质100%·履约99.9%·回头率60.1%｜货号<code>BT011</code>防脱妆海绵鼻贴11个SKU 约<b>¥0.20/副</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/605034920928.html" target="_blank" rel="noopener noreferrer">1688 605034920928 ↗</a> <b>丹阳视澄眼镜</b>（<code>五星供应链</code>·品质100%·<b>回头率 70.3%</b>｜货号<code>BT011</code> 11款SKU 约<b>¥0.20/副</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/657207591375.html" target="_blank" rel="noopener noreferrer">1688 657207591375 ↗</a> <b>丹阳欧彼利眼镜</b>（<code>四星供应链</code>·品质100%·回头率60.1%｜货号<code>BT011</code> 约<b>¥0.20/副</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：高密EVA防脱妆海绵鼻托 40副混装(薄厚各20副) + 不锈钢辅助贴合镊子 + 便携分格收纳盒 (成本¥1.85)</td>
+            <td>
+              ① <b>原厂自带「16副/40副袋装【送镊子】」组合装</b>：<a class="acc-link" href="https://detail.1688.com/offer/906307641493.html" target="_blank" rel="noopener noreferrer">原厂送镊套组 906307641493 ↗</a> 义乌云湃（四星·<b>单品好评率100%</b>·货号<code>A12035</code> <b>¥0.95/套</b>）<br>
+              ② <b>独立增益配件（高精辅助贴合镊子 + 4.5cm/5.5cm透明收纳小盒）</b>：<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">镊子+透明盒 1033237819599 ↗</a> 义乌妖姬屋（四星·品质99.9%｜内置<code>高精镊子</code>+<code>透明收纳盒*4.5cm/5.5cm</code> <b>¥0.35~¥0.60</b>）<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/1075184626433.html" target="_blank" rel="noopener noreferrer">尖头/弯头镊子 1075184626433 ↗</a> 广州童梦（五星供应链·品质100%·回头率72.1%）
+            </td>
             <td>16副装：<span class="price">¥15.80</span> / ¥18.60 (<span class="margin">91.77%</span>)<br>40副装：<span class="price">¥22.80</span> / ¥26.80 (<span class="margin">91.89%</span>)</td>
           </tr>
           <tr>
@@ -373,16 +417,21 @@
             </td>
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1055460188912.html" target="_blank" rel="noopener noreferrer">1688 1055460188912 ↗</a><br>
-              <b>金华市云童工贸有限公司</b> (金华同城源头)<br>
-              <code>五星供应链</code> ｜ <b>单品好评率 100% (100+条评价)</b> ｜ 品质99.9% ｜ 履约99.9% ｜ <b>回头率 76.4%</b><br>
-              SKU直配：8个SKU <code>【52/78/104钉】透明/纯白/画线耐高温长钉板</code> <b>¥1.00~¥1.50/件</b>
+              <b>金华市云童工贸有限公司</b><br>
+              <code>五星供应链</code> ｜ <b>单品好评率 100% (100+评价)</b> ｜ <b>回头率 76.4%</b><br>
+              8款<code>52/78/104钉</code> <b>¥1.00~¥1.50/件</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/1063800426253.html" target="_blank" rel="noopener noreferrer">1688 1063800426253 ↗</a> <b>金华市造趣文化用品</b>（<code>五星供应链</code>·品质100%·履约100%·<b>回头率 79.9%</b>｜货号<code>PDB</code> <b>48个SKU全覆盖</b>透明/纯白/画线/网格/猫爪 <b>¥1.00~¥1.37</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/1062211507363.html" target="_blank" rel="noopener noreferrer">1688 1062211507363 ↗</a> <b>义乌市宁晟文化用品</b>（货号<code>BDH313-B50</code>｜<code>【可拼接/1.8mm长钉/耐高温】52/78/104钉</code> <b>¥3.00~¥3.31</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/1063800426253.html" target="_blank" rel="noopener noreferrer">1688 1063800426253 ↗</a> <b>金华造趣文化</b>（<code>五星供应链</code>·品质100%·<b>回头率 79.9%</b>｜货号<code>PDB</code> <b>48个SKU全覆盖</b> <b>¥1.00~¥1.37</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/1062211507363.html" target="_blank" rel="noopener noreferrer">1688 1062211507363 ↗</a> <b>义乌宁晟文化</b>（货号<code>BDH313-B50</code> 1.8mm长钉 <b>¥3.00~¥3.31</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：耐高温长钉拼豆板(52/78/104钉可选) 2块/4块拼接装 + 耐高温助烫纸10张 + 夹豆镊 (成本¥4.50~¥8.80)</td>
+            <td>
+              <b>增益组合配件（耐高温助烫纸/熨烫布 + 尖头/弯头夹豆镊子 + 豆铲豆盘工具包）</b>：<br>
+              ① <a class="acc-link" href="https://detail.1688.com/offer/1075184626433.html" target="_blank" rel="noopener noreferrer">助烫布+镊子 1075184626433 ↗</a> 广州童梦文化（<code>五星供应链</code>·品质100%·履约99.9%·<b>回头率 72.1%</b>｜30个SKU：<code>拼豆烘焙布/助烫纸</code>+<code>专用镊子尖头/弯头</code>+<code>拼豆美纹纸</code> <b>¥0.30~¥1.50</b>）<br>
+              ② <a class="acc-link" href="https://detail.1688.com/offer/1004133863316.html" target="_blank" rel="noopener noreferrer">四件套+助烫纸 1004133863316 ↗</a> 金华英妮供应链（货号<code>961291</code>｜<code>【拼豆四件套】豆铲豆笔豆盘镊子</code>+<code>15*15cm助烫纸5张</code> <b>¥0.50~¥2.80</b>）<br>
+              ③ <a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">全套工具包 1033237819599 ↗</a> 义乌妖姬屋（四星·65个SKU含<code>助烫纸*5/500</code>+<code>高精镊子</code>+<code>工具包4/5/6/7件套</code>）
+            </td>
             <td>单板：<span class="price">¥21.50</span> / ¥25.30 (<span class="margin">84.6%~93.0%</span>)<br>2个装：<span class="price">¥38.80</span> / ¥45.60 (<span class="margin">82.9%</span>)</td>
           </tr>
           <tr>
@@ -395,15 +444,18 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1059480942553.html" target="_blank" rel="noopener noreferrer">1688 1059480942553 ↗</a><br>
               <b>义乌市蒙幻文化用品有限公司</b> (货号：<code>解压橡皮擦</code>)<br>
-              <code>四星供应链</code> ｜ 品质达标率 99.9% ｜ 履约率 99.5% ｜ <b>回头率 62.0%</b> ｜ 复购率 37.5%<br>
-              SKU直配：<code>感官石解压橡皮擦【6个盒装】送1个防丢绳</code> <b>¥2.00~¥2.05/盒</b>
+              <code>四星供应链</code> ｜ 品质99.9% ｜ <b>回头率 62.0%</b> ｜ 复购37.5%<br>
+              <code>【6个盒装】送1个防丢绳</code> <b>¥2.00~¥2.05/盒</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/1032916690926.html" target="_blank" rel="noopener noreferrer">1688 1032916690926 ↗</a> <b>义乌市廷煊文具</b>（品质达标率100%·复购率35.63%·单品10+评价｜货号<code>解压橡皮擦</code> 5个SKU<code>【一盒6只】带一根防丢绳</code> <b>¥1.00~¥2.95/盒</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/1061519165355.html" target="_blank" rel="noopener noreferrer">1688 1061519165355 ↗</a> <b>义乌市率行文化用品</b>（品质达标率100%·复购率25.9%｜货号<code>感官石橡皮</code> <code>盒装(6橡皮+防丢绳)</code> <b>¥2.00~¥2.05/盒</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/1032916690926.html" target="_blank" rel="noopener noreferrer">1688 1032916690926 ↗</a> <b>义乌廷煊文具</b>（品质100%·复购35.63%｜5个SKU<code>【一盒6只】带一根防丢绳</code> <b>¥1.00~¥2.95/盒</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/1061519165355.html" target="_blank" rel="noopener noreferrer">1688 1061519165355 ↗</a> <b>义乌率行文化</b>（品质100%｜<code>盒装(6橡皮+防丢绳)</code> <b>¥2.00~¥2.05/盒</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：感官石解压橡皮擦6块盒装(多巴胺/治愈色) + 防丢挂绳2根 + 便携亚克力收纳盒 (成本¥2.95~¥4.10)</td>
+            <td>
+              ① <b>原厂自带「6块盒装+送防丢挂绳」组合装</b>：<a class="acc-link" href="https://detail.1688.com/offer/1059480942553.html" target="_blank" rel="noopener noreferrer">蒙幻盒装送绳 1059480942553 ↗</a> (¥2.05) / <a class="acc-link" href="https://detail.1688.com/offer/1032916690926.html" target="_blank" rel="noopener noreferrer">廷煊6只送绳 1032916690926 ↗</a> (¥2.95)<br>
+              ② <b>独立增益配件（便携透明收纳盒 4.5cm/5.5cm + 挂件链条）</b>：<a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">透明盒+挂链 1033237819599 ↗</a> 义乌妖姬屋（四星供应链·品质99.9%｜内置<code>透明收纳盒*4.5cm/5.5cm</code>+<code>链条挂件</code> <b>¥0.45/个</b>）
+            </td>
             <td>6块盒装：<span class="price">¥19.80</span> / ¥23.30 (<span class="margin">85.1%~89.6%</span>)<br>12块双盒：<span class="price">¥32.80</span> / ¥38.60 (<span class="margin">87.5%</span>)</td>
           </tr>
           <tr>
@@ -416,16 +468,20 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1033752909096.html" target="_blank" rel="noopener noreferrer">1688 1033752909096 ↗</a><br>
               <b>温州帛然工艺品有限公司</b> (货号：<code>008</code>)<br>
-              <code>四星供应链</code> ｜ <b>单品好评率 100% (20+条评价)</b> ｜ 品质100% ｜ 履约99.2% ｜ 回头率55.3%<br>
-              SKU直配：20个SKU（<code>28格棕色中英文</code>、<code>28格棕色中文大字</code>、<code>28格避光黑</code>）<b>¥10.00</b>
+              <code>四星供应链</code> ｜ <b>单品好评率 100% (20+评价)</b> ｜ 品质100%<br>
+              20个SKU（<code>28格棕色中英文/中文大字/避光黑</code>）<b>¥10.00</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/876614430797.html" target="_blank" rel="noopener noreferrer">1688 876614430797 ↗</a> <b>台州市悦纳塑业</b>（<code>三星供应链</code>·品质99.3%·履约98.2%·回头率59.7%·<b>单品复购率 50%</b>｜6个SKU<code>透咖色【28格】/透灰色【28格】</code> <b>¥13.00~¥15.40</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/910817783435.html" target="_blank" rel="noopener noreferrer">1688 910817783435 ↗</a> <b>杭州一路发严选电商</b>（货号<code>组合</code>｜<code>28格棕色（带密封圈）新款</code> <b>¥8.00~¥16.11</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/876614430797.html" target="_blank" rel="noopener noreferrer">1688 876614430797 ↗</a> <b>台州悦纳塑业</b>（<code>三星供应链</code>·品质99.3%·<b>单品复购率 50%</b>｜<code>透咖色【28格】</code> <b>¥13.00~¥15.40</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/910817783435.html" target="_blank" rel="noopener noreferrer">1688 910817783435 ↗</a> <b>杭州一路发严选</b>（货号<code>组合</code>｜<code>28格棕色带密封圈新款</code> <b>¥8.00~¥16.11</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：28格棕色密封避光分装药盒 + 不锈钢刀片精准切药器/磨药器 + 剂量时间贴纸 (成本¥11.50~¥16.90)</td>
-            <td>28格避光款：<span class="price">¥49.80</span> / ¥58.60 (<span class="margin">69.1%~79.9%</span>)<br>+切药器套组：<span class="price">¥61.80</span> / ¥72.70 (<span class="margin">72.7%</span>)</td>
+            <td>
+              <b>增益组合配件（对标母本 `28格棕色+切药器` ¥61.38 的便携切药器/分药器源头厂）</b>：<br>
+              ① <b>S1高性价比切药器(四星供应链·品质99.9%·履约99.7%)</b>：<a class="acc-link" href="https://detail.1688.com/offer/922287461389.html" target="_blank" rel="noopener noreferrer">便携切药器 922287461389 ↗</a> 义乌市云湃日用品（货号<code>7224</code> 日式二分之一/四分之一不锈钢刀片切药器 蓝/白/透明 <b>¥1.00~¥1.17/个</b>，配药盒总成本仅 <b>¥11.17</b>，毛利 <b>81.9%</b>！）<br>
+              ② <b>S2高端旗舰切药器(五星供应链·单品好评率 100% [10+评价])</b>：<a class="acc-link" href="https://detail.1688.com/offer/1069414471081.html" target="_blank" rel="noopener noreferrer">高端切药器 1069414471081 ↗</a> & <a class="acc-link" href="https://detail.1688.com/offer/955181150071.html" target="_blank" rel="noopener noreferrer">带刷切药器 955181150071 ↗</a> 金华市一栗塑业（货号<code>HY-04/YL016</code> <code>【1/2+1/4带清洁刷】</code> <b>¥13.00~¥14.00</b>）
+            </td>
+            <td>28格避光款：<span class="price">¥49.80</span> / ¥58.60 (<span class="margin">69.1%~79.9%</span>)<br>+切药器套组：<span class="price">¥61.80</span> / ¥72.70 (<span class="margin">81.9%</span>)</td>
           </tr>
           <tr>
             <td><strong>储备P0 · REXL-P0-17</strong><br>C型颈椎按摩反弓牵引枕</td>
@@ -436,15 +492,18 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/693132184134.html" target="_blank" rel="noopener noreferrer">1688 693132184134 ↗</a><br>
               <b>江苏佳雷家居用品有限公司</b> (货号：<code>JL22112101</code>)<br>
-              <code>五星供应链</code> ｜ 品质达标率 99.6% ｜ 履约率 100% ｜ 复购率 27.94%<br>
-              SKU直配：PU自结皮<code>天蓝色/粉色/灰白色/黑色</code>颈椎重力指压牵引枕 <b>¥10.00</b>
+              <code>五星供应链</code> ｜ 品质99.6% ｜ 履约100% ｜ 复购27.94%<br>
+              PU自结皮<code>天蓝/粉色/灰白/黑</code> <b>¥10.00</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/816312887306.html" target="_blank" rel="noopener noreferrer">1688 816312887306 ↗</a> <b>东阳市湘凯橡胶制品</b>（<code>四星供应链</code>·<b>单品好评率 91.5% [40+条评价]</b>·品质100%·履约99.5%｜货号<code>6154</code>粉色/蓝色/米白反弓枕 <b>¥6.00~¥8.00</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/950621139703.html" target="_blank" rel="noopener noreferrer">1688 950621139703 ↗</a> <b>广州市云伯汇医疗</b>（<code>四星供应链</code>·品质100%·回头率59%｜8磁石款 <b>¥23.00~¥23.80</b>） / <a class="ali-link" href="https://detail.1688.com/offer/808753527151.html" target="_blank" rel="noopener noreferrer">1688 808753527151 ↗</a> 河北宏昌（<code>五星供应链</code> <b>¥19.00</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/816312887306.html" target="_blank" rel="noopener noreferrer">1688 816312887306 ↗</a> <b>东阳湘凯橡胶</b>（<code>四星供应链</code>·<b>单品好评率 91.5% [40+评价]</b>·品质100%｜货号<code>6154</code>粉/蓝/米白 <b>¥6.00~¥8.00</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/808753527151.html" target="_blank" rel="noopener noreferrer">1688 808753527151 ↗</a> <b>河北宏昌医疗</b>（<code>五星供应链</code>·品质100% <b>¥19.00</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>升级独立SKU</b>：全新8磁石温感热敷款 + 亲肤透气冰丝枕套 (成本¥10.00~¥23.80)</td>
+            <td>
+              ① <b>升级独立SKU（全新8磁石款颈椎反弓牵引枕）</b>：<a class="acc-link" href="https://detail.1688.com/offer/950621139703.html" target="_blank" rel="noopener noreferrer">8磁石升级款 950621139703 ↗</a> 广州市云伯汇医疗（<code>四星供应链</code>·品质100%·回头率59%｜8磁石护理款 <b>¥23.00~¥23.80</b>）<br>
+              ② <b>增益组合配件（草本艾草颈椎热敷穴位贴12贴/盒）</b>：<a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">颈椎艾草贴 1003178936762 ↗</a> 河南张仲景生物科技（<code>五星供应链</code>·品质100%·履约99.9% <b>¥1.20/盒</b>）
+            </td>
             <td>舒缓枕：<span class="price">¥53.50</span> / ¥62.90 (<span class="margin">81.3%~88.8%</span>)<br>8磁石款：<span class="price">¥62.50</span> / ¥73.50 (<span class="margin">61.9%~84.0%</span>)</td>
           </tr>
           <tr>
@@ -456,16 +515,21 @@
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/1068910855535.html" target="_blank" rel="noopener noreferrer">1688 1068910855535 ↗</a><br>
               <b>江都区小纪镇菲迪斯体育用品厂</b> (货号：<code>1</code>)<br>
-              <code>五星供应链</code> ｜ 品质达标率 100% ｜ 履约率 100% ｜ 回头率 56.2%<br>
-              SKU直配：<code>紫色/粉色/肤色/黑色</code> × <code>儿童/成人</code>分码防张嘴呼吸矫正头套 <b>¥2.00~¥2.50/件</b>
+              <code>五星供应链</code> ｜ 品质100% ｜ 履约100% ｜ 回头率56.2%<br>
+              儿童/成人分码防张嘴头套 <b>¥2.00~¥2.50/件</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/1076405868524.html" target="_blank" rel="noopener noreferrer">1688 1076405868524 ↗</a> <b>东莞市寮步嘉富运动用品厂</b>（<b>店铺好评率 94.0%</b>·品质100%·复购42.86%｜货号<code>矫正带</code> 8款SKU 1:1同源<code>樱落粉/芦穗灰×2-7岁/8岁-成人×1件/2件</code> <b>¥4.00~¥4.80</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/934064048639.html" target="_blank" rel="noopener noreferrer">1688 934064048639 ↗</a> <b>义乌青歌家居</b>（<code>五星供应链</code>·品质100%·履约100%·复购33.33%｜货号<code>QG-806</code> <b>¥8.00~¥8.80</b>） / <a class="ali-link" href="https://detail.1688.com/offer/744003959425.html" target="_blank" rel="noopener noreferrer">1688 744003959425 ↗</a> 广州云伯汇 (<b>¥4.00~¥4.80</b>)
+              ② <a class="ali-link" href="https://detail.1688.com/offer/1076405868524.html" target="_blank" rel="noopener noreferrer">1688 1076405868524 ↗</a> <b>东莞嘉富运动用品厂</b>（<b>店铺好评率 94.0%</b>·品质100%·复购42.86%｜货号<code>矫正带</code> 8款SKU 1:1同源 <b>¥4.00~¥4.80</b>）<br>
+              ③ <a class="ali-link" href="https://detail.1688.com/offer/934064048639.html" target="_blank" rel="noopener noreferrer">1688 934064048639 ↗</a> <b>义乌青歌家居</b>（<code>五星供应链</code>·品质100%·货号<code>QG-806</code> <b>¥8.00~¥8.80</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>增益组合装</b>：双提拉无痕冰丝闭嘴绷带 + 便携防尘换洗袋（单件装 / 2件换洗装）</td>
-            <td>单件装：<span class="price">¥65.80</span> / ¥77.40 (<span class="margin">86.6%~96.2%</span>)<br>2件装：<span class="price">¥93.00</span> / ¥109.40 (<span class="margin">89.7%</span>)</td>
+            <td>
+              ① <b>原厂自带「第二件半价2件换洗装」</b>：<a class="acc-link" href="https://detail.1688.com/offer/1076405868524.html" target="_blank" rel="noopener noreferrer">2件换洗装 1076405868524 ↗</a> 东莞嘉富（自带<code>樱落粉/芦穗灰×儿童/成人×2件装</code>SKU）<br>
+              ② <b>独立增益组合配件（低致敏睡眠防张嘴闭口贴 30贴/盒）</b>：<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/1038119500865.html" target="_blank" rel="noopener noreferrer">闭口贴 1038119500865 ↗</a> 源头工厂（<code>五星供应链</code>·<b>单品好评率 100% [1800+条评价!]</b>·品质100%·货号<code>卡通款闭嘴贴</code> <code>【1盒装】30贴低致敏</code> <b>¥2.00/盒</b>）<br>
+              • <a class="acc-link" href="https://detail.1688.com/offer/814997734129.html" target="_blank" rel="noopener noreferrer">儿童封口贴 814997734129 ↗</a> 东阳伟冬贸易（<code>五星供应链</code>·品质100%·履约100%·回头率60.2%｜<code>一盒30贴</code> <b>¥2.00/盒</b>）
+            </td>
+            <td>单件装：<span class="price">¥65.80</span> / ¥77.40 (<span class="margin">86.6%~96.2%</span>)<br>2件/配贴装：<span class="price">¥93.00</span> / ¥109.40 (<span class="margin">89.7%</span>)</td>
           </tr>
           <tr>
             <td><strong>储备P0 · REXL-P0-16</strong><br>TFCC手腕损伤护腕固定支具</td>
@@ -475,17 +539,20 @@
             </td>
             <td>
               <a class="ali-link" href="https://detail.1688.com/offer/904343633254.html" target="_blank" rel="noopener noreferrer">1688 904343633254 ↗</a><br>
-              <b>威斯登(扬州)体育用品有限公司</b> (扬州同城｜货号：<code>A7192</code>)<br>
-              <code>五星供应链</code> ｜ 品质达标率 100% ｜ 履约率 100% ｜ <b>回头率 71.1%</b> ｜ 复购率 50%<br>
-              SKU直配：<code>ブラック[黑]/グレー[灰]/ピンク[粉]/肌色[肤]</code> TFCC双绑带加压护腕 <b>¥9.00~¥9.46/件</b>
+              <b>威斯登(扬州)体育用品有限公司</b> (货号：<code>A7192</code>)<br>
+              <code>五星供应链</code> ｜ 品质100% ｜ 履约100% ｜ <b>回头率 71.1%</b><br>
+              TFCC双绑带加压护腕 <b>¥9.00~¥9.46/件</b>
             </td>
             <td>
-              ② <a class="ali-link" href="https://detail.1688.com/offer/1038868054393.html" target="_blank" rel="noopener noreferrer">1688 1038868054393 ↗</a> <b>双星体育用品(江苏)</b>（<code>五星供应链</code>·品质100%·履约99.7%·回头率59%｜货号<code>SX2039</code> 12个SKU<code>黑/灰×左/右×S/M/L</code> <b>¥6.00</b>）<br>
-              ③ <a class="ali-link" href="https://detail.1688.com/offer/894880939076.html" target="_blank" rel="noopener noreferrer">1688 894880939076 ↗</a> <b>衡水嘉耀医疗器械</b>（<code>五星供应链</code>·<b>单品好评率 100% [10+条评价]</b>·品质100%｜货号<code>HW-06</code>钢板固定款 <b>¥15.00</b>）<br>
-              ④ 旋钮旗舰款：<a class="ali-link" href="https://detail.1688.com/offer/999438606505.html" target="_blank" rel="noopener noreferrer">1688 999438606505 ↗</a> 扬州宇皓（<code>五星供应链</code>·品质100%·履约100%｜货号<code>2098</code>旋钮调节款 <b>¥26.00~¥28.80</b>）
+              ② <a class="ali-link" href="https://detail.1688.com/offer/1038868054393.html" target="_blank" rel="noopener noreferrer">1688 1038868054393 ↗</a> <b>双星体育用品(江苏)</b>（<code>五星供应链</code>·品质100%·履约99.7%｜货号<code>SX2039</code> 12个SKU左右×S/M/L <b>¥6.00</b>）
             </td>
             <td><span class="tag-accept">ACCEPT</span></td>
-            <td><b>全矩阵4阶SKU</b>：TFCC双加压舒适款(¥9.46) + 铝合金钢板固定款(¥15.00) + 4板强支撑款(¥15.00) + BOA旋钮调节顶配款(¥26.00)</td>
+            <td>
+              <b>全矩阵4阶升级SKU及对应 1688 专属源头厂</b>：<br>
+              ① <b>升级1（铝合金钢板固定/4板强支撑款）</b>：<a class="acc-link" href="https://detail.1688.com/offer/894880939076.html" target="_blank" rel="noopener noreferrer">钢板款 894880939076 ↗</a> 衡水嘉耀医疗器械（<code>五星供应链</code>·<b>单品好评率 100% [10+评价]</b>·品质100%｜货号<code>HW-06</code> <b>¥15.00</b> → 折后 ¥59.80）<br>
+              ② <b>升级2（BOA旋钮调节钢丝锁紧顶配款）</b>：<a class="acc-link" href="https://detail.1688.com/offer/999438606505.html" target="_blank" rel="noopener noreferrer">旋钮顶配款 999438606505 ↗</a> 扬州宇皓体育用品（<code>五星供应链</code>·品质100%·履约100%｜货号<code>2098</code> <b>¥26.00~¥28.80</b> → 折后 ¥97.80）<br>
+              ③ <b>增益配件（艾草手腕腱鞘热敷贴）</b>：<a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">艾草贴 1003178936762 ↗</a> 河南张仲景生物 (<b>¥1.20/盒</b>)
+            </td>
             <td>TFCC款：<span class="price">¥54.80</span> / ¥64.50 (<span class="margin">82.7%</span>)<br>旋钮款：<span class="price">¥97.80</span> / ¥115.10 (<span class="margin">72.6%</span>)</td>
           </tr>
         </tbody>
@@ -494,7 +561,7 @@
 
     <!-- TAB 3 -->
     <div id="t3" class="card hidden">
-      <h2>三、 重点立项品「逐 SKU 级」`accio_sourcing_probe.py` 实盘穿透与定价毛利明细表</h2>
+      <h2>三、 重点立项品「逐 SKU 级」对版明细 & 全量 12 款单品「ERR-37 增益组合配件」1688 源头厂专表</h2>
 
       <h3>3.1 REXL-P0-18 户外防滑徒步半指手套（对标 <a class="tb-link" href="https://detail.tmall.com/item.htm?id=1080669558825&sku_properties=20509%3A28383" target="_blank" rel="noopener noreferrer">rexl 1080669558825 (均码 ¥67.2) ↗</a> & <a class="tb-link" href="https://detail.tmall.com/item.htm?id=1003635269192" target="_blank" rel="noopener noreferrer">李宁 1003635269192 (¥44.0) ↗</a>）</h3>
       <table>
@@ -509,38 +576,260 @@
           <tr><td><code>931骑士黑/公主粉—半指防滑款</code> (S/M/L/XL)</td><td>931骑士黑/樱花粉【蜂窝硅胶防滑耐磨】S/M/L/XL</td><td>S1 <a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯(五星)：货号<code>931</code> <code>网布931黑色/粉色/黑灰/灰粉</code> S/M/L/XL</td><td>¥12.00</td><td>¥44.00</td><td class="price">¥44.00</td><td>¥51.80</td><td class="margin">72.73%</td></tr>
           <tr><td><code>567潮流黑/粉灰—透气经典款</code> (S/M/L)</td><td>567透气黑/灰粉【AB网冰丝散热】S/M/L</td><td>S2A <a class="ali-link" href="https://detail.1688.com/offer/1047222415122.html" target="_blank" rel="noopener noreferrer">1688 1047222415122 ↗</a> 辛集初语服饰(五星)：货号<code>15666</code> <code>AB网半指黑色/灰色/粉色</code> S/M/L</td><td>¥13.00~¥14.00</td><td>¥44.00</td><td class="price">¥46.80</td><td>¥55.10</td><td class="margin">70.09%~72.22%</td></tr>
           <tr><td><code>454经典黑—防滑亲肤款</code> (M/L/XL)</td><td>技师加强款-曜石黑/军绿【耐磨防起茧】M/L/XL</td><td>S2B <a class="ali-link" href="https://detail.1688.com/offer/588046670139.html" target="_blank" rel="noopener noreferrer">1688 588046670139 ↗</a> 辛集昕晴手套厂(四星·96%单品好评)：货号<code>008</code> <code>技师半指黑/军绿/沙色</code> M/L/XL</td><td>¥5.00~¥5.20</td><td>¥44.00</td><td class="price">¥39.80</td><td>¥46.80</td><td class="margin">86.93%~87.44%</td></tr>
-          <tr><td><code>升级旗舰款</code> (ERR-37升级加层)</td><td>升级01B尊享款【加厚立体硅胶护关节】M/L/XL</td><td>S1 <a class="ali-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">1688 1018623862377 ↗</a> 辛集克莱特斯：<code>升级01B黑色/灰色</code> M/L/XL</td><td>¥15.50</td><td>—</td><td class="price">¥55.80</td><td>¥65.60</td><td class="margin">72.22%</td></tr>
+          <tr><td><code>升级旗舰款</code> (ERR-37升级加层)</td><td>升级01B尊享款【加厚立体硅胶护关节】M/L/XL</td><td>S1 <a class="acc-link" href="https://detail.1688.com/offer/1018623862377.html" target="_blank" rel="noopener noreferrer">升级01B 1018623862377 ↗</a> 辛集克莱特斯：<code>升级01B黑色/灰色</code> M/L/XL</td><td>¥15.50</td><td>—</td><td class="price">¥55.80</td><td>¥65.60</td><td class="margin">72.22%</td></tr>
+          <tr><td><code>增益组合装</code> (ERR-37增益加层)</td><td>透气网盾牌半指手套 + 铝合金防丢快挂登山扣夹</td><td>主品 <a class="ali-link" href="https://detail.1688.com/offer/908792234196.html" target="_blank" rel="noopener noreferrer">908792234196 ↗</a> (¥8.90) + 配件 <a class="acc-link" href="https://detail.1688.com/offer/964778104969.html" target="_blank" rel="noopener noreferrer">防丢扣 964778104969 ↗</a> 东阳新跃 (¥1.20) / <a class="acc-link" href="https://detail.1688.com/offer/864571428325.html" target="_blank" rel="noopener noreferrer">战术夹 864571428325 ↗</a> (¥0.65)</td><td>¥9.55~¥10.10</td><td>—</td><td class="price">¥69.80</td><td>¥82.10</td><td class="margin">85.53%~86.32%</td></tr>
         </tbody>
       </table>
 
-      <h3>3.2 全量重探前后纠偏对比（`accio_sourcing_probe.py` 抓出隐蔽错配并100%替换为同模货源）</h3>
+      <h3>3.2 全量 12 款单品「ERR-37 增益组合配件 / 升级款」专属 1688 源头厂穿透核验总表（全部可点击直达）</h3>
       <table>
         <thead>
           <tr>
-            <th>所属单品</th><th>天猫竞品真实 SKU 规格</th><th>被 `accio_sourcing_probe.py` 揪出的旧版问题货源（已淘汰）</th><th>`accio_sourcing_probe.py` 1:1 精确对版 1688 货源与实测口碑</th><th>1688 拿货价 vs 天猫价</th>
+            <th>所属主品</th>
+            <th>我方设计的 ERR-37 增益组合 / 升级 SKU 名称</th>
+            <th>组合方式（原厂自带套组 vs 独立配件厂合包）</th>
+            <th>对应 1688 货源链接（点击直达）与工厂名称</th>
+            <th>实测货号 & 底层 SKU 规格</th>
+            <th>三维好评率 / 供应链星级实测</th>
+            <th>配件/升级款拿货价</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><b>REXL 登山半指手套</b><br><a class="tb-link" href="https://detail.tmall.com/item.htm?id=1080669558825&sku_properties=20509%3A28383" target="_blank" rel="noopener noreferrer">rexl 1080669558825 ↗</a></td>
-            <td><code>sku_properties=20509:28383</code>（均码 × 7色透气网盾牌翻盖/露指手套）</td>
-            <td>❌ 直接拿含户外模特的主图搜1688会误召回「冲锋衣」；只看李宁 `931` 会漏掉 REXL 67.2元链接里的「透气网盾牌均码7色」同模厂</td>
-            <td>✅ `extract-tmall-sku` 提取纯净白底SKU图召回河北辛集3家同模厂：<br>• <a class="ali-link" href="https://detail.1688.com/offer/908792234196.html" target="_blank" rel="noopener noreferrer">1688 908792234196 ↗</a> 辛集亿德福（<b>店铺好评率 98.6%</b>·货号<code>5</code>·7色透气网盾牌）<br>• <a class="ali-link" href="https://detail.1688.com/offer/909288241506.html" target="_blank" rel="noopener noreferrer">1688 909288241506 ↗</a> 辛集迈瑟尔（<b>四星供应链·单品好评率 98.7%</b>·7色×均码）<br>• <a class="ali-link" href="https://detail.1688.com/offer/1026437611307.html" target="_blank" rel="noopener noreferrer">1688 1026437611307 ↗</a> 辛集宏博（<b>五星供应链·5.0满分AAA</b>·货号<code>盾牌网布长指</code>）</td>
-            <td>1688拿货 <b>¥8.00 ~ ¥10.90/双</b><br>vs REXL <b>¥67.20</b><br>(毛利 <span class="margin">83.8%~88.1%</span>)</td>
+            <td><b>1. REXL-P0-18 登山半指手套</b></td>
+            <td>手套 + 户外防丢快挂登山扣夹</td>
+            <td>独立配件厂合包</td>
+            <td>
+              ① <a class="acc-link" href="https://detail.1688.com/offer/964778104969.html" target="_blank" rel="noopener noreferrer">1688 964778104969 ↗</a> <b>东阳市新跃家居用品有限公司</b><br>
+              ② <a class="acc-link" href="https://detail.1688.com/offer/864571428325.html" target="_blank" rel="noopener noreferrer">1688 864571428325 ↗</a> <b>惠州市风译户外用品有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>大手套夹</code>：铝材卡扣+手套夹（黑/蓝/红/绿/黄/橙6色）<br>
+              ② 货号<code>H-018</code>：战术POM防掉手套夹（黑/军绿/卡其/橙4色）
+            </td>
+            <td>
+              ① <code>四星供应链</code> · <b>单品好评率 100% (10+评价)</b> · 品质100% · 复购32.35%<br>
+              ② <code>四星供应链</code> · 品质100% · 履约99.8% · 复购36.11%
+            </td>
+            <td><b>¥0.65 ~ ¥1.20/个</b></td>
           </tr>
           <tr>
-            <td><b>记忆棉坐靠一体坐垫</b><br><a class="tb-link" href="https://detail.tmall.com/item.htm?id=1071121100266" target="_blank" rel="noopener noreferrer">天猫 1071121100266 ↗</a></td>
-            <td><code>44*40*37cm</code> 五分区贝壳护腰坐靠一体垫 × 8色</td>
-            <td>❌ 旧候选 `987053345597` 经探针穿透发现 `货号: 甜圈垫 (40*48*8cm)`，实为无靠背扁平中空坐垫，已物理淘汰</td>
-            <td>✅ <a class="ali-link" href="https://detail.1688.com/offer/1033874625035.html" target="_blank" rel="noopener noreferrer">1688 1033874625035 ↗</a> 保定蠡县逸景（四星供应链·品质100%·货号<code>高腰座垫 40*44*37cm</code>）<br>✅ <a class="ali-link" href="https://detail.1688.com/offer/994747512683.html" target="_blank" rel="noopener noreferrer">1688 994747512683 ↗</a> 保定蠡县卡美奇（<b>店铺好评率96.8%·单品好评率100%</b>·货号<code>贝壳一体美臀坐垫</code>）<br>✅ <a class="ali-link" href="https://detail.1688.com/offer/1015458155944.html" target="_blank" rel="noopener noreferrer">1688 1015458155944 ↗</a> 永康锘衍（五星供应链·<code>贝壳款44*40*37cm</code>）</td>
-            <td>1688拿货 <b>¥26.00 ~ ¥30.00</b><br>vs 我方B路 <b>¥98.00</b><br>(毛利 <span class="margin">71.9%~73.5%</span>)</td>
+            <td><b>2. REXL-P0-13 德绒保暖护肩坎肩</b></td>
+            <td>① 九档三键艾草/海盐电热敷理疗护肩款<br>② 护肩 + 艾草肩周自发热贴(12贴/盒)</td>
+            <td>① 升级款独立源头厂<br>② 独立配件厂合包</td>
+            <td>
+              ① <a class="acc-link" href="https://detail.1688.com/offer/822603758346.html" target="_blank" rel="noopener noreferrer">1688 822603758346 ↗</a> <b>新乐市致源电热科技有限公司</b><br>
+              ② <a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">1688 1003178936762 ↗</a> <b>河南张仲景生物科技有限公司</b><br>
+              ③ <a class="acc-link" href="https://detail.1688.com/offer/1063248859129.html" target="_blank" rel="noopener noreferrer">1688 1063248859129 ↗</a> <b>湖北艾都供应链有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>2024-MHCKHJ001</code>：11个SKU九档三键艾绒/海盐热敷护肩<br>
+              ② 货号<code>贴</code>：艾草肩周/颈椎热敷穴位贴（12贴盒装）
+            </td>
+            <td>
+              ① <code>五星供应链</code> · <b>单品好评率 95.6% (40+评价)</b> · 品质100%<br>
+              ② <code>五星供应链</code> · 品质100% · 履约99.9% · 回头率50.8%<br>
+              ③ <code>五星供应链</code> · 品质100% · 履约100%
+            </td>
+            <td>① 电热款 <b>¥22.00</b><br>② 艾草贴 <b>¥1.20~¥1.50/盒</b></td>
           </tr>
           <tr>
-            <td><b>starmuseum 防雾麂皮绒眼镜布</b><br><a class="tb-link" href="https://detail.tmall.com/item.htm?id=1016799658074" target="_blank" rel="noopener noreferrer">天猫 1016799658074 ↗</a></td>
-            <td><code>升级麂皮绒 混色5/10/20片装</code> + <code>送清洗液组合装</code>（共21个SKU）</td>
-            <td>❌ 普通眼镜布厂只有单片裸布，缺少 `5/10/20片装+送清洗液` 原生组合SKU</td>
-            <td>✅ <a class="ali-link" href="https://detail.1688.com/offer/744741842827.html" target="_blank" rel="noopener noreferrer">1688 744741842827 ↗</a> 温州致奕贸易（四星供应链·品质99.9%·复购55.41%·<b>21个SKU与天猫母本一字不差</b>）<br>✅ <a class="ali-link" href="https://detail.1688.com/offer/551814195976.html" target="_blank" rel="noopener noreferrer">1688 551814195976 ↗</a> 新河新兴眼镜盒厂（五星供应链·<b>单品好评率95% [40+条评价]</b>）</td>
-            <td>1688拿货 <b>¥0.25~¥0.47/片</b><br>vs 天猫 <b>¥37.90~¥101.90</b><br>(毛利 <span class="margin">79.2%~95.5%</span>)</td>
+            <td><b>3. REXL-P0-14 记忆棉坐靠一体坐垫</b></td>
+            <td>① 升级加高贝壳一体垫(40×44×37cm)<br>② 子母组合：一体垫 + 牛角护尾椎单坐垫</td>
+            <td>主厂升级SKU + 同品类专厂组合</td>
+            <td>
+              ① <a class="acc-link" href="https://detail.1688.com/offer/1033874625035.html" target="_blank" rel="noopener noreferrer">1688 1033874625035 ↗</a> <b>蠡县逸景家居</b> / <a class="acc-link" href="https://detail.1688.com/offer/1015458155944.html" target="_blank" rel="noopener noreferrer">1688 1015458155944 ↗</a> <b>永康锘衍工贸</b><br>
+              ② <a class="acc-link" href="https://detail.1688.com/offer/870750426337.html" target="_blank" rel="noopener noreferrer">1688 870750426337 ↗</a> <b>南通悦莱思家居用品有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>高腰座垫</code>：<code>【升级加高】40*44*37cm</code><br>
+              ② 货号<code>牛角坐垫</code>：14个SKU（含内衬/无内衬 <code>40*36*11cm</code>）
+            </td>
+            <td>
+              ① <code>四星/五星供应链</code> · 品质100%<br>
+              ② <code>五星供应链</code> · 品质100% · 履约99.9% · 单品复购率33.89%
+            </td>
+            <td>① 加高一体垫 <b>¥27.00</b><br>② 牛角单垫 <b>¥23.00</b></td>
+          </tr>
+          <tr>
+            <td><b>4. 民用-09 日本防雾麂皮绒眼镜布</b></td>
+            <td>防雾麂皮绒眼镜布(5/10/20片) + 镜片防雾清洁喷雾液</td>
+            <td>原厂自带组合SKU + 独立防雾剂厂双保险</td>
+            <td>
+              ① 原厂自带组合：<a class="acc-link" href="https://detail.1688.com/offer/744741842827.html" target="_blank" rel="noopener noreferrer">1688 744741842827 ↗</a> <b>温州致奕贸易有限公司</b><br>
+              ② 独立防雾喷雾：<a class="acc-link" href="https://detail.1688.com/offer/654463222162.html" target="_blank" rel="noopener noreferrer">1688 654463222162 ↗</a> <b>义乌市麦里品牌管理有限公司</b><br>
+              ③ 防雾喷雾套组：<a class="acc-link" href="https://detail.1688.com/offer/855115845751.html" target="_blank" rel="noopener noreferrer">1688 855115845751 ↗</a> <b>义乌市锦沁汽车用品有限公司</b>
+            </td>
+            <td>
+              ① 内置<code>混色5/10/20片装+送清洗液</code>原生SKU（共21个SKU）<br>
+              ② 货号<code>防雾剂</code>：<code>眼镜防雾剂30ml</code>便携喷雾<br>
+              ③ <code>防雾剂90ML+麂皮擦镜巾</code>
+            </td>
+            <td>
+              ① <code>四星供应链</code> · 品质99.9% · <b>单品复购率 55.41%</b><br>
+              ② <code>四星供应链</code> · <b>单品好评率 99.7% (1600+条评价!)</b> · 品质99.9%<br>
+              ③ <code>四星供应链</code> · 品质100% · 单品20+评价
+            </td>
+            <td>① 原厂套组 <b>¥2.45~¥6.50</b><br>② 30ml喷雾 <b>¥2.00/瓶</b></td>
+          </tr>
+          <tr>
+            <td><b>5. 民用-07 体育老师海豚裁判口哨</b></td>
+            <td>① 二代升级海豚哨(配护齿咬嘴+挂绳+收纳盒)<br>② 指环夹带护齿专业裁判哨</td>
+            <td>原厂自带套组 + 专业指环护齿哨专厂</td>
+            <td>
+              ① 原厂套组：<a class="acc-link" href="https://detail.1688.com/offer/1068957187060.html" target="_blank" rel="noopener noreferrer">1688 1068957187060 ↗</a> <b>广州利安德户外</b> / <a class="acc-link" href="https://detail.1688.com/offer/775930396793.html" target="_blank" rel="noopener noreferrer">1688 775930396793 ↗</a> <b>义乌聚莱</b><br>
+              ② 护齿指环哨：<a class="acc-link" href="https://detail.1688.com/offer/40318093182.html" target="_blank" rel="noopener noreferrer">1688 40318093182 ↗</a> <b>义乌市极风体育用品有限公司</b><br>
+              ③ 护齿指环哨：<a class="acc-link" href="https://detail.1688.com/offer/816834631685.html" target="_blank" rel="noopener noreferrer">1688 816834631685 ↗</a> <b>义乌市动泰体育用品有限公司</b>
+            </td>
+            <td>
+              ① 内置<code>二代升级款</code> & <code>【买一送一】2套</code><br>
+              ② 货号<code>乃力NL-81套手指口哨</code>：带硅胶护齿套4色<br>
+              ③ 货号<code>MK-3028</code>：无核带护齿套手指裁判哨
+            </td>
+            <td>
+              ① <code>四星供应链</code> · <b>单品好评率 100%</b> · 品质100%<br>
+              ② <code>四星供应链</code> · <b>单品好评率 100% (50+评价)</b> · 复购50%<br>
+              ③ <code>五星供应链</code> · 品质100% · 回头率58.6%
+            </td>
+            <td>① 原厂双只 <b>¥1.99~¥13.81</b><br>② 护齿指环哨 <b>¥3.00/套</b></td>
+          </tr>
+          <tr>
+            <td><b>6. 民用-08 海绵眼镜鼻托贴</b></td>
+            <td>海绵鼻托贴(16副/40副混装) + 辅助贴合镊子 + 透明收纳小盒</td>
+            <td>原厂自带送镊子 + 独立镊子收纳盒厂</td>
+            <td>
+              ① 原厂自带送镊：<a class="acc-link" href="https://detail.1688.com/offer/906307641493.html" target="_blank" rel="noopener noreferrer">1688 906307641493 ↗</a> <b>义乌市云湃日用品有限公司</b><br>
+              ② 镊子+透明小盒：<a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">1688 1033237819599 ↗</a> <b>义乌市妖姬屋饰品有限公司</b><br>
+              ③ 尖头/弯头镊子：<a class="acc-link" href="https://detail.1688.com/offer/1075184626433.html" target="_blank" rel="noopener noreferrer">1688 1075184626433 ↗</a> <b>广州童梦文化用品有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>A12035</code>：16副/40副袋装自带送镊子<br>
+              ② 内置<code>高精镊子</code> + <code>透明收纳盒*4.5cm/5.5cm</code><br>
+              ③ 内置<code>专用镊子/尖头/弯头</code>
+            </td>
+            <td>
+              ① <code>四星供应链</code> · <b>单品好评率 100% (10+评价)</b> · 品质99.9%<br>
+              ② <code>四星供应链</code> · 品质99.9% · 复购21.14%<br>
+              ③ <code>五星供应链</code> · 品质100% · 回头率72.1%
+            </td>
+            <td>① 原厂送镊套组 <b>¥0.95</b><br>② 镊子+盒 <b>¥0.35~¥0.60</b></td>
+          </tr>
+          <tr>
+            <td><b>7. 民用-10 耐高温长钉拼豆板</b></td>
+            <td>长钉拼豆板(2块/4块) + 耐高温助烫纸/熨烫布 + 夹豆镊子 + 豆铲豆盘</td>
+            <td>独立拼豆工具配件源头厂合包</td>
+            <td>
+              ① <a class="acc-link" href="https://detail.1688.com/offer/1075184626433.html" target="_blank" rel="noopener noreferrer">1688 1075184626433 ↗</a> <b>广州童梦文化用品有限公司</b><br>
+              ② <a class="acc-link" href="https://detail.1688.com/offer/1004133863316.html" target="_blank" rel="noopener noreferrer">1688 1004133863316 ↗</a> <b>金华市英妮供应链有限公司</b><br>
+              ③ <a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">1688 1033237819599 ↗</a> <b>义乌市妖姬屋饰品有限公司</b>
+            </td>
+            <td>
+              ① 30个SKU：<code>拼豆烘焙布/助烫纸</code>、<code>专用镊子尖头/弯头</code>、<code>拼豆美纹纸</code><br>
+              ② 货号<code>961291</code>：<code>【拼豆四件套】豆铲豆笔豆盘镊子</code>、<code>15*15cm助烫纸(5张)</code><br>
+              ③ 65个SKU：<code>助烫纸*5/500</code>、<code>高精镊子</code>、<code>工具包4/5/6/7件套</code>
+            </td>
+            <td>
+              ① <code>五星供应链</code> · 品质100% · 履约99.9% · <b>回头率 72.1%</b><br>
+              ② 金华同城源头供应链<br>
+              ③ <code>四星供应链</code> · 品质99.9% · 单品10+评价
+            </td>
+            <td>助烫纸+镊子套组 <b>¥0.50 ~ ¥2.80</b></td>
+          </tr>
+          <tr>
+            <td><b>8. 民用-01 猫太子感官石解压橡皮擦</b></td>
+            <td>感官石解压橡皮擦6块盒装 + 防丢挂绳 + 便携透明收纳盒</td>
+            <td>原厂自带盒装送防丢绳 + 透明收纳盒厂</td>
+            <td>
+              ① 原厂盒装送绳：<a class="acc-link" href="https://detail.1688.com/offer/1059480942553.html" target="_blank" rel="noopener noreferrer">1688 1059480942553 ↗</a> <b>义乌蒙幻</b> / <a class="acc-link" href="https://detail.1688.com/offer/1032916690926.html" target="_blank" rel="noopener noreferrer">1688 1032916690926 ↗</a> <b>义乌廷煊</b><br>
+              ② 透明收纳盒+挂链：<a class="acc-link" href="https://detail.1688.com/offer/1033237819599.html" target="_blank" rel="noopener noreferrer">1688 1033237819599 ↗</a> <b>义乌市妖姬屋饰品有限公司</b>
+            </td>
+            <td>
+              ① 原厂自带<code>【6个盒装】送1个防丢绳</code><br>
+              ② 内置<code>透明收纳盒*4.5cm/5.5cm</code> + <code>链条挂件</code>
+            </td>
+            <td>
+              ① <code>四星供应链</code> · 品质99.9%~100% · 回头率62% · 复购37.5%<br>
+              ② <code>四星供应链</code> · 品质99.9%
+            </td>
+            <td>① 原厂盒装送绳 <b>¥2.05</b><br>② 透明盒 <b>¥0.45/个</b></td>
+          </tr>
+          <tr>
+            <td><b>9. 民用-药盒 7天28格密封避光分装药盒</b></td>
+            <td>28格棕色密封避光分装药盒 + 不锈钢刀片精准切药器/分药器</td>
+            <td>独立切药器源头厂合包（1:1对标淘宝母本 `+切药器` ¥61.38 SKU）</td>
+            <td>
+              ① S1高性价比切药器：<a class="acc-link" href="https://detail.1688.com/offer/922287461389.html" target="_blank" rel="noopener noreferrer">1688 922287461389 ↗</a> <b>义乌市云湃日用品有限公司</b><br>
+              ② S2高端切药器：<a class="acc-link" href="https://detail.1688.com/offer/1069414471081.html" target="_blank" rel="noopener noreferrer">1688 1069414471081 ↗</a> <b>金华市一栗塑业有限公司</b><br>
+              ③ S2带刷切药器：<a class="acc-link" href="https://detail.1688.com/offer/955181150071.html" target="_blank" rel="noopener noreferrer">1688 955181150071 ↗</a> <b>金华市一栗塑业有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>7224</code>：日式一分二/四分之一切药器（蓝/白/透明3色）<br>
+              ② 货号<code>HY-04</code>：<code>切药器【1/2+1/4】</code><br>
+              ③ 货号<code>YL016</code>：<code>切药器升级款【1/2+1/4带清洁刷】</code>
+            </td>
+            <td>
+              ① <code>四星供应链</code> · 品质99.9% · 履约99.7% · 单品70+评价<br>
+              ② <code>五星供应链</code> · <b>单品好评率 100% (10+评价)</b> · 品质100% · 履约100%<br>
+              ③ <code>五星供应链</code> · 品质100% · 履约100%
+            </td>
+            <td>① 云湃切药器 <b>¥1.00~¥1.17/个</b><br>② 一栗旗舰款 <b>¥13.00~¥14.00</b></td>
+          </tr>
+          <tr>
+            <td><b>10. REXL-P0-17 C型颈椎反弓牵引枕</b></td>
+            <td>① 全新8磁石款颈椎反弓枕<br>② 反弓枕 + 艾草颈椎热敷贴(12贴/盒)</td>
+            <td>升级款专厂 + 艾草贴专厂合包</td>
+            <td>
+              ① 8磁石款：<a class="acc-link" href="https://detail.1688.com/offer/950621139703.html" target="_blank" rel="noopener noreferrer">1688 950621139703 ↗</a> <b>广州市云伯汇医疗科技有限公司</b><br>
+              ② 艾草颈椎贴：<a class="acc-link" href="https://detail.1688.com/offer/1003178936762.html" target="_blank" rel="noopener noreferrer">1688 1003178936762 ↗</a> <b>河南张仲景生物科技有限公司</b>
+            </td>
+            <td>
+              ① 8磁石款颈椎反弓牵引枕<br>
+              ② 艾草颈椎热敷穴位贴（12贴盒装）
+            </td>
+            <td>
+              ① <code>四星供应链</code> · 品质100% · 回头率59%<br>
+              ② <code>五星供应链</code> · 品质100% · 履约99.9%
+            </td>
+            <td>① 8磁石款 <b>¥23.00</b><br>② 艾草贴 <b>¥1.20/盒</b></td>
+          </tr>
+          <tr>
+            <td><b>11. REXL-P0-15 口呼吸矫正闭嘴绷带</b></td>
+            <td>闭嘴绷带面罩 + 低致敏睡眠防张嘴闭口贴(30贴/盒)</td>
+            <td>原厂2件换洗装 + 闭口贴专厂合包</td>
+            <td>
+              ① 原厂2件装：<a class="acc-link" href="https://detail.1688.com/offer/1076405868524.html" target="_blank" rel="noopener noreferrer">1688 1076405868524 ↗</a> <b>东莞市寮步嘉富运动用品厂</b><br>
+              ② 30贴闭口贴：<a class="acc-link" href="https://detail.1688.com/offer/1038119500865.html" target="_blank" rel="noopener noreferrer">1688 1038119500865 ↗</a> <b>源头工厂</b><br>
+              ③ 儿童/成人封口贴：<a class="acc-link" href="https://detail.1688.com/offer/814997734129.html" target="_blank" rel="noopener noreferrer">1688 814997734129 ↗</a> <b>东阳市伟冬贸易有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>矫正带</code>：8款SKU含2件装<br>
+              ② 货号<code>卡通款闭嘴贴</code>：<code>【1盒装】共30贴低致敏</code><br>
+              ③ 货号<code>儿童封口贴</code>：<code>一盒30贴/20贴</code>
+            </td>
+            <td>
+              ① <b>店铺好评率 94.0%</b> · 品质100% · 复购42.86%<br>
+              ② <code>五星供应链</code> · <b>单品好评率 100% (1800+条评价!)</b> · 品质100%<br>
+              ③ <code>五星供应链</code> · 品质100% · 履约100% · 回头率60.2%
+            </td>
+            <td>① 2件装 <b>¥4.80</b><br>② 闭口贴30贴 <b>¥2.00/盒</b></td>
+          </tr>
+          <tr>
+            <td><b>12. REXL-P0-16 TFCC手腕固定支具</b></td>
+            <td>① 铝合金钢板固定款 / 4板强支撑款<br>② BOA旋钮调节钢丝锁紧顶配款</td>
+            <td>全矩阵4阶专厂分级直采</td>
+            <td>
+              ① 钢板款：<a class="acc-link" href="https://detail.1688.com/offer/894880939076.html" target="_blank" rel="noopener noreferrer">1688 894880939076 ↗</a> <b>衡水嘉耀医疗器械有限公司</b><br>
+              ② 旋钮顶配款：<a class="acc-link" href="https://detail.1688.com/offer/999438606505.html" target="_blank" rel="noopener noreferrer">1688 999438606505 ↗</a> <b>扬州宇皓体育用品有限公司</b>
+            </td>
+            <td>
+              ① 货号<code>HW-06</code>：铝合金钢板固定护腕（左右×S/M/L）<br>
+              ② 货号<code>2098</code>：BOA旋钮钢丝锁紧护腕（左右×S/M/L）
+            </td>
+            <td>
+              ① <code>五星供应链</code> · <b>单品好评率 100% (10+评价)</b> · 品质100%<br>
+              ② <code>五星供应链</code> · 品质100% · 履约100% · 回头率52.2%
+            </td>
+            <td>① 钢板款 <b>¥15.00</b><br>② 旋钮顶配款 <b>¥26.00~¥28.80</b></td>
           </tr>
         </tbody>
       </table>
