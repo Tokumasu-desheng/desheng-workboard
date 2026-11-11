@@ -146,6 +146,12 @@ details.acc .acc-body{padding:12px 14px;font-size:12.5px;color:#444;line-height:
 .modal-head h3{font-size:15px;font-weight:600;color:#111}
 .modal-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;font-size:13px;color:#222}
 .modal-foot{padding:10px 16px;border-top:1px solid #e6e6e6;background:#fafafa;display:flex;justify-content:flex-end;gap:8px}
+.proof-zone{margin-top:8px;padding:8px 10px;border:1px dashed #bcbcbc;border-radius:6px;background:#fafafa;display:flex;flex-direction:column;gap:6px}
+.proof-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:12px}
+.proof-thumbs{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.proof-thumb-item{position:relative;width:68px;height:68px;border:1px solid #ccc;border-radius:6px;overflow:hidden;background:#fff;cursor:pointer;flex:none}
+.proof-thumb-item img{width:100%;height:100%;object-fit:cover;display:block}
+.proof-del{position:absolute;top:2px;right:2px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.7);color:#fff;border:0;font-size:12px;line-height:18px;text-align:center;cursor:pointer}
   </style>
 <script>
 window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
@@ -220,7 +226,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       <div class="clean-head">
         <div class="clean-head-left">
           <h2>今日待办</h2>
-          <span class="emp-dim"><span id="boardTodayDate">2026-11-03</span> · 待处理 <b id="col2CountBadge">15</b> 项 · 已处理归档 <b id="archiveCountTop">211</b> 项（已收起）</span>
+          <span class="emp-dim">2026-11-10 · 待处理 <b id="col2CountBadge">0</b> 项 · 已处理归档 <b id="archiveCountTop">425</b> 项（已收起）</span>
         </div>
         <div class="emp-stream-act">
           <button type="button" class="btn btn-sm" onclick="syncFromBridge(true)">刷新</button>
@@ -247,7 +253,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         <!-- 已处理隐藏区（默认折叠，点击展开回看历史已闭环项） -->
         <details class="emp-archive" id="emp-approval-archive-box" ontoggle="if(this.open)loadArchivedItems()">
           <summary>
-            <span>已处理（<b id="emp-app-arch-cnt">211</b>）<span class="emp-dim"> · 已隐藏，点击展开回看</span></span>
+            <span>已处理（<b id="emp-app-arch-cnt">425</b>）<span class="emp-dim"> · 已隐藏，点击展开回看</span></span>
             <svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </summary>
           <div id="archiveContainer">
@@ -302,7 +308,13 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         </div>
         <div>
           <label class="small muted" style="display:block;margin-bottom:4px">具体做了什么（必填，全组共享）：</label>
-          <textarea id="modalStaffInput" rows="3" class="textarea" style="width:100%" placeholder="请写明具体执行结果..."></textarea>
+          <textarea id="modalStaffInput" rows="3" class="textarea" style="width:100%" onpaste="handleModalProofPaste(event)" placeholder="请写明具体执行结果，可 Ctrl+V 粘贴截图..."></textarea>
+        </div>
+        <div class="proof-zone">
+          <div class="proof-head"><b>处理完的截图凭证（必填）：</b><span class="muted">支持在处理结果框 Ctrl+V 粘贴截图</span>
+            <label class="btn btn-sm">+ 上传处理截图<input type="file" accept="image/*" multiple class="is-hidden" onchange="handleModalProofSelect(event)"></label>
+          </div>
+          <div id="modalProofThumbs" class="proof-thumbs"></div>
         </div>
         <div id="qualityRatioBox" class="is-hidden" style="padding:10px;border:1px solid #e0e0e0;border-radius:6px;background:#fafafa">
           <div style="font-weight:600;font-size:12.5px;margin-bottom:6px">质量退款占比判定：</div>
@@ -422,9 +434,13 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
     </div>
   </div>
 
+  <div id="proofLightboxModal" class="modal-mask is-hidden" style="z-index:200;background:rgba(0,0,0,.88)" role="dialog" aria-label="截图凭证预览" onclick="closeProofLightbox()">
+    <button type="button" class="btn" style="position:absolute;top:18px;right:18px" onclick="closeProofLightbox()">关闭</button>
+    <img id="proofLightboxImage" alt="处理完的截图凭证" style="max-width:96vw;max-height:92vh;object-fit:contain" onclick="event.stopPropagation()">
+  </div>
   <script>
-    const INITIAL_ITEMS = [{"id": "TASK-398", "rowId": "天猫wo居家日用旗舰店#R17(10.30-11.1)", "store": "天猫wo居家日用旗舰店", "customerId": "曦曦男爵", "orderId": "5127901201019014037", "chatTime": "2026-10-30 17:30:07", "hasProblem": "是", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["运营部"], "ownerNames": "唐勇", "groupKey": "OFFLINE_OPS_MKT_FOLLOWUP", "groupTitle": "运营部 / 市场部客服问题跟进", "cleanTitle": "黑色款缺货客户拒换其他颜色待处理 + 客户拒换色回“我就要黑色的”遭机器人答非所问+断货SKU未下架", "cleanAction": "1. 仓库+客服立即核查买家【曦曦男爵】订单，如黑色确实无货请人工联系客户协助办理缺货退款避免超时处罚；2. 运营唐勇立即在千牛后台将该断货黑色SKU库存清零。；运营核实缺货断码SKU并在千牛前台下架清零，按实际问题修正页面参数与尺寸；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "丽媛(10-30 17:30)：你下单的这款产品黑色刚好没有，换蓝色或白色可以吗 / 买家(19:11)：那算了 我就要黑色的 / 圆圆(机器人)：严选亲肤材质", "staffResult": "[仓库部] 15:32锁定相关库存（据审计记录汇总）。；[市场部] 10:02完成前置跟进（据审计记录汇总）。；[运营部] 11:23 核验订单5127901201019014037退款15.10元；5个天猫链接×2个黑色口罩SKU共10个SKU清零；仓库15:32锁定，市场10:02步骤已完成（据审计记录汇总）。", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-10-30\n17:30:07\n你好亲亲，你下单的这款产品黑色刚好没有，这边给你换蓝色或者白色可以吗\nwo居家日用旗舰店:丽媛\n19:11:45\n那算了 我就要黑色的\n曦曦男爵\n19:11:46\n亲亲你好~\nwo居家日用旗舰店:圆圆\n19:11:47\n请问有什么可以帮助你的~\nwo居家日用旗舰店:圆圆\n19:11:50\n亲亲，咱们商品都是严选亲肤材质，符合详情页各项实测标准，并且小店提供【退换包邮费】无忧保障服务，收到后您可以先查看实物手感和佩戴体验，有任何需要随时给我们留言哈~\nwo居家日用旗舰店:圆圆\n没有更多内容了", "originalDepts": ["运营部", "市场部", "仓库部"], "doneSteps": [{"dept": "仓库部", "ownerNames": "许培婷 / 吴行哲", "result": "15:32锁定相关库存（据审计记录汇总）。", "time": "2026-11-03 15:32", "proofImages": [], "proofKind": "audit_summary", "auditReconciliation": "2026-11-03-audit-v1"}, {"dept": "市场部", "ownerNames": "林丽媛 / 尤敏燕", "result": "10:02完成前置跟进（据审计记录汇总）。", "time": "2026-11-03 10:02", "proofImages": [], "proofKind": "audit_summary", "auditReconciliation": "2026-11-03-audit-v1"}, {"dept": "运营部", "ownerNames": "P02 唐勇", "result": "11:23 核验订单5127901201019014037退款15.10元；5个天猫链接×2个黑色口罩SKU共10个SKU清零；仓库15:32锁定，市场10:02步骤已完成（据审计记录汇总）。", "time": "2026-11-03 11:23", "proofImages": ["/proof_images/proof_TASK-398_ops_sku0_20261103.png"], "proofKind": "audit_summary", "auditReconciliation": "2026-11-03-audit-v1"}], "initialCsNote": "待跟进闭环", "auditSummaryImages": ["/proof_images/proof_TASK-398_ops_sku0_20261103.png"], "proofImages": ["/proof_images/proof_TASK-398_ops_sku0_20261103.png"], "auditReconciliation": "2026-11-03-audit-v1", "completionProofRejected": true, "rejectReason": "仓库锁库与唐勇11:23退款/10个SKU清零记录已归档至审计汇总卡；请补传1张【千牛后台SKU清零或订单退款真实截图凭证】后提交闭环。"}, {"id": "TASK-351", "rowId": "天猫得升旗舰店#R36(10.30-11.1)", "store": "天猫得升旗舰店", "customerId": "玻璃心0725", "orderId": "商品ID:720336616470", "chatTime": "2026-10-30 22:09:27", "hasProblem": "是", "track": "offline_human_todo", "stage": "offline_todo", "depts": ["运营部"], "ownerNames": "唐勇", "groupKey": "AUDIT_20261103_TASK-351", "groupTitle": "市场部客服问题跟进", "cleanTitle": "双11活动价格暴涨近一倍老客流失 + 人工客服连说2次“稍等”后彻底断联未回复", "cleanAction": "1. 运营唐勇核查商品720336616470双11券后价配置是否异常；2. 客服主动回访老客【玻璃心0725】说明拍2件优惠/退差政策挽回老客。；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "买家(10-30 22:09)：太离谱了 双十一更贵 平时买两个我支付15.8 现在居然涨价接近一倍 / 圆圆(22:13)：亲亲稍等 [后续彻底断联]", "staffResult": "", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-10-30\n22:09:27\n看不明白了 到底什么价格\n玻璃心0725\n22:09:28\n亲亲你好~\n得升旗舰店:圆圆\n22:09:28\n玻璃心0725\n22:09:29\n请在客户端查看原始聊天记录，网页版无法展示\n玻璃心0725\n22:09:29\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n得升旗舰店:圆圆\n22:09:29\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n22:09:31\n亲，麻烦您发一下想咨询的商品链接或名称哈，我帮您看看具体价格和优惠～~\n得升旗舰店:圆圆\n22:09:53\nhttp://item.taobao.com/item.htm?id=720336616470\n玻璃心0725\n22:09:53\n请在客户端查看原始聊天记录，网页版无法展示\n玻璃心0725\n22:09:56\n亲亲， 麻烦您稍等一下， 我这边帮您看看哦。\n得升旗舰店:圆圆\n22:10:14\n之前买颗15.8元\n玻璃心0725\n22:10:20\n亲亲，感谢您一直支持我们~\n得升旗舰店:圆圆\n22:10:20\n店铺目前支持【满2件及以上享9.5折】优惠哦～您可以把需要的2件商品一起加入购物车或直接拍2件，提交订单结算页系统会自动立减并显示折后实付金额（不同规格单价不同，具体优惠后金额请以结算页显示为准哈）~~\n得升旗舰店:圆圆\n22:12:08\n太离谱了 双十一更贵 平时买两个我支付15.8 现在居然涨价接近一倍\n玻璃心0725\n22:12:09\n亲亲， 麻烦您稍等一下， 我这边帮您看看哦。\n得升旗舰店:圆圆\n22:12:37\n玻璃心0725\n22:13:07\n亲亲稍等~\n得升旗舰店:圆圆\n没有更多内容了", "originalDepts": ["市场部", "运营部"], "doneSteps": [{"dept": "市场部", "ownerNames": "林丽媛 / 尤敏燕 / 唐勇", "result": "已核实运营价格无异常，并留言买家优惠政策", "time": "09:46"}], "initialCsNote": "待跟进闭环", "auditSummaryImages": [], "proofImages": [], "rejectReason": "", "lastUpdatedAt": "09:46:09", "auditReconciliation": "2026-11-03-audit-v1"}, {"id": "TASK-375", "rowId": "天猫得升旗舰店#R60(10.30-11.1)", "store": "天猫得升旗舰店", "customerId": "tb30740800", "orderId": "待查订单(tb30740800)", "chatTime": "2026-10-30 11:03:40", "hasProblem": "是", "track": "offline_human_todo", "stage": "offline_todo", "depts": ["仓库部"], "ownerNames": "许培婷 / 吴行哲", "groupKey": "AUDIT_20261103_TASK-375", "groupTitle": "📦 仓库+客服（10.30-11.1）：可调节款发错补发单号回填 & 黑色断货SKU跟进", "cleanTitle": "发错款式(拍可调节收到无调节扣延续) + 疑似发错无调节扣款待核实 + 售后核实待跟进闭环", "cleanAction": "核查买家【tb30740800】订单后台售后状态，确认是否已退换或补发可调节款闭环。", "aiOnlineDone": "", "keyEvidence": "丽媛(10-30 11:03)：亲亲您收到的是里面是什么，都是一个图案吗，帮忙拍一下照片", "staffResult": "", "isNormalRatio": "正常", "normalRatioBasis": "常规偶发", "abnormalPlan": "", "chatContent": "2026-10-30\n11:03:40\n亲亲您收到的是里面是什么，都是一个图案吗，帮忙拍一下照片\n得升旗舰店:红包得力的摇篮\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [{"dept": "仓库部", "ownerNames": "许培婷 / 吴行哲", "result": "货位贴红标隔离俩个款式", "time": "17:17"}, {"dept": "市场部", "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "result": "[仓库部] 货位贴红标隔离俩个款式", "time": "09:45"}], "initialCsNote": "", "rejectReason": "", "lastUpdatedAt": "2026-11-03 18:00:00", "auditSummaryImages": [], "proofImages": [], "auditReconciliation": "2026-11-03-audit-v1"}];
-    const BUILD_VERSION_TS = 1793756774936;
+    const INITIAL_ITEMS = [{"id": "TASK-706", "rowId": "天猫得升旗舰店#R23(11.4-11.7)", "store": "天猫得升旗舰店", "customerId": "tb670617564", "orderId": "3316982233110001962", "chatTime": "2026-11-07 08:31:01", "hasProblem": "是", "problemType": "机器人/接待异常（重复转人工且等待超30秒，后续确认页面与实物标识未同步）", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["仓库部", "市场部"], "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "groupKey": "OFFLINE_WH_MKT_FOLLOWUP", "groupTitle": "仓库部 / 市场部客服问题跟进", "cleanTitle": "机器人/接待异常（重复转人工且等待超30秒，后续确认页面与实物标识未同步）", "cleanAction": "排查重复转接和人工承接超时，核对并更新页面标识展示，跟进客户退货申请及退款、运费处理结果。；仓库核对实物与批次，按问题盘点隔离或补发正确货物，并回填处理凭证及物流单号；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "2026-11-06 10:05:27“马上为您转接人工客服专员一对一核实解答”→10:11:02“马上为您转接人工客服专员一对一核实解答”→10:14:06“拍张照片发给我”→2026-11-07 11:47:27“页面图片上还没来得及同步更新”", "staffResult": "人工接待处理客户诉求，同步优化接待流程，防止反复转人工。", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-06\n10:05:03\n我看这面罩没有图案啊\ntb670617564\n10:05:03\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n10:05:04\n亲亲你好~\n得升旗舰店:圆圆\n10:05:05\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n10:05:11\n这怎么还有个logo呢\ntb670617564\n10:05:27\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n10:05:48\n？\ntb670617564\n10:05:55\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n10:10:48\n？？？？\ntb670617564\n10:11:02\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n10:11:02\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n10:14:06\n非常抱歉给您添麻烦了，麻烦您将收到的包裹和里面的产品放在一起拍张照片发给我，我会尽快帮您核实并处理的，感谢您的配合～\n得升旗舰店:圆圆\n10:14:42\n包裹扔了\ntb670617564\n10:14:50\n东西没在我身边\ntb670617564\n10:15:17\n拍一下口罩的亲亲\n得升旗舰店:圆圆\n18:48:06\ntb670617564\n18:48:10\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n18:48:17\n欢迎光临，很高兴能够为您服务！\n得升旗舰店:圆圆\n18:48:58\n亲亲 ，这边帮您反馈一下专员，稍后回复给您留言呢。\n得升旗舰店:圆圆\n18:49:05\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n19:08:29\n？\ntb670617564\n19:08:46\n这边帮您核实了 明天给您回复呢\n得升旗舰店:圆圆\n19:09:06\n你们自己啥货还不知道嘛\ntb670617564\n19:09:14\n你们还核实上了\ntb670617564\n19:09:47\n抱歉 这边反馈仓库问了 还没有回复\n得升旗舰店:圆圆\n19:10:02\n卖的又不止我一个？\ntb670617564\n19:10:07\n没人反馈嘛？\ntb670617564\n19:10:14\n没有呢亲\n得升旗舰店:圆圆\n19:10:28\n宣传图片与实物不符\ntb670617564\n19:10:37\n亲亲，实在对不住呀~\n得升旗舰店:圆圆\n19:10:37\n给您带来不好的体验了~\n得升旗舰店:圆圆\n19:10:37\n为了不耽误您使用，您看能不能将就先用着？我马上给您申请补偿【3元】作为歉意，如果方案可行请回复【同意】，如果不能接受，请直接回复【不行】~\n得升旗舰店:圆圆\n19:10:57\n不行\ntb670617564\n19:10:58\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n19:11:06\n能理解您的心情，这次确实让您失望了~\n得升旗舰店:圆圆\n19:11:06\n如果您愿意留下商品，我们可以为您申请【半价保留】（退还实付金额50%）；如果您还是不需要，也可以直接申请退货退款，我们都会尽快为您处理~\n得升旗舰店:圆圆\n19:11:38\n明天给您回复呢亲\n得升旗舰店:圆圆\n19:11:44\n你这属于店铺问题了\ntb670617564\n19:11:50\n欺骗消费者\ntb670617564\n19:12:12\n不好意思 明天给您回复呢\n得升旗舰店:圆圆\n19:12:23\n让我拍照片我也给你拍了\ntb670617564\n19:12:30\n明天回复会怎么解决呢\ntb670617564\n19:12:53\n回复之后给您留言呢\n得升旗舰店:圆圆\n19:14:43\n没时间这事跟你整这么久\ntb670617564\n19:15:38\n实在抱歉了亲亲 给您带来不便了\n得升旗舰店:圆圆\n2026-11-07\n08:31:01\n亲亲 是有logo的哈\n得升旗舰店:圆圆\n11:47:27\n你好亲亲，非常抱歉让您不开心了！先跟您解释一下，面罩上这个 UPF500+ 不是杂牌广告Logo，而是工厂出厂时压印的防紫外线防晒等级功能标识。因为最近工厂新批次升级了防晒标识印字，我们美工在页面图片上还没来得及同步更新，确实是我们页面展示不够严谨，给您添麻烦了！\n得升旗舰店:丽媛\n11:51:26\n您这边是想要留下还是要退货那，如果您愿意留下平时备用，这边给您去申请20元补偿，如果要退回这边先垫付运费，这边在给您报销，理由辛苦选下不想要，感谢您的理解\n得升旗舰店:丽媛\n11:52:03\n您这边是想要留下还是要退货那，如果您愿意留下平时备用，这边给您去申请20元补偿，如果要退回这边先垫付运费，这边在给您报销，理由辛苦选下「7天无理由 / 不想要了」，感谢您的理解\n得升旗舰店:丽媛\n12:46:09\n请在客户端查看原始聊天记录，网页版无法展示\ntb670617564\n14:21:58\n请在客户端查看原始聊天记录，网页版无法展示\n得升旗舰店:丽媛\n14:21:59\n麻烦亲亲，申请退货退款\n得升旗舰店:丽媛\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [], "initialCsNote": "人工已解释标识差异并提出补偿或退货方案，最后要求申请退货退款，尚未闭环。", "proofImages": ["/proof_images/TASK-706_1794206702045_86465dff635e_3144947940bbcd5692de4aec6cfcd0d7.png", "/proof_images/TASK-706_1794218263078_662bef52a6f4_image.png", "/proof_images/TASK-706_1794218370004_7f9f2149997a_image.png"], "auditSummaryImages": [], "localIdOn192_168_1_11": "TASK-543", "lastUpdatedAt": "2026-11-09 17:59:45", "rejectReason": "退回：检测到未实际完结的推脱表述，请实际执行完毕并上传截图凭证后再提交！"}, {"id": "TASK-707", "rowId": "天猫得升旗舰店#R35(11.4-11.7)", "store": "天猫得升旗舰店", "customerId": "杜海玲姐", "orderId": "3316558802004027493", "chatTime": "2026-11-07 08:55:01", "hasProblem": "是", "problemType": "机器人/接待异常（客户要求人工后反复收到转接话术，长时间等待且核实后无明确结果）", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["仓库部", "市场部"], "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "groupKey": "OFFLINE_WH_MKT_FOLLOWUP", "groupTitle": "仓库部 / 市场部客服问题跟进", "cleanTitle": "机器人/接待异常（客户要求人工后反复收到转接话术，长时间等待且核实后无明确结果）", "cleanAction": "核查人工转接与排队超时原因，安排专人确认已签收包裹的实际去向，并向客户明确处理方案及结果。；仓库核对实物与批次，按问题盘点隔离或补发正确货物，并回填处理凭证及物流单号；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "08:56:04“人工”→08:56:55“马上为您转接人工客服专员一对一核实解答”→09:05:04“这边需要帮您核实一下哦 麻烦您稍等下哦”", "staffResult": "已核实给客户留言退货退款", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-07\n08:55:01\n订单号:3316558802004027493 共1件商品,合计￥0.00 交易时间:2026-11-03 17:50:53\n杜海玲姐\n08:55:01\n请在客户端查看原始聊天记录，网页版无法展示\n杜海玲姐\n08:55:01\n亲亲你好~\n得升旗舰店:圆圆\n08:55:02\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n08:55:15\n这款填错地址了咋办\n杜海玲姐\n08:55:21\n亲亲，如果您下单后需要修改收货地址，请不要着急申请退款哦~\n得升旗舰店:圆圆\n08:55:21\n麻烦您直接把【新的收货人姓名、电话、详细文字地址】发在聊天框里，人工客服看到后会第一时间为您在后台系统登记修改；若包裹已揽收发出，客服也会立即帮您联系快递拦截更改地址哈~~\n得升旗舰店:圆圆\n08:55:48\n以被签收了\n杜海玲姐\n08:55:55\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n08:56:04\n人工\n杜海玲姐\n08:56:12\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n08:56:47\n？\n杜海玲姐\n08:56:55\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n08:56:55\n请在客户端查看原始聊天记录，网页版无法展示\n杜海玲姐\n09:05:04\n亲亲~这边需要帮您核实一下哦 麻烦您稍等下哦\n得升旗舰店:圆圆\n09:05:10\nJT3183375758928;\n得升旗舰店:圆圆\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [], "initialCsNote": "已发送快递单号，地址及签收问题仍待明确处理", "proofImages": ["/proof_images/TASK-707_1794210360931_a517176bbd9f_image.png"], "auditSummaryImages": [], "localIdOn192_168_1_11": "TASK-545", "lastUpdatedAt": "2026-11-09 15:47:51", "rejectReason": "退回：仓库部工单需写明实物库存清点、批次隔离或补发/退回快递核对结果。"}, {"id": "TASK-710", "rowId": "天猫得升旗舰店#R30(11.4-11.7)", "store": "天猫得升旗舰店", "customerId": "qq我是一条小鱼", "orderId": "JT3183610401899", "chatTime": "2026-11-07 10:44:48", "hasProblem": "是", "problemType": "机器人/接待异常、商品/尺码/质量异常（尺寸咨询反复转接且等待超时，客户反馈口罩偏小，后续已提供补发单号）", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["市场部"], "ownerNames": "林丽媛 / 尤敏燕", "groupKey": "OFFLINE_WH_MKT_FOLLOWUP", "groupTitle": "仓库部 / 市场部客服问题跟进", "cleanTitle": "机器人/接待异常、商品/尺码/质量异常（尺寸咨询反复转接且等待超时，客户反馈口罩偏小，后续已提供补发单号）", "cleanAction": "运营部修正尺寸咨询的重复转接及超时接待；市场部核对所报尺寸、包装规格与适用建议，并跟进补发后的实际适配情况。；仓库核对实物与批次，按问题盘点隔离或补发正确货物，并回填处理凭证及物流单号；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "11月6日17:29:40“在吗你把你家尺寸发来呗”→17:31:24“马上为您转接人工客服专员一对一核实解答”→17:36:25“口罩小，这个脸都没兜住”→11月7日10:44:48“JT3183610401899 这是补发单号记得查收”", "staffResult": "已核实并补发", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-06\n17:29:40\n在吗你把你家尺寸发来呗\nqq我是一条小鱼\n17:29:40\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:29:40\n亲亲你好~\n得升旗舰店:圆圆\n17:29:41\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n17:29:51\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n17:30:30\n啥意思\nqq我是一条小鱼\n17:30:42\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n17:30:53\n是干啥的呀？\nqq我是一条小鱼\n17:30:57\n你是干啥的啊\nqq我是一条小鱼\n17:31:03\n就问个尺寸，你还找个专业人员，你是干啥的？\nqq我是一条小鱼\n17:31:24\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n得升旗舰店:圆圆\n17:31:24\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:31:53\n由 圆圆 转交给 丽媛，原因：【买家评价不满意】，请您做好用户接待，若解决消费者问题，系统将自动剔除上一个负向评价\nqq我是一条小鱼\n17:32:02\n亲亲稍等~\n得升旗舰店:圆圆\n17:32:12\n这个呢\n得升旗舰店:圆圆\n17:32:19\n你好亲亲\n得升旗舰店:丽媛\n17:32:23\n稍等我这边看下\n得升旗舰店:丽媛\n17:33:20\n这边有什么能帮你\n得升旗舰店:丽媛\n17:33:52\n尺寸表\nqq我是一条小鱼\n17:33:56\n[6月-3岁/16-30斤]:长约8.9cmx宽9.4cm(±0.5c\n得升旗舰店:丽媛\n17:34:02\n你下单的是这个尺寸\n得升旗舰店:丽媛\n17:34:15\nqq我是一条小鱼\n17:34:20\n和你说的一样吗\nqq我是一条小鱼\n17:34:31\n稍等\n得升旗舰店:丽媛\n17:34:35\n我看下\n得升旗舰店:丽媛\n17:35:17\n不好意思，你下单的就是你盒子这个尺寸\n得升旗舰店:丽媛\n17:35:26\n我家孩子耳朵带着没问题。但是，脸不够长啊，小了。当时我买的时候我也问了，你们也给我发的是这个。与实际也不一样啊。我家孩子也不胖。\nqq我是一条小鱼\n17:35:29\n你这边是不能用吗\n得升旗舰店:丽媛\n17:35:50\n我下单的尺寸是你们说的尺寸和我收到的尺寸不一样啊\nqq我是一条小鱼\n17:35:52\n现在宝贝是多重那\n得升旗舰店:丽媛\n17:35:59\n二十多斤\nqq我是一条小鱼\n17:36:11\n那你现在就是脸这边小对吧\n得升旗舰店:丽媛\n17:36:25\n口罩小，这个脸都没兜住\nqq我是一条小鱼\n17:36:31\n我打开一个看了\nqq我是一条小鱼\n17:36:36\n能帮忙拍照看下吗\n得升旗舰店:丽媛\n17:36:45\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:36:51\n你看不看啥用跟你们说的尺寸一样吗？\nqq我是一条小鱼\n17:36:53\n我这边看下给你免费补发一盒大一个尺码\n得升旗舰店:丽媛\n17:37:22\n我不要你免费，就是退了，我重新拍就完事了，谁也不想占便宜，这盒小了，我留着也没用\nqq我是一条小鱼\n17:37:36\n明白你的意思\n得升旗舰店:丽媛\n17:37:56\n因为你这个没有运费险的，你退回我们也要帮你付运费对吧\n得升旗舰店:丽媛\n17:38:03\n是吗？我还没看呢\nqq我是一条小鱼\n17:38:15\n我还不知道，没有运费险呢，我就寻思跟你们说一下子，让你们改一下尺寸，有客户介绍的话，你们别说差了\nqq我是一条小鱼\n17:38:16\n所以这边不用麻烦，我们这边直接给你寄一盒S的\n得升旗舰店:丽媛\n17:38:37\n感谢你的提醒亲亲\n得升旗舰店:丽媛\n17:38:51\n那我这边给你安排一盒大一个尺码你看行吗\n得升旗舰店:丽媛\n17:38:54\n你这s是多大用的\nqq我是一条小鱼\n17:39:07\n小的这盒你自行处理\n得升旗舰店:丽媛\n17:39:11\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:39:21\n一般30斤以上\n得升旗舰店:丽媛\n17:39:29\n那我家孩子没有30斤\nqq我是一条小鱼\n17:39:37\n因为每个宝宝脸型也不一样\n得升旗舰店:丽媛\n17:39:48\n也不一点是这个斤数\n得升旗舰店:丽媛\n17:39:49\n有图片吗\nqq我是一条小鱼\n17:39:50\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:39:57\n你是说图案吗\n得升旗舰店:丽媛\n17:40:01\n他这玩意就跟纸尿裤似的，说多少斤的话也不是那么准确\nqq我是一条小鱼\n17:40:05\n嗯\nqq我是一条小鱼\n17:40:09\n对的\n得升旗舰店:丽媛\n17:40:16\n是这样的亲亲\n得升旗舰店:丽媛\n17:40:26\n你家是男宝贝是吗\n得升旗舰店:丽媛\n17:40:39\n对\nqq我是一条小鱼\n17:40:52\n好的，你稍等我给你发图案\n得升旗舰店:丽媛\n17:41:39\n你购买的这个3图也有S\n得升旗舰店:丽媛\n17:41:50\n你看寄回这3个小图案可以吗\n得升旗舰店:丽媛\n17:42:28\n你看行吗，亲亲\n得升旗舰店:丽媛\n17:42:36\n什么意思没懂\nqq我是一条小鱼\n17:42:43\n稍等\n得升旗舰店:丽媛\n17:43:07\n啊，你也没给我发图片呢，你就大一码也行，你给我发也行，你就发吧，那你这个真不要了，这我可不想占你便宜，你要的话就给你退回去\nqq我是一条小鱼\n17:43:18\n是的\n得升旗舰店:丽媛\n17:43:23\n不用的\n得升旗舰店:丽媛\n17:43:37\n退回运费估计都要9元了，没必要退回\n得升旗舰店:丽媛\n17:44:12\n能麻烦亲亲，你在刚才点了对客服不满意的，帮忙点下满意，我们有考核的\n得升旗舰店:丽媛\n17:44:14\n那我买运费险呢？\nqq我是一条小鱼\n17:44:18\n感谢你的理解\n得升旗舰店:丽媛\n17:44:32\n重新下一单买运费险呢，完了之后把这个再退回去呢，运费险多少钱呢？买运费险我还没看呢\nqq我是一条小鱼\n17:44:35\n不用的，我们这边给你安排免费寄一盒S\n得升旗舰店:丽媛\n17:45:04\n那你发吧\nqq我是一条小鱼\n17:45:10\n好的\n得升旗舰店:丽媛\n17:45:29\n辛苦你帮我点下亲亲，谢谢\n得升旗舰店:丽媛\n17:45:44\n这边马上给你安排补发，稍后出单号给你留言\n得升旗舰店:丽媛\n17:45:57\n那个客服啊，我就问问他尺寸，因为之前我拍的时候也是他给我发的尺寸，我想让他再发一下子看看我到底是你们发错了还是我整错了？，她啥话也不说，就直接转接\nqq我是一条小鱼\n17:46:02\n那我给你改一下吧\nqq我是一条小鱼\n17:46:04\n请在客户端查看原始聊天记录，网页版无法展示\nqq我是一条小鱼\n17:46:19\n点呢，咋点呢？\nqq我是一条小鱼\n17:46:23\n我咋点不\nqq我是一条小鱼\n17:46:26\n好的，谢谢，我这边会反馈，让上级找她修改\n得升旗舰店:丽媛\n17:46:40\n点已解决就可以的亲亲\n得升旗舰店:丽媛\n17:47:17\n我改了\nqq我是一条小鱼\n17:47:19\n看到了吗\nqq我是一条小鱼\n17:47:27\n真的很感谢你亲亲\n得升旗舰店:丽媛\n17:47:33\nqq我是一条小鱼\n17:47:36\n这个我需要点吗\nqq我是一条小鱼\n17:47:41\n不用了\n得升旗舰店:丽媛\n17:51:06\n行，那记得把单号给我\nqq我是一条小鱼\n17:51:07\n请在客户端查看原始聊天记录，网页版无法展示\n得升旗舰店:丽媛\n17:51:49\n/:)-(\n得升旗舰店:丽媛\n2026-11-07\n10:44:48\nJT3183610401899 这是补发单号记得查收\n得升旗舰店:丽媛\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [{"dept": "仓库部", "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "result": "已核实并补发", "proofImages": ["/proof_images/TASK-710_1794212026961_4e06660edf23_image.png"], "at": "2026-11-09 16:14:08", "time": "16:14"}], "initialCsNote": "已提供大一码补发单号，接待异常整改及补发适配结果仍待跟进", "proofImages": ["/proof_images/TASK-710_1794212026961_4e06660edf23_image.png"], "auditSummaryImages": [], "localIdOn192_168_1_11": "TASK-551", "lastUpdatedAt": "2026-11-09 18:00:26", "rejectReason": "退回：请上传本次处理完成的新截图；上一部门或探域审计汇总图不能代替本次处理凭证。"}, {"id": "TASK-744", "rowId": "天猫得升旗舰店#K207d2849eb97(11.7-11.8)", "store": "天猫得升旗舰店", "customerId": "hdjdhdh88455542", "orderId": "", "chatTime": "2026-11-08 18:15:50", "hasProblem": "是", "problemType": "商品/尺码/质量异常", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["仓库部", "市场部"], "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "groupKey": "OFFLINE_WH_MKT_FOLLOWUP", "groupTitle": "仓库部 / 市场部客服问题跟进", "cleanTitle": "商品/尺码/质量异常", "cleanAction": "回访买家【hdjdhdh88455542】核实并处理“破损”相关诉求，回填处理凭证；仓库核对实物与批次，按问题盘点隔离或补发正确货物，并回填处理凭证及物流单号；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "快递盒子外包装有没有破损 / 快递盒子有没有破损", "staffResult": "已核实补偿", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-08 18:15:50 未识别：hdjdhdh88455542\n18:15:50\nhdjdhdh88455542\n18:15:50\nhdjdhdh88455542\n18:15:50\n亲亲你好~\n得升旗舰店:圆圆\n18:15:50\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n得升旗舰店:圆圆\n18:15:50\n请在客户端查看原始聊天记录，网页版无法展示\nhdjdhdh88455542\n18:15:51\n请问有什么可以帮助你的~\n得升旗舰店:圆圆\n18:15:57\nn您好\nhdjdhdh88455542\n18:15:59\n盒子烂啦\nhdjdhdh88455542\n18:16:02\n压扁啦\nhdjdhdh88455542\n18:16:07\n口罩缺的呢\nhdjdhdh88455542\n18:16:11\n请在客户端查看原始聊天记录，网页版无法展示\nhdjdhdh88455542\n18:16:13\n请在客户端查看原始聊天记录，网页版无法展示\nhdjdhdh88455542\n18:16:13\n亲亲实在非常抱歉给您带来不好的体验🙏 跟您郑重说明一下：咱们仓库有严格的【退货拆包三核验红线】，任何拆封或外盒受损的退货件都会直接进入残次隔离区销毁，100%绝不会二次发给客户~\n得升旗舰店:圆圆\n18:16:13\n如果出现单包少1片（自动化高速点片机偶发千分之三红外感应误差）或内盒在原厂装箱时受挤压，我们全额为您负责~\n得升旗舰店:圆圆\n18:16:14\n为表歉意，我马上按售后S01标准给您申请【3~5元现金小红包】直接打款到您账户，您看可以吗？~\n得升旗舰店:圆圆\n18:16:35\n只有11个\nhdjdhdh88455542\n18:16:56\n您好\nhdjdhdh88455542\n18:17:00\n亲亲辛苦您这边拍一下照片或者视频 这边看下呢\n得升旗舰店:圆圆\n18:17:11\n给你发啦\nhdjdhdh88455542\n18:17:19\n亲收到啦，辛苦您配合上传~ 咱们仓库有严格的【退货拆包三核验红线】，任何拆封或外盒受损的退货件都会直接进入残次隔离区销毁，100%绝不会二次发给客户~\n得升旗舰店:圆圆\n18:17:19\n如果出现单包少1片（自动化高速点片机偶发千分之三红外感应误差）或内盒在原厂装箱时受挤压，我们全额为您负责~~\n得升旗舰店:圆圆\n18:17:29\n快递盒子拍下照片\n得升旗舰店:圆圆\n18:18:48\nhdjdhdh88455542\n18:18:48\nhdjdhdh88455542\n18:18:48\nhdjdhdh88455542\n18:19:00\n快递盒子外包装有没有破损\n得升旗舰店:圆圆\n18:20:34\n你应该打包的时候就有问题吧，打包的时候就是烂的。\nhdjdhdh88455542\n18:20:43\n亲亲实在非常抱歉给您带来不好的体验🙏 跟您郑重说明一下：咱们仓库有严格的【退货拆包三核验红线】，任何拆封或外盒受损的退货件都会直接进入残次隔离区销毁，100%绝不会二次发给客户~ 如果出现单包少1片（自动化高速点片机偶发千分之三红外感应误差）或内盒在原厂装箱时受挤压，我们全额为您负责~ 为表歉意，我马上按售后S01标准给您申请【3~5元现金小红包】直接打款到您账户，您看可以吗？~~\n得升旗舰店:圆圆\n18:20:45\n还缺了十几个，您看您是补发还是我给您退回去？\nhdjdhdh88455542\n18:20:52\n快递盒子有没有破损\n得升旗舰店:圆圆\n18:22:55\n补偿5元可以\nhdjdhdh88455542\n18:23:48\nhdjdhdh88455542\n18:24:15\n是少了11个是吗亲\n得升旗舰店:圆圆\n18:24:42\n...是的。\nhdjdhdh88455542\n18:24:58\n好的\n得升旗舰店:圆圆\n18:25:03\n请在客户端查看原始聊天记录，网页版无法展示\n得升旗舰店:圆圆\n18:25:22\n好的\nhdjdhdh88455542\n18:25:46\n嗯嗯\n得升旗舰店:圆圆\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [], "initialCsNote": "待跟进闭环", "proofImages": ["/proof_images/TASK-744_1794279270958_58ee351d21f2_image.png"], "auditSummaryImages": [], "lastUpdatedAt": "2026-11-10 15:21:53", "rejectReason": "退回：仓库部工单需写明实物库存清点、批次隔离或补发/退回快递核对结果。"}, {"id": "TASK-762", "rowId": "天猫得升旗舰店#Kc1db3d014762(11.7-11.8)", "store": "天猫得升旗舰店", "customerId": "lly执着aaa", "orderId": "", "chatTime": "2026-11-08 09:44:19", "hasProblem": "待人工判断", "problemType": "处理中待核对", "track": "offline_human_todo", "stage": "offline_rejected", "depts": ["仓库部", "市场部"], "ownerNames": "许培婷 / 吴行哲 / 林丽媛 / 尤敏燕", "groupKey": "OFFLINE_WH_MKT_FOLLOWUP", "groupTitle": "仓库部 / 市场部客服问题跟进", "cleanTitle": "处理中待核对", "cleanAction": "回访买家【lly执着aaa】核实并处理“登记”相关诉求，回填处理凭证；仓库核对实物与批次，按问题盘点隔离或补发正确货物，并回填处理凭证及物流单号；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "如果您需要修改收货地址，麻烦把【新的收货人姓名、电话、详细文字地址】发在聊天框里，人工客服看到后会第一时间为您在后台系统登记修改；若包裹已揽收发出，客服也会立即帮您联系快递拦截更改地址哈~~", "staffResult": "已核实正常签收", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-08 09:44:19 未识别：请问改地址了吗？需要我退货吗\nlly执着aaa\n09:44:20\n买家正在向您提出退换货、催派件、修改收件信息、核实物流状态等要求，若因您未经用户授权擅自将消费者个人信息复制到公开群组上导致数据泄露事件发生，您将因此承担数据泄露的法律责任，平台也有权追究您的责任！\nlly执着aaa\n09:44:30\n亲亲，这边没有看到您之前发送的新地址信息哈~\n得升旗舰店:圆圆\n09:44:30\n如果您需要修改收货地址，麻烦把【新的收货人姓名、电话、详细文字地址】发在聊天框里，人工客服看到后会第一时间为您在后台系统登记修改；若包裹已揽收发出，客服也会立即帮您联系快递拦截更改地址哈~~\n得升旗舰店:圆圆\n09:44:35\n得升旗舰店:圆圆\n09:44:38\n改了呢\n得升旗舰店:圆圆\n09:44:57\n好的👌 谢谢\nlly执着aaa\n09:45:03\n亲，不用客气哈，感谢您的支持~~\n得升旗舰店:圆圆\n没有更多内容了", "originalDepts": ["仓库部", "市场部"], "doneSteps": [], "initialCsNote": "待跟进闭环", "proofImages": ["/proof_images/TASK-762_1794295802609_ee01116f60b0_image.png", "/proof_images/TASK-762_1794295835927_52bbbdf891d8_image.png"], "auditSummaryImages": [], "lastUpdatedAt": "2026-11-10 15:33:39", "rejectReason": "退回：仓库部工单需写明实物库存清点、批次隔离或补发/退回快递核对结果。"}, {"id": "TASK-788", "rowId": "拼多多得升医疗器械官方旗舰店#K95df8835580a(11.7-11.8)", "store": "拼多多得升医疗器械官方旗舰店", "customerId": "毛***(uid:4065494491)", "orderId": "", "chatTime": "2026-11-08 21:26:09", "hasProblem": "是", "problemType": "商品/尺码/质量异常", "track": "offline_human_todo", "stage": "offline_todo", "depts": ["市场部"], "ownerNames": "林丽媛 / 尤敏燕", "groupKey": "OFFLINE_MKT_FOLLOWUP", "groupTitle": "市场部客服问题跟进", "cleanTitle": "商品/尺码/质量异常", "cleanAction": "回访买家【毛***(uid:4065494491)】核实并处理“偏大”相关诉求，回填处理凭证；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "亲亲，3岁宝宝戴这款是合适的哦～建议选【M码/小童款】，适合3-6岁（约30-50斤）宝宝，3D立体版型贴合不勒耳，不会戴着偏大哈~", "staffResult": "", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-08 21:26:09 系统：系统消息\n\n\n[常见问题列表]\n2026-11-08 21:26:10 买家：毛***\n\n\nhttps://mobile.yangkeduo.com/goods.html?goods_id=455323403922&_oak_rcto=YWLBqCK7ZS_0senyRDORWQZbDpbo-h7JF6mwJ-RdXAlNaF-4Ap4OOcESgjkMvWV1Bfo&page_from=63&_oak_actype=null&_oak_sub_actype=null\n2026-11-08 21:26:11 买家：拼多多得升圆圆\n\n\n亲亲你好~\n2026-11-08 21:26:12 买家：拼多多得升圆圆\n\n\n请问有什么可以帮助你的~\n2026-11-08 21:26:20 买家：毛***\n\n\n这个3岁可以带吗\n2026-11-08 21:26:20 系统：系统消息\n\n\n[当前用户来自 商品详情页]\n2026-11-08 21:26:20 买家：拼多多得升圆圆\n\n\n欢迎光临，很高兴能够为您服务！\n2026-11-08 21:26:50 买家：拼多多得升圆圆\n\n\nhttps://mobile.yangkeduo.com/goods.html?goods_id=1005576208264\n2026-11-08 21:26:53 买家：拼多多得升圆圆\n\n\n这个您看下\n2026-11-08 21:27:17 买家：毛***\n\n\n这个会不会戴着大呀\n2026-11-08 21:27:21 买家：拼多多得升圆圆\n\n\n亲亲，3岁宝宝戴这款是合适的哦～建议选【M码/小童款】，适合3-6岁（约30-50斤）宝宝，3D立体版型贴合不勒耳，不会戴着偏大哈~\n2026-11-08 21:27:22 买家：拼多多得升圆圆\n\n\n咱们有【退换包邮费】服务，收到可以先试戴，您完全放心～~\n2026-11-08 21:29:06 买家：毛***\n\n\n这个也没有M小童啊\n2026-11-08 21:29:14 买家：拼多多得升圆圆\n\n\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n2026-11-08 21:30:27 买家：拼多多得升圆圆\n\n\n可以到货试一下呢亲\n2026-11-08 21:30:54 买家：毛***\n2026-11-08 21:30:54 买家：拼多多得升圆圆\n\n\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n2026-11-08 21:31:15 买家：毛***\n\n\n我之前拍的这个我儿子3岁半了还能贷\n2026-11-08 21:31:17 买家：毛***\n\n\n带\n2026-11-08 21:31:21 买家：拼多多得升圆圆\n\n\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~", "originalDepts": ["市场部"], "doneSteps": [], "initialCsNote": "待跟进闭环", "proofImages": [], "auditSummaryImages": []}, {"id": "TASK-798", "rowId": "拼多多陈小培的商铺25#Kc7aa843f39e9(11.7-11.8)", "store": "拼多多陈小培的商铺25", "customerId": "初***(uid:3878282575)", "orderId": "", "chatTime": "2026-11-08 21:17:27", "hasProblem": "是", "problemType": "商品/尺码/质量异常", "track": "offline_human_todo", "stage": "offline_todo", "depts": ["市场部"], "ownerNames": "林丽媛 / 尤敏燕", "groupKey": "OFFLINE_MKT_FOLLOWUP", "groupTitle": "市场部客服问题跟进", "cleanTitle": "商品/尺码/质量异常", "cleanAction": "回访买家【初***(uid:3878282575)】核实并处理“勒”相关诉求，回填处理凭证；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "亲亲，快两岁的宝宝体重如果在16-30斤范围内，这款【1-3岁/XS码】是可以戴的哦～它比小月龄款空间更宽裕、贴合不勒耳~ 咱们支持免费试戴1片和退换包邮费服务，您收到后可以放心给宝宝试戴一下，不合适随时包退哈~~~", "staffResult": "", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-08 21:17:27 系统：系统消息\n\n\n[常见问题列表]\n2026-11-08 21:17:35 买家：初***\n\n\n有两岁的宝宝带的吗\n2026-11-08 21:17:35 系统：系统消息\n\n\n[当前用户来自 商品详情页]\n2026-11-08 21:17:36 买家：拼多多wo圆圆\n\n\n亲亲你好~\n2026-11-08 21:17:37 买家：拼多多wo圆圆\n\n\n请问有什么可以帮助你的~\n2026-11-08 21:17:40 买家：拼多多wo圆圆\n\n\n亲亲，快两岁的宝宝体重如果在16-30斤范围内，这款【1-3岁/XS码】是可以戴的哦～它比小月龄款空间更宽裕、贴合不勒耳~ 咱们支持免费试戴1片和退换包邮费服务，您收到后可以放心给宝宝试戴一下，不合适随时包退哈~~~", "originalDepts": ["市场部"], "doneSteps": [], "initialCsNote": "待跟进闭环", "proofImages": [], "auditSummaryImages": []}, {"id": "TASK-803", "rowId": "拼多多陈小培的商铺25#K713c43f2668c(11.9-11.9)", "store": "拼多多陈小培的商铺25", "customerId": "＠***(uid:5147987204)", "orderId": "", "chatTime": "2026-11-09 13:46:09", "hasProblem": "是", "problemType": "商品/尺码/质量异常", "track": "offline_human_todo", "stage": "offline_todo", "depts": ["市场部"], "ownerNames": "林丽媛 / 尤敏燕", "groupKey": "OFFLINE_MKT_FOLLOWUP", "groupTitle": "市场部客服问题跟进", "cleanTitle": "商品/尺码/质量异常", "cleanAction": "回访买家【＠***(uid:5147987204)】核实并处理“偏小”相关诉求，回填处理凭证；市场跟进客服断联回访、发票及质量留样复盘，维护探域知识库并回填结果", "aiOnlineDone": "", "keyEvidence": "亲亲，1岁5个月、体重18斤的宝宝，建议选择【1-3岁/XS码】哦～ ⭐如果宝宝脸偏小、偏瘦、想更贴合，或者想方便调节松紧，可以选择规格里带【调节扣】字样的款式哦～ 我们还有【退换包邮费】服务，收到可以先试戴，您完全放心~~", "staffResult": "", "isNormalRatio": "", "normalRatioBasis": "", "abnormalPlan": "", "chatContent": "2026-11-09 13:46:09 买家：＠***\n\n\nhttps://mobile.yangkeduo.com/goods.html?goods_id=464063235976&_oak_rcto=YWIkSFp5iJ5SnpJnnCyeoEXyR8lJpw4h9gjYRqXyMgSmfEtY5UKuozw5&page_from=101&_oak_actype=null&_oak_sub_actype=null\n2026-11-09 13:46:10 买家：拼多多wo圆圆\n\n\n亲亲你好~\n2026-11-09 13:46:11 买家：拼多多wo圆圆\n\n\n请问有什么可以帮助你的~\n2026-11-09 13:46:18 买家：拼多多wo圆圆\n\n\n欢迎光临，很高兴能够为您服务！\n2026-11-09 13:46:23 买家：＠***\n\n\n一岁5个月拍哪个口罩\n2026-11-09 13:46:23 系统：系统消息\n\n\n[当前用户来自 商品详情页]\n2026-11-09 13:46:28 买家：拼多多wo圆圆\n\n\n亲亲，给宝宝选口罩咱们主要看体重哦，方便告诉我宝宝大概多少斤吗？比如16-30斤左右的宝宝建议选【4-12个月/1-3岁XS码】，我帮您推荐更合适的尺码~\n2026-11-09 13:46:28 买家：拼多多wo圆圆\n\n\n咱们提供【退换包邮费】服务，收到试戴不合适随时包退换~~\n2026-11-09 13:59:24 买家：＠***\n\n\n体重18斤\n2026-11-09 13:59:30 买家：拼多多wo圆圆\n\n\n亲亲，1岁5个月、体重18斤的宝宝，建议选择【1-3岁/XS码】哦～ ⭐如果宝宝脸偏小、偏瘦、想更贴合，或者想方便调节松紧，可以选择规格里带【调节扣】字样的款式哦～ 我们还有【退换包邮费】服务，收到可以先试戴，您完全放心~~\n2026-11-09 14:00:36 买家：＠***\n\n\n你给我发个链接\n2026-11-09 14:00:41 买家：拼多多wo圆圆\n\n\n亲亲，直接在咱们当前这个商品链接里选择【1-3岁/XS码】的规格下单就可以啦～如果宝宝脸偏瘦或想方便调节松紧，也可以选带【调节扣】的款式哦~\n2026-11-09 14:00:42 买家：拼多多wo圆圆\n\n\n咱们提供【退换包邮费】服务，收到试戴不合适随时包退换~~~\n2026-11-09 14:01:04 买家：＠***\n2026-11-09 14:01:05 买家：拼多多wo圆圆\n\n\n亲亲，由于系统暂时无法直接识别图片细节，麻烦您用文字简单描述一下您想咨询的商品款式、尺码或具体问题，我马上为您解答处理哈~\n2026-11-09 14:01:10 买家：＠***\n\n\n选这个吗\n2026-11-09 14:01:20 买家：拼多多wo圆圆\n\n\n亲亲，您咨询的问题圆圆马上为您转接人工客服专员一对一核实解答，请稍等一下下哦~\n2026-11-09 14:01:25 买家：拼多多wo圆圆\n\n\n是的亲\n2026-11-09 14:01:27 买家：＠***\n\n\n1到2岁的吗\n2026-11-09 14:01:34 买家：拼多多wo圆圆\n\n\n亲亲，是的哦～这款【1-2岁】规格的口罩，只要宝宝体重在40斤以内都是可以佩戴的，您家宝宝1岁5个月、18斤选这个完全没问题哈~", "originalDepts": ["市场部"], "doneSteps": [], "initialCsNote": "待跟进闭环", "proofImages": [], "auditSummaryImages": []}];
+    const BUILD_VERSION_TS = 1794302247759;
     const STORAGE_KEY = 'desheng_cs_v35_workflow_items';
     const BUILD_VER_KEY = 'desheng_cs_v35_build_ver';
     const CHEVRON_SVG = '<svg class="chev" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -467,18 +483,74 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       items = filterActiveOnly(INITIAL_ITEMS);
     }
 
+    const CANONICAL_IDS = {"TASK-434": "TASK-398", "TASK-435": "TASK-323", "TASK-436": "TASK-340", "TASK-437": "TASK-350", "TASK-438": "TASK-351", "TASK-439": "TASK-353"};
+    const DUPLICATE_TASK_IDENTITIES = {
+      "TASK-434": {
+        "store": "天猫wo居家日用旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "曦曦男爵",
+        "rowId": "天猫wo居家日用旗舰店#R17(10.30-11.1)",
+        "orderId": "5127901201019014037"
+      },
+      "TASK-435": {
+        "store": "天猫得升旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "740415576z",
+        "rowId": "天猫得升旗舰店#R8(10.30-11.1)",
+        "orderId": "待查订单(740415576z)"
+      },
+      "TASK-436": {
+        "store": "天猫得升旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "刘二拴liuershuan",
+        "rowId": "天猫得升旗舰店#R25(10.30-11.1)",
+        "orderId": "待查订单(刘二拴liuershuan)"
+      },
+      "TASK-437": {
+        "store": "天猫得升旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "apple6934",
+        "rowId": "天猫得升旗舰店#R35(10.30-11.1)",
+        "orderId": "商品ID:1073663405610"
+      },
+      "TASK-438": {
+        "store": "天猫得升旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "玻璃心0725",
+        "rowId": "天猫得升旗舰店#R36(10.30-11.1)",
+        "orderId": "商品ID:720336616470"
+      },
+      "TASK-439": {
+        "store": "天猫得升旗舰店",
+        "batch": "10.30-11.1",
+        "customerId": "tb1416279",
+        "rowId": "天猫得升旗舰店#R38(10.30-11.1)",
+        "orderId": "5127894973039010242"
+      }
+    };
+    // Keep immutable department history separate from mutable submission objects.
+    const completionHistory = new Map();
+    for (const item of mergeActiveRecords([INITIAL_ITEMS, items])) {
+      completionHistory.set(item.id, JSON.parse(JSON.stringify(item)));
+    }
+    items = items.map(item => preserveDepartments(item, completionHistory.get(item.id)));
+
     let currentRole = 'ALL';
     let offlineGroupedMode = false; // 默认逐单展开（与陈晓娟极简版 1 件事 = 1 行标题完全一致）
     let activeGroupKey = null;
     let activeSingleId = null;
     const inlineDrafts = {};
+    const inlineProofDrafts = {};
+    let modalProofDrafts = [];
+    let pendingProofUploads = 0;
     const openFolds = new Set();
+    // Keep failed submissions visible across background refreshes until a confirmed retry.
+    const unconfirmedSubmissions = new Map();
 
     let BRIDGE_BASE = (window.location.protocol.startsWith('http') && (window.location.port === '18899' || window.location.port === '8788' || window.location.hostname.includes('desheng.shop') || window.location.hostname.includes('trycloudflare.com')))
       ? window.location.origin
       : 'http://127.0.0.1:18899';
     let bridgeOnline = false;
-    let isSubmitting = false;
     let lastServerUpdatedAt = 0;
     let serverConfig = {
       groupName: '服务改进群',
@@ -503,28 +575,33 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
     }
 
     async function syncFromBridge(forceRender = false) {
-      if (isSubmitting && !forceRender) return;
-      const candidates = Array.from(new Set([
-        'http://127.0.0.1:18899',
-        'http://127.0.0.1:8788',
-        BRIDGE_BASE,
-        'https://gptweb.desheng.shop'
-      ]));
+      const candidates = [BRIDGE_BASE, 'http://127.0.0.1:18899', 'http://192.168.1.11:18899'];
       for (const base of candidates) {
         try {
           const res = await fetch(base + '/api/data', { cache: 'no-store' });
           if (res.ok) {
             const data = await res.json();
-            if (Array.isArray(data.items) && data.items.length === 0 && !data.updatedAt && items.length > 0) {
-              continue; // 跳过未挂载数据库的空响应节点，严禁把待办清零
-            }
             BRIDGE_BASE = base;
             bridgeOnline = true;
             updateSyncBadge(true, data.lanUrl);
             if (data.items && Array.isArray(data.items)) {
               if (forceRender || !lastServerUpdatedAt || data.updatedAt !== lastServerUpdatedAt) {
                 lastServerUpdatedAt = data.updatedAt || Date.now();
-                items = filterActiveOnly(data.items);
+                const history = new Map(mergeActiveRecords([Array.from(completionHistory.values()), data.items])
+                  .map(x => [x.id, x]));
+                const refreshed = new Map(data.items.map(x => {
+                  preserveDepartments(x, history.get(x.id));
+                  completionHistory.set(x.id, JSON.parse(JSON.stringify(x)));
+                  return [x.id, x];
+                }));
+                unconfirmedSubmissions.forEach((original, id) => {
+                  if (!refreshed.has(id) || recordClock(refreshed.get(id)) > recordClock(original)) {
+                    unconfirmedSubmissions.delete(id);
+                  } else {
+                    refreshed.set(id, original);
+                  }
+                });
+                items = filterActiveOnly(Array.from(refreshed.values()));
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
                 if (!isUserTypingInline() || forceRender) {
                   renderBoard();
@@ -571,10 +648,303 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       }
     }
 
+    function recordClock(record) {
+      return Math.max(...['lastUpdatedAt', 'archivedAt'].map(field => {
+        const stamp = String(record[field] || '').trim().replace(/\//g, '-').replace(' ', 'T');
+        return Date.parse(stamp && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(stamp) ? stamp + '+08:00' : stamp) || 0;
+      }));
+    }
+    function mergeActiveRecords(lists) {
+      const map = new Map();
+      for (const list of lists) for (const x of Array.isArray(list) ? list : []) {
+        validateRawEvidence(x);
+        const previous = map.get(x.id);
+        if (!previous) { map.set(x.id, preserveDepartments({ ...x })); continue; }
+        const newer = recordClock(previous) > recordClock(x) ? previous : x;
+        const older = newer === x ? previous : x;
+        const merged = { ...older, ...newer };
+        for (const field of ['proofImages', 'doneSteps']) {
+          if (Array.isArray(older[field]) || Array.isArray(newer[field])) {
+            merged[field] = Array.from(new Map([...(older[field] || []), ...(newer[field] || [])]
+              .map(v => [JSON.stringify(v), v])).values());
+          }
+        }
+        const preserved = preserveDepartments(merged, older);
+        map.set(x.id, preserved);
+      }
+      return Array.from(map.values());
+    }
+    function matchesExpectedIdentity(record, expected) {
+      const normalized = (field, value) => {
+        const text = String(value == null ? '' : value).trim();
+        return field === 'rowId' ? text.replace(/（/g, '(').replace(/）/g, ')') : (field === 'orderId' && text === '待查订单(曦曦男爵)' ? '5127901201019014037' : text);
+      };
+      return ['store', 'customerId', 'rowId', 'orderId', 'batch'].every(field =>
+        !normalized(field, record[field]) || normalized(field, record[field]) === normalized(field, expected[field])) &&
+        normalized('customerId', record.customerId) === normalized('customerId', expected.customerId) &&
+        (normalized('rowId', record.rowId) === normalized('rowId', expected.rowId) ||
+          (!!normalized('orderId', expected.orderId) && normalized('orderId', record.orderId) === normalized('orderId', expected.orderId)));
+    }
+    function allowedTaskIds(record, prev = null) {
+      const allowed = new Set([record.id]);
+      const normalized = (field, value) => {
+        const text = String(value == null ? '' : value).trim();
+        return field === 'rowId' ? text.replace(/（/g, '(').replace(/）/g, ')') : (field === 'orderId' && text === '待查订单(曦曦男爵)' ? '5127901201019014037' : text);
+      };
+      for (const [aliasId, canonId] of Object.entries(CANONICAL_IDS)) {
+        const expected = DUPLICATE_TASK_IDENTITIES[aliasId];
+        const noConflicts = ['store', 'customerId', 'rowId', 'orderId', 'batch'].every(field =>
+          !normalized(field, record[field]) || normalized(field, record[field]) === normalized(field, expected[field]));
+        if (record.id === canonId && noConflicts && (matchesExpectedIdentity(record, expected) ||
+          (prev && typeof prev === 'object' && !Array.isArray(prev) && matchesExpectedIdentity(prev, expected)))) allowed.add(aliasId);
+      }
+      return allowed;
+    }
+    function isNormalChat(record, prev = null) {
+      const text = value => String(value == null ? '' : value).trim();
+      const noDepts = item => !(Array.isArray(item.originalDepts) ? item.originalDepts.length : item.originalDepts) &&
+        !(Array.isArray(item.depts) ? item.depts.length : item.depts);
+      return text(record.hasProblem) === '否' && record.track === 'normal_auto_archived' &&
+        record.stage === 'closed_passed' && ['', '无', '否', '正常'].includes(text(record.problemType)) && noDepts(record) &&
+        (prev === null || (text(prev.hasProblem) === '否' && prev.track === 'normal_auto_archived' &&
+          prev.stage === 'closed_passed' && noDepts(prev)));
+    }
+    function validateRawEvidence(record) {
+      if (record.doneSteps !== undefined && !Array.isArray(record.doneSteps)) throw Error('处理步骤(doneSteps)必须为数组');
+      if (record.proofImages !== undefined && !Array.isArray(record.proofImages)) throw Error('截图凭证(proofImages)必须为数组');
+    }
+    function requiredDepartments(record, prev = null) {
+      const required = new Set();
+      for (const item of [prev, record]) {
+        if (!item || typeof item !== 'object') continue;
+        for (const values of [item.originalDepts, item.depts,
+          Array.isArray(item.doneSteps) ? item.doneSteps.map(s => s && s.dept) : []]) {
+          for (const dept of Array.isArray(values) ? values : []) {
+            if (typeof dept === 'string' && dept.trim()) required.add(dept.trim());
+          }
+        }
+      }
+      return Array.from(required);
+    }
+    function collectSummaryProofs(record, prev = null) {
+      const records = [prev, record].filter(item => item && typeof item === 'object');
+      const urls = new Set();
+      const add = values => (Array.isArray(values) ? values : []).forEach(url => {
+        if (typeof url === 'string') urls.add(url);
+      });
+      for (const item of records) add(item.auditSummaryImages);
+      for (const item of records) {
+        for (const step of Array.isArray(item.doneSteps) ? item.doneSteps : []) {
+          if (step && (step.proofKind === 'audit_summary' || step.auditReconciliation)) add(step.proofImages);
+        }
+      }
+      for (const item of records) {
+        const candidates = [...(Array.isArray(item.proofImages) ? item.proofImages : []),
+          ...(Array.isArray(item.doneSteps) ? item.doneSteps : []).flatMap(step => step && Array.isArray(step.proofImages) ? step.proofImages : [])];
+        add(candidates.filter(isSummaryOnlyProof));
+      }
+      return Array.from(urls);
+    }
+    function preserveDepartments(record, prev = null) {
+      validateRawEvidence(record);
+      if (prev) validateRawEvidence(prev);
+      record.originalDepts = requiredDepartments(record, prev);
+      record.auditSummaryImages = collectSummaryProofs(record, prev);
+      if (prev && typeof prev === 'object' && !Array.isArray(prev)) {
+        record.proofImages = Array.from(new Set([
+          ...(Array.isArray(prev.proofImages) ? prev.proofImages : []),
+          ...(Array.isArray(prev.doneSteps) ? prev.doneSteps : []).flatMap(step =>
+            step && Array.isArray(step.proofImages) ? step.proofImages : []),
+          ...(record.proofImages || [])
+        ]));
+      }
+      if (prev && Array.isArray(prev.doneSteps)) {
+        const curSteps = Array.isArray(record.doneSteps) ? record.doneSteps : [];
+        // Replace only retained legacy entries, leaving new empty steps for validation.
+        const superseded = new Set(prev.doneSteps.filter(old => old && typeof old.dept === 'string' && !(old.proofImages || []).length &&
+          !trustedAuditStep(record, old, prev) && curSteps.some(step =>
+            step && typeof step.dept === 'string' && step.dept.trim() === old.dept.trim() && (step.proofImages || []).length)).map(proofStepKey));
+        record.doneSteps = Array.from(new Map([...prev.doneSteps, ...curSteps]
+          .filter(step => !superseded.has(proofStepKey(step)))
+          .map(step => [proofStepKey(step), step])).values());
+      }
+      return record;
+    }
+
+    // Synchronous SHA-256 keeps offline save validation synchronous as well.
+    function proofSha256(bytes) {
+      const k = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+        0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+        0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+        0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+        0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+        0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+        0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+        0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+      const h = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+      const padded = new Uint8Array(Math.ceil((bytes.length + 9) / 64) * 64);
+      padded.set(bytes); padded[bytes.length] = 0x80;
+      const view = new DataView(padded.buffer);
+      view.setUint32(padded.length - 8, Math.floor(bytes.length / 0x20000000), false);
+      view.setUint32(padded.length - 4, (bytes.length * 8) >>> 0, false);
+      const rotr = (x, n) => (x >>> n) | (x << (32 - n)), w = new Uint32Array(64);
+      for (let offset = 0; offset < padded.length; offset += 64) {
+        for (let i = 0; i < 16; i++) w[i] = view.getUint32(offset + i * 4, false);
+        for (let i = 16; i < 64; i++) {
+          const x = w[i - 15], y = w[i - 2];
+          w[i] = w[i - 16] + (rotr(x, 7) ^ rotr(x, 18) ^ (x >>> 3)) + w[i - 7] +
+            (rotr(y, 17) ^ rotr(y, 19) ^ (y >>> 10));
+        }
+        let [a,b,c,d,e,f,g,hh] = h;
+        for (let i = 0; i < 64; i++) {
+          const t1 = (hh + (rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25)) + ((e & f) ^ (~e & g)) + k[i] + w[i]) | 0;
+          const t2 = ((rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+          hh=g; g=f; f=e; e=(d+t1)|0; d=c; c=b; b=a; a=(t1+t2)|0;
+        }
+        [a,b,c,d,e,f,g,hh].forEach((v, i) => { h[i] = (h[i] + v) | 0; });
+      }
+      return h.map(v => (v >>> 0).toString(16).padStart(8, '0')).join('');
+    }
+    function proofFingerprint(url) {
+      if (typeof url !== 'string') return null;
+      const inline = /^data:image\/png;base64,([A-Za-z0-9+/=\s]+)$/.exec(url);
+      if (inline) {
+        try {
+          const payload = inline[1].replace(/\s/g, '');
+          if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(payload)) return null;
+          const bytes = Uint8Array.from(atob(payload), c => c.charCodeAt(0));
+          return isStructurallyValidImage(bytes, 'png', true) || null;
+        } catch (e) { return null; }
+      }
+      // The API hashes files; offline clients can only compare canonical local URLs.
+      const local = /^\/proof_images\/([a-zA-Z0-9_-]+\.png)$/.exec(url);
+      return local && local[0] === url ? 'url:/proof_images/' + local[1] : null;
+    }
+
+    function proofStepKey(step) {
+      return JSON.stringify(step, (_key, value) => value && typeof value === 'object' && !Array.isArray(value)
+        ? Object.fromEntries(Object.keys(value).sort().map(key => [key, value[key]])) : value);
+    }
+    function trustedAuditStep(record, step, prev = null) {
+      const departments = record.id === 'TASK-398' ? ['仓库部', '市场部', '运营部'] :
+        ['TASK-323', 'TASK-340', 'TASK-352', 'TASK-361', 'TASK-406', 'TASK-429'].includes(record.id) ? ['市场部'] : [];
+      return !!prev && prev.id === record.id && step.auditReconciliation === '2026-11-03-audit-v1' &&
+        departments.includes(step.dept) && Array.isArray(prev.doneSteps) &&
+        prev.doneSteps.some(old => old && proofStepKey(old) === proofStepKey(step));
+    }
+    function legacyHandoffStep(record, step, prev = null) {
+      return record.id === 'TASK-008' && !!prev && prev.id === record.id && step.dept === '仓库部' &&
+        step.time === '17:04:30' && Array.isArray(prev.doneSteps) &&
+        prev.doneSteps.some(old => old && proofStepKey(old) === proofStepKey(step));
+    }
+    function auditStepSatisfiesDepartment(record, step, prev = null) {
+      if (legacyHandoffStep(record, step, prev)) return true;
+      if (step.proofKind !== 'audit_summary' && !step.auditReconciliation) {
+        const summaries = new Set(collectSummaryProofs(record, prev).map(proofFingerprint).filter(Boolean));
+        return (step.proofImages || []).some(u => !isSummaryOnlyProof(u) && proofFingerprint(u) && !summaries.has(proofFingerprint(u)));
+      }
+      const expected = { '仓库部': '2026-11-03 15:32', '市场部': '2026-11-03 10:02' }[step.dept];
+      return record.id === 'TASK-398' && !!expected && trustedAuditStep(record, step, prev) &&
+        [expected, expected + ':00'].includes(step.time || step.at);
+    }
+    function validateStepProofs(record, prev = null, closing = true) {
+      const allowedIds = allowedTaskIds(record, prev);
+      const proofs = record.proofImages === undefined ? [] : record.proofImages;
+      const steps = record.doneSteps === undefined ? [] : record.doneSteps;
+      validateRawEvidence(record);
+      const historicalSteps = prev && prev.id === record.id && Array.isArray(prev.doneSteps) ? prev.doneSteps : [];
+      // Audit flags are never a client-controlled exemption, including on an open save.
+      for (const step of steps) {
+        if (!step || Array.isArray(step) || typeof step.dept !== 'string' || !step.dept.trim() ||
+            typeof step.result !== 'string' || !step.result.trim()) throw Error('处理步骤必须包含部门和非空处理结果');
+        if ((step.proofKind === 'audit_summary' || step.auditReconciliation) && !trustedAuditStep(record, step, prev)) {
+          throw Error('不允许客户端伪造审计汇总步骤');
+        }
+      }
+      if (proofs.some(u => !validProofUrl(u, allowedIds))) throw Error('截图凭证无效、文件不存在或不属于本任务');
+      const fingerprints = new Map();
+      const fingerprint = url => {
+        if (!fingerprints.has(url)) fingerprints.set(url, proofFingerprint(url));
+        return fingerprints.get(url);
+      };
+      const itemProofFingerprints = new Set(proofs.map(fingerprint).filter(Boolean));
+      const summaryFingerprints = new Set(collectSummaryProofs(record, prev).map(fingerprint).filter(Boolean));
+      for (const [idx, step] of steps.entries()) {
+        const stepProofs = step.proofImages === undefined ? [] : step.proofImages;
+        if (!Array.isArray(stepProofs) || stepProofs.some(u => !validProofUrl(u, allowedIds))) {
+          throw Error('处理步骤截图凭证无效');
+        }
+        if (trustedAuditStep(record, step, prev)) continue;
+        const historical = historicalSteps.some(old => old && proofStepKey(old) === proofStepKey(step));
+        if (!stepProofs.length && historical) {
+          const supplemented = steps.some(other => other.dept.trim() === step.dept.trim() &&
+            other.proofKind !== 'audit_summary' && !other.auditReconciliation &&
+            Array.isArray(other.proofImages) && other.proofImages.some(u => !isSummaryOnlyProof(u) && fingerprint(u) &&
+              !summaryFingerprints.has(fingerprint(u)) && itemProofFingerprints.has(fingerprint(u))));
+          if (!closing || record.stage !== 'closed_passed' || supplemented || legacyHandoffStep(record, step, prev)) continue;
+        }
+        const remainingStepKeys = new Set(steps.slice(idx).map(proofStepKey));
+        const priorSteps = [...historicalSteps.filter(old => !remainingStepKeys.has(proofStepKey(old))), ...steps.slice(0, idx)];
+        const priorDeptFingerprints = new Set(priorSteps.filter(old => old &&
+          typeof old.dept === 'string' && old.dept.trim() !== step.dept.trim())
+          .flatMap(old => Array.isArray(old.proofImages) ? old.proofImages.filter(u => typeof u === 'string') : [])
+          .map(fingerprint).filter(Boolean));
+        if (!stepProofs.length || stepProofs.some(u => !itemProofFingerprints.has(fingerprint(u))) ||
+            !stepProofs.some(u => !isSummaryOnlyProof(u) && fingerprint(u) &&
+              !summaryFingerprints.has(fingerprint(u)) && !priorDeptFingerprints.has(fingerprint(u)))) {
+          throw Error('部门处理步骤必须包含本部门独立有效的非汇总PNG截图凭证');
+        }
+      }
+      return { historicalSteps, summaryFingerprints, itemProofFingerprints, fingerprint };
+    }
+
+    function requireCompletionProof(record, prev = null, closing = true) {
+      const demotion = prev && prev.track === 'normal_auto_archived' && record.track === 'offline_human_todo' &&
+        ['offline_rejected', 'offline_todo'].includes(record.stage);
+      if (prev && prev.track && record.track !== prev.track && !demotion) throw Error('不允许篡改任务类型(track)绕过部门闭环校验');
+      if (record.doneSteps !== undefined && !Array.isArray(record.doneSteps)) throw Error('处理步骤(doneSteps)必须为数组');
+      if (record.proofImages !== undefined && !Array.isArray(record.proofImages)) throw Error('截图凭证(proofImages)必须为数组');
+      preserveDepartments(record, prev);
+      const { historicalSteps, summaryFingerprints, itemProofFingerprints, fingerprint } = validateStepProofs(record, prev, closing);
+      const proofs = record.proofImages === undefined ? [] : record.proofImages;
+      const steps = record.doneSteps === undefined ? [] : record.doneSteps;
+      if (isNormalChat(record, prev)) return;
+      if (closing && record.stage !== 'closed_passed') {
+        if (record.track === 'normal_auto_archived') throw Error('自动归档必须先完成闭环并提供有效截图凭证');
+        return;
+      }
+      if (!closing) return;
+      if (!proofs.some(u => !isSummaryOnlyProof(u))) throw Error('必须上传至少1张本次处理完的截图凭证后才可闭环');
+      if (!steps.length) throw Error('必须有至少1个已完成的处理步骤');
+      if (!proofs.some(u => !isSummaryOnlyProof(u) && !summaryFingerprints.has(fingerprint(u)))) throw Error('审计汇总附图不能作为真实闭环截图凭证');
+      const requiredDepts = requiredDepartments(record, prev);
+      if (requiredDepts.some(dept => !steps.some(step => step.dept.trim() === dept && auditStepSatisfiesDepartment(record, step, prev)))) {
+        throw Error('必需部门尚未完成处理步骤');
+      }
+      if (steps.length) {
+        const last = steps[steps.length - 1];
+        const finalProofs = last && !Array.isArray(last) && last.proofImages;
+        if (!Array.isArray(finalProofs) || !finalProofs.length || finalProofs.some(u => typeof u !== 'string' || !itemProofFingerprints.has(fingerprint(u)))) {
+          throw Error('最后闭环步骤必须有本部门的有效截图凭证');
+        }
+        const priorDeptFingerprints = new Set([...historicalSteps, ...steps.slice(0, -1)].filter(s => s && !Array.isArray(s) &&
+          typeof s.dept === 'string' && s.dept.trim() !== last.dept.trim())
+          .flatMap(s => Array.isArray(s.proofImages) ? s.proofImages.filter(u => typeof u === 'string') : []).map(fingerprint).filter(Boolean));
+        if (last.proofKind === 'audit_summary' || last.auditReconciliation ||
+            !finalProofs.some(u => !isSummaryOnlyProof(u) && !summaryFingerprints.has(fingerprint(u)) && !priorDeptFingerprints.has(fingerprint(u)))) throw Error('最后闭环步骤不能仅沿用上一部门的截图凭证');
+      }
+      delete record.completionProofRejected;
+      if (!record.archivedAt) record.archivedAt = new Date().toLocaleString('sv-SE');
+    }
+
     async function saveSingleItem(item) {
-      items = filterActiveOnly(items);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      if (bridgeOnline && item && item.id) {
+      try {
+        preserveDepartments(item, completionHistory.get(item.id));
+        requireCompletionProof(item, completionHistory.get(item.id));
+      } catch (err) { alert(err.message); return false; }
+      if (item) item.lastUpdatedAt = new Date().toLocaleString('sv-SE');
+      if (!BRIDGE_BASE) return true;
+      if (item && item.id) {
         try {
           const res = await fetch(BRIDGE_BASE + '/api/item-update', {
             method: 'POST',
@@ -583,25 +953,110 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
           });
           if (res.ok) {
             const d = await res.json();
+            if (!d || d.ok === false) return false;
             if (d.updatedAt) lastServerUpdatedAt = d.updatedAt;
+            const savedItem = Array.isArray(d.items) ? d.items.find(x => x.id === item.id) : null;
+            if (savedItem && savedItem.lastUpdatedAt) item.lastUpdatedAt = savedItem.lastUpdatedAt;
+            if (savedItem && savedItem.reopenedAt) item.reopenedAt = savedItem.reopenedAt;
+            return true;
           }
-        } catch (e) {}
+        } catch (e) { return false; }
       }
+      return false;
     }
 
-    function saveAllItems() {
-      const payloadItems = items;
-      items = filterActiveOnly(items);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      if (bridgeOnline) {
-        fetch(BRIDGE_BASE + '/api/data', {
+    async function syncToServer() {
+      try {
+        for (const item of items) {
+          preserveDepartments(item, completionHistory.get(item.id));
+          requireCompletionProof(item, completionHistory.get(item.id));
+        }
+      } catch (err) { alert(err.message); return false; }
+      if (!BRIDGE_BASE) return true;
+      try {
+        const res = await fetch(BRIDGE_BASE + '/api/data', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: payloadItems })
-        }).then(r => r.json()).then(d => {
-          if (d && d.updatedAt) lastServerUpdatedAt = d.updatedAt;
-        }).catch(() => {});
+          body: JSON.stringify({ items })
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        if (!data || data.ok === false) return false;
+        if (data.updatedAt) lastServerUpdatedAt = data.updatedAt;
+        return true;
+      } catch (e) { return false; }
+    }
+
+    async function saveAllItems() {
+      if (!await syncToServer()) return false;
+      items = filterActiveOnly(items);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      return true;
+    }
+
+    async function saveSubmittedItems(groupItems, beforeSnapshot) {
+      const confirmedIds = new Set();
+      try {
+        for (const item of groupItems) {
+          const prev = beforeSnapshot.find(x => x.id === item.id);
+          preserveDepartments(item, completionHistory.get(item.id));
+          requireCompletionProof(item, prev);
+        }
+      } catch (err) {
+        restoreSubmission(beforeSnapshot);
+        alert(err.message);
+        return false;
       }
+      const submitted = new Map(groupItems.map(x => [x.id, x]));
+      // A refresh during proof verification may have restored the visible originals.
+      items = items.map(x => submitted.get(x.id) || x);
+      for (const item of groupItems) {
+        if (!await saveSingleItem(item)) {
+          restoreSubmission(beforeSnapshot.filter(x => !confirmedIds.has(x.id)), confirmedIds);
+          items = filterActiveOnly(items);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+          renderBoard();
+          return false;
+        }
+        confirmedIds.add(item.id);
+        completionHistory.set(item.id, JSON.parse(JSON.stringify(item)));
+        unconfirmedSubmissions.delete(item.id);
+      }
+      items = items.map(x => submitted.get(x.id) || x);
+      if (!await syncToServer()) {
+        if (confirmedIds.size < groupItems.length) {
+          restoreSubmission(beforeSnapshot.filter(x => !confirmedIds.has(x.id)), confirmedIds);
+        } else {
+          alert('逐条保存已确认，整表同步失败；正在刷新服务端状态。');
+        }
+        items = filterActiveOnly(items);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        renderBoard();
+        if (confirmedIds.size === groupItems.length) await syncFromBridge(true);
+        return false;
+      }
+      groupItems.forEach(x => completionHistory.set(x.id, JSON.parse(JSON.stringify(x))));
+      beforeSnapshot.forEach(x => unconfirmedSubmissions.delete(x.id));
+      items = items.map(x => submitted.get(x.id) || x);
+      items = filterActiveOnly(items);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      return true;
+    }
+
+    function restoreSubmission(beforeSnapshot, confirmedIds = new Set()) {
+      const pending = beforeSnapshot.filter(x => !confirmedIds.has(x.id));
+      const originals = new Map(pending.map(x => [x.id, x]));
+      items = items.map(x => originals.get(x.id) || x);
+      for (const original of pending) {
+        if (!items.some(x => x.id === original.id)) items.push(original);
+      }
+      alert('保存失败：服务端未确认写入，请检查网络或后台服务后重试！');
+    }
+
+    function snapshotSubmission(groupItems) {
+      const beforeSnapshot = JSON.parse(JSON.stringify(groupItems));
+      beforeSnapshot.forEach(x => unconfirmedSubmissions.set(x.id, x));
+      return beforeSnapshot;
     }
 
     function setRoleFilter(role) {
@@ -663,7 +1118,6 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       }
       if (d.includes('运营部')) {
         return [
-          '唐勇已核实该商品活动价格及券后价配置符合公司定价要求',
           '已核对库存并在千牛后台下架断货花色SKU',
           '已将实测长宽尺寸表与卡其色实拍图更新至商品详情页'
         ];
@@ -676,9 +1130,6 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
     }
 
     function renderBoard() {
-      const todayIsoStr = new Date().toLocaleDateString('sv-SE');
-      const todayEl = document.getElementById('boardTodayDate');
-      if (todayEl) todayEl.textContent = todayIsoStr;
       const allOfflineTodo = items.filter(x => x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
       const allOnlineTodo = items.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
       const totalPending = allOfflineTodo.length + allOnlineTodo.length;
@@ -731,12 +1182,15 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
             const seq = String(idx + 1).padStart(2, '0');
             const fKey = 'ON_' + g.groupKey;
             const openAttr = openFolds.has(fKey) ? ' open' : '';
+            const draftKey = 'ON_' + g.groupKey;
+            const firstOnline = g.list[0] || {};
+            const onlineProofs = inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (Array.isArray(firstOnline.proofImages) ? firstOnline.proofImages.slice() : []);
             return `
               <article class="emp-approval-card">
-                <details class="emp-fold"${openAttr} ontoggle="recordFoldToggle('${fKey}', this.open)">
+                <details class="emp-fold"${escapeHtml(openAttr)} ontoggle="recordFoldToggle('${escapeJsAttr(fKey)}', this.open)">
                   <summary class="emp-sum">
-                    <span class="emp-no">${seq}</span>
-                    <span class="emp-t">${escapeHtml(g.groupTitle)}（${g.list.length}单）</span>
+                    <span class="emp-no">${escapeHtml(seq)}</span>
+                    <span class="emp-t">${escapeHtml(g.groupTitle)}（${escapeHtml(g.list.length)}单）</span>
                     <span class="emp-meta">线上AI自愈 · 陈晓娟确认</span>
                     <span class="chip emp-st is-todo">待确认</span>
                     ${CHEVRON_SVG}
@@ -749,9 +1203,16 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
                         <div class="emp-kv"><span class="emp-k">涉及会话</span><span class="emp-v">${g.list.map(s => escapeHtml(s.store + ' · ' + s.customerId)).join('；')}</span></div>
                       </div>
                     </div>
+                    <div class="proof-zone">
+                      <div class="proof-head">
+                        <div><b>处理完的截图凭证（必填）：</b><span class="muted">已传 ${escapeHtml(onlineProofs.length)} 张</span></div>
+                        <label class="btn btn-sm">+ 上传处理截图<input type="file" accept="image/*" multiple class="is-hidden" onchange="handleInlineProofSelect(event, '${escapeJsAttr(draftKey)}', null, '${escapeJsAttr(g.groupKey)}')" /></label>
+                      </div>
+                      <div class="proof-thumbs">${proofThumbs(onlineProofs, 'inline', [draftKey, null, g.groupKey])}</div>
+                    </div>
                     <div class="emp-foot">
-                      <span class="small muted" style="flex:1">确认探域机器人话术已生效即可点右侧按钮归档</span>
-                      <button type="button" class="btn btn-sm btn-ok" onclick="approveOnlineGroup('${g.groupKey}')">通过</button>
+                      <input type="text" class="emp-inp" placeholder="在此按 Ctrl+V 粘贴探域生效截图凭证..." onpaste="handleInlineProofPaste(event, '${escapeJsAttr(draftKey)}', null, '${escapeJsAttr(g.groupKey)}')" />
+                      <button type="button" class="btn btn-sm btn-ok" onclick="approveOnlineGroup('${escapeJsAttr(g.groupKey)}')">通过</button>
                     </div>
                   </div>
                 </details>
@@ -793,9 +1254,10 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
           const doneSteps = (g.list.find(x => x.doneSteps && x.doneSteps.length > 0) || {}).doneSteps || [];
           const deptStr = (g.depts || []).join('/') || '待办';
           const firstItem = g.list[0] || {};
-          const rawChatShort = String(firstItem.chatTime || '').slice(5, 16); const shortDate = rawChatShort ? ((typeof todayIsoStr !== 'undefined' ? todayIsoStr : '2026-11-03') + ' 待办（会话 ' + rawChatShort + '）') : '2026-11-03';
+          const shortDate = String(firstItem.chatTime || '').slice(5, 16) || '今日';
 
           const draftKey = g.isSingle ? ('S_' + g.singleId) : ('G_' + g.groupKey);
+          const existingProofs = inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (Array.isArray(firstItem.proofImages) ? firstItem.proofImages.slice() : []);
           const inputId = 'inline_input_' + draftKey.replace(/[^a-zA-Z0-9_]/g, '_');
           const existingVal = inlineDrafts[draftKey] !== undefined
             ? inlineDrafts[draftKey]
@@ -816,8 +1278,8 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
           const rowsKvHtml = g.list.map(sub => {
             const ord = (sub.orderId || '').trim();
             const ordHtml = ord
-              ? `<code>${escapeHtml(ord)}</code> <button type="button" class="btn btn-sm" style="height:22px;padding:0 7px;font-size:11px;margin-left:4px" onclick="copyOrderId('${escapeHtml(ord)}', event)">复制订单号</button>`
-              : `<span class="muted">未提取到订单号</span> <button type="button" class="emp-lnk" style="margin-left:6px" onclick="openGroupModal('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'})">补录订单号</button>`;
+              ? `<code>${escapeHtml(ord)}</code> <button type="button" class="btn btn-sm" style="height:22px;padding:0 7px;font-size:11px;margin-left:4px" onclick="copyOrderId('${escapeJsAttr(ord)}', event)">复制订单号</button>`
+              : `<span class="muted">未提取到订单号</span> <button type="button" class="emp-lnk" style="margin-left:6px" onclick="openGroupModal('${escapeJsAttr(g.groupKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'})">补录订单号</button>`;
             return `
               <div style="padding:6px 0;border-bottom:1px dashed #e6e6e6">
                 <div class="emp-kv"><span class="emp-k">店铺/买家</span><span class="emp-v">${escapeHtml(sub.store)} · <span class="mono">${escapeHtml(sub.customerId)}</span>（${escapeHtml(sub.rowId)} · ${escapeHtml(sub.chatTime || '')}）</span></div>
@@ -835,7 +1297,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
           const handoffHtml = doneSteps.length > 0 ? `
             <div class="emp-rej-bar" style="border-color:#bcbcbc;background:#fafafa">
               <div><b>上一部门已完成交接：</b></div>
-              ${doneSteps.map(st => `<div>· [${escapeHtml(st.dept)} · ${escapeHtml(st.ownerNames || '')}]：${escapeHtml(st.result)}（${escapeHtml(st.time || '')}）</div>`).join('')}
+              ${doneSteps.map(st => `<div>· [${escapeHtml(st.dept)} · ${escapeHtml(st.ownerNames || '')}]：${escapeHtml(st.result)}（${escapeHtml(st.time || '')}）<div class="proof-thumbs">${proofThumbs(st.proofImages)}</div></div>`).join('')}
             </div>` : '';
 
           const rejectHtml = hasRejected ? `
@@ -844,10 +1306,10 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
             </div>` : '';
 
           return `
-            <article class="emp-approval-card${hasRejected ? ' is-rejected' : ''}" id="card_${draftKey}">
-              <details class="emp-fold"${openAttr} ontoggle="recordFoldToggle('${draftKey}', this.open)">
+            <article class="emp-approval-card${escapeHtml(hasRejected ? ' is-rejected' : '')}" id="card_${escapeHtml(draftKey)}">
+              <details class="emp-fold"${escapeHtml(openAttr)} ontoggle="recordFoldToggle('${escapeJsAttr(draftKey)}', this.open)">
                 <summary class="emp-sum">
-                  <span class="emp-no">${seq}</span>
+                  <span class="emp-no">${escapeHtml(seq)}</span>
                   <span class="emp-t" title="${escapeHtml(titleText)}">${escapeHtml(titleText)}</span>
                   <span class="emp-meta">${escapeHtml(deptStr)} · ${escapeHtml(g.ownerNames)} · ${escapeHtml(shortDate)}</span>
                   ${badgeHtml}
@@ -868,24 +1330,193 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
                     <div class="emp-links">
                       <span class="muted">快捷填入：</span>
                       ${quickPhrases.map(p => `
-                        <button type="button" class="btn btn-sm" style="height:24px;font-size:11.5px" onclick="fillQuickInline('${inputId}', '${draftKey}', '${escapeHtml(p)}')">+ ${escapeHtml(p.length > 24 ? p.slice(0, 24) + '…' : p)}</button>
+                        <button type="button" class="btn btn-sm" style="height:24px;font-size:11.5px" onclick="fillQuickInline('${escapeJsAttr(inputId)}', '${escapeJsAttr(draftKey)}', '${escapeJsAttr(p)}')">+ ${escapeHtml(p.length > 24 ? p.slice(0, 24) + '…' : p)}</button>
                       `).join('')}
                     </div>
                   </div>
+                  <div class="proof-zone">
+                    <div class="proof-head">
+                      <div><b>处理完的截图凭证（必填）：</b><span class="muted">支持在下方输入框直接按 Ctrl+V 粘贴截图，或点右侧按钮上传（已传 <b>${escapeHtml(existingProofs.length)}</b> 张）</span></div>
+                      <label class="btn btn-sm">+ 上传处理截图<input type="file" accept="image/*" multiple class="is-hidden" onchange="handleInlineProofSelect(event, '${escapeJsAttr(draftKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'}, '${escapeJsAttr(g.groupKey)}')" /></label>
+                    </div>
+                    <div class="proof-thumbs">${proofThumbs(existingProofs, 'inline', [draftKey, g.isSingle ? g.singleId : null, g.groupKey])}</div>
+                  </div>
                   <div class="emp-foot">
-                    <input id="${inputId}" type="text" value="${escapeHtml(existingVal)}"
-                      oninput="recordInlineDraft('${draftKey}', this.value)"
-                      onkeydown="if(event.key==='Enter'){event.preventDefault();submitInlineGroup('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'}, '${inputId}', '${draftKey}');}"
+                    <input id="${escapeHtml(inputId)}" type="text" value="${escapeHtml(existingVal)}"
+                      onpaste="handleInlineProofPaste(event, '${escapeJsAttr(draftKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'}, '${escapeJsAttr(g.groupKey)}')"
+                      oninput="recordInlineDraft('${escapeJsAttr(draftKey)}', this.value)"
+                      onkeydown="if(event.key==='Enter'){event.preventDefault();submitInlineGroup('${escapeJsAttr(g.groupKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'}, '${escapeJsAttr(inputId)}', '${escapeJsAttr(draftKey)}');}"
                       placeholder="填写具体处理结果（禁填“已处理/收到”空话，回车或点右侧按钮提交）..."
                       class="input" />
-                    <button type="button" class="btn btn-sm" onclick="openGroupModal('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'})">更多选项</button>
-                    <button type="button" class="btn btn-sm btn-ok" onclick="submitInlineGroup('${g.groupKey}', ${g.isSingle ? "'" + g.singleId + "'" : 'null'}, '${inputId}', '${draftKey}')">提交完成</button>
+                    <button type="button" class="btn btn-sm" onclick="openGroupModal('${escapeJsAttr(g.groupKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'})">更多选项</button>
+                    <button type="button" class="btn btn-sm btn-ok" onclick="submitInlineGroup('${escapeJsAttr(g.groupKey)}', ${g.isSingle ? "'" + escapeJsAttr(g.singleId) + "'" : 'null'}, '${escapeJsAttr(inputId)}', '${escapeJsAttr(draftKey)}')">提交完成</button>
                   </div>
                 </div>
               </details>
             </article>`;
         }).join('');
       }
+    }
+
+    function normalizeProofUrl(u) {
+      u = String(u || '');
+      return u.startsWith('/proof_images/') && /^https?:\/\//.test(BRIDGE_BASE || '') ? BRIDGE_BASE + u : u;
+    }
+
+    function openProofLightbox(url) {
+      document.getElementById('proofLightboxImage').src = normalizeProofUrl(url);
+      document.getElementById('proofLightboxModal').classList.remove('is-hidden');
+    }
+
+    function closeProofLightbox() {
+      document.getElementById('proofLightboxModal').classList.add('is-hidden');
+      document.getElementById('proofLightboxImage').removeAttribute('src');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeProofLightbox(); });
+
+    function proofThumbs(proofs, removeHandler = '', removeArgs = []) {
+      return (Array.isArray(proofs) ? proofs : []).map((url, idx) => {
+        const src = normalizeProofUrl(url);
+        return `<div class="proof-thumb-item" onclick="openProofLightbox(this.querySelector('img').getAttribute('src'))"><img src="${escapeHtml(src)}" alt="处理完的截图凭证 ${escapeHtml(idx + 1)}" loading="lazy">${removeHandler ? `<button type="button" class="proof-del" aria-label="删除截图" data-proof-remove="${escapeHtml(JSON.stringify([removeHandler, ...removeArgs, idx]))}" onclick="removeProofFromThumb(this, event)">×</button>` : ''}</div>`;
+      }).join('');
+    }
+
+    function removeProofFromThumb(button, event) {
+      event.stopPropagation();
+      const [kind, ...args] = JSON.parse(button.dataset.proofRemove);
+      if (kind === 'inline') removeInlineProof(...args);
+      else if (kind === 'modal') removeModalProof(...args);
+    }
+
+    async function uploadProofFile(file, taskId) {
+      let dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(file);
+      });
+      const filename = (file.name || ('paste_' + Date.now())).replace(/\.[^.]*$/, '') + '.png';
+      if (!dataUrl.startsWith('data:image/png;base64,')) {
+        // Decode real source pixels before conversion; a container header is insufficient.
+        dataUrl = await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onerror = () => reject(new Error('图片无法解码，请重新选择有效图片'));
+          image.onload = () => {
+            try {
+              const width = image.naturalWidth, height = image.naturalHeight;
+              if (!width || !height || (width * 4 + 1) * height > 256 * 1024 * 1024) throw new Error('图片尺寸无效或过大');
+              const canvas = document.createElement('canvas');
+              canvas.width = width; canvas.height = height;
+              const context = canvas.getContext('2d');
+              if (!context) throw new Error('无法转换图片');
+              context.drawImage(image, 0, 0);
+              resolve(canvas.toDataURL('image/png'));
+            } catch (e) { reject(e); }
+          };
+          image.src = dataUrl;
+        });
+      }
+      if (!validProofUrl(dataUrl, taskId)) throw new Error('PNG图片数据无效，请重新选择图片');
+      try {
+        const res = await fetch(BRIDGE_BASE + '/api/upload-proof', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ taskId: taskId || 'BATCH', filename, dataUrl })
+        });
+        const d = await res.json();
+        if (res.ok && d && d.ok && validProofUrl(d.url, taskId || 'BATCH')) return d.url;
+      } catch (e) { /* Offline evidence stays in the item as a validated PNG DataURL. */ }
+      return dataUrl;
+    }
+
+    function proofGroupItems(singleId, groupKey, draftKey) {
+      if (String(draftKey || '').startsWith('ON_')) {
+        return items.filter(x => x.groupKey === groupKey && x.track === 'online_ai_done');
+      }
+      return items.filter(x => x.stage !== 'closed_passed' && (singleId ? x.id === singleId : x.groupKey === groupKey && x.track === 'offline_human_todo'));
+    }
+
+    function pastedProofFiles(evt) {
+      const files = Array.from((evt.clipboardData || {}).items || []).filter(x => x.kind === 'file' && x.type.startsWith('image/')).map(x => x.getAsFile()).filter(Boolean);
+      if (files.length) evt.preventDefault();
+      return files;
+    }
+
+    async function addInlineProofs(files, draftKey, singleId, groupKey) {
+      files = files.filter(f => f.type.startsWith('image/'));
+      if (!files.length) return;
+      const matching = proofGroupItems(singleId, groupKey, draftKey);
+      if (!matching.length) return;
+      if (inlineProofDrafts[draftKey] === undefined) inlineProofDrafts[draftKey] = (matching[0].proofImages || []).slice();
+      pendingProofUploads++;
+      try {
+        for (const file of files) {
+          const url = await uploadProofFile(file, singleId);
+          inlineProofDrafts[draftKey].push(url);
+          for (const item of matching) {
+            item.proofImages = [...(item.proofImages || []), url];
+            await saveSingleItem(item);
+          }
+        }
+      } catch (e) { alert('截图读取失败，请重新上传。'); }
+      finally { pendingProofUploads--; renderBoard(); }
+    }
+
+    async function handleInlineProofSelect(evt, draftKey, singleId, groupKey) {
+      const files = Array.from(evt.target.files || []);
+      evt.target.value = '';
+      await addInlineProofs(files, draftKey, singleId, groupKey);
+    }
+    async function handleInlineProofPaste(evt, draftKey, singleId, groupKey) {
+      await addInlineProofs(pastedProofFiles(evt), draftKey, singleId, groupKey);
+    }
+    async function removeInlineProof(draftKey, singleId, groupKey, idx) {
+      const matching = proofGroupItems(singleId, groupKey, draftKey);
+      const proofs = inlineProofDrafts[draftKey] || ((matching[0] || {}).proofImages || []).slice();
+      const removed = proofs.splice(idx, 1)[0];
+      inlineProofDrafts[draftKey] = proofs;
+      for (const item of matching) {
+        item.proofImages = (item.proofImages || []).slice();
+        const itemIndex = item.proofImages.indexOf(removed);
+        if (itemIndex >= 0) item.proofImages.splice(itemIndex, 1);
+        await saveSingleItem(item);
+      }
+      renderBoard();
+    }
+
+    async function addModalProofs(files) {
+      const draft = modalProofDrafts;
+      const taskId = activeSingleId;
+      pendingProofUploads++;
+      try {
+        for (const file of files.filter(f => f.type.startsWith('image/'))) draft.push(await uploadProofFile(file, taskId));
+      } catch (e) { alert('截图读取失败，请重新上传。'); }
+      finally { pendingProofUploads--; if (draft === modalProofDrafts) renderModalProofThumbs(); }
+    }
+    async function handleModalProofSelect(evt) {
+      const files = Array.from(evt.target.files || []);
+      evt.target.value = '';
+      await addModalProofs(files);
+    }
+    async function handleModalProofPaste(evt) { await addModalProofs(pastedProofFiles(evt)); }
+    function removeModalProof(idx) { modalProofDrafts.splice(idx, 1); renderModalProofThumbs(); }
+    function renderModalProofThumbs() {
+      document.getElementById('modalProofThumbs').innerHTML = proofThumbs(modalProofDrafts, 'modal');
+    }
+
+    async function handleArchiveProofUpload(evt, itemId) {
+      const files = Array.from(evt.target.files || []).filter(f => f.type.startsWith('image/'));
+      evt.target.value = '';
+      try {
+        const proofImages = [];
+        for (const file of files) proofImages.push(await uploadProofFile(file, itemId));
+        if (!proofImages.length) return;
+        const res = await fetch(BRIDGE_BASE + '/api/archive-update', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: itemId, proofImages })
+        });
+        const d = await res.json();
+        if (!res.ok || !d.ok) throw new Error(d.error || '归档保存失败');
+        await loadArchivedItems();
+      } catch (e) { alert('补传截图未保存：' + e.message); }
     }
 
     async function loadArchivedItems() {
@@ -896,9 +1527,9 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         if (res.ok) {
           const d = await res.json();
           const list = Array.isArray(d.items) ? d.items : [];
-          const totalArch = d.total || list.length;
-          if (document.getElementById('emp-app-arch-cnt')) document.getElementById('emp-app-arch-cnt').textContent = String(totalArch);
-          if (document.getElementById('archiveCountTop')) document.getElementById('archiveCountTop').textContent = String(totalArch);
+          const total = d.total !== undefined ? d.total : list.length;
+          if (document.getElementById('emp-app-arch-cnt')) document.getElementById('emp-app-arch-cnt').textContent = String(total);
+          if (document.getElementById('archiveCountTop')) document.getElementById('archiveCountTop').textContent = String(total);
           if (list.length === 0) {
             box.innerHTML = '<div class="emp-empty">暂无已归档历史记录。</div>';
             return;
@@ -911,7 +1542,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
               <article class="emp-approval-card is-approved">
                 <details class="emp-fold">
                   <summary class="emp-sum">
-                    <span class="emp-no">${seq}</span>
+                    <span class="emp-no">${escapeHtml(seq)}</span>
                     <span class="emp-t">${escapeHtml(title)}</span>
                     <span class="emp-meta">${escapeHtml(x.ownerNames || 'AI自愈')}</span>
                     <span class="chip emp-st is-ok">已处理</span>
@@ -921,6 +1552,10 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
                     <div class="emp-kv"><span class="emp-k">店铺/买家</span><span class="emp-v">${escapeHtml(x.store || '')} · ${escapeHtml(x.customerId || '')}</span></div>
                     ${x.orderId ? `<div class="emp-kv"><span class="emp-k">订单号</span><span class="emp-v mono">${escapeHtml(x.orderId)}</span></div>` : ''}
                     <div class="emp-kv"><span class="emp-k">处理结果</span><span class="emp-v">${escapeHtml(resTxt)}</span></div>
+                    <div class="emp-kv"><span class="emp-k">归档时间</span><span class="emp-v">${escapeHtml(x.archivedAt || x.lastUpdatedAt || '')}</span></div>
+                    <div class="proof-zone"><b>处理完的截图凭证</b><div class="proof-thumbs">${proofThumbs(x.proofImages)}</div>
+                      ${!x.proofImages || x.proofImages.length === 0 ? `<span class="chip emp-st is-todo">待补截图凭证</span><label class="btn btn-sm">+ 补传截图凭证<input type="file" accept="image/*" multiple class="is-hidden" onchange="handleArchiveProofUpload(event, '${escapeJsAttr(x.id)}')" /></label>` : ''}
+                    </div>
                   </div>
                 </details>
               </article>`;
@@ -932,90 +1567,161 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
     }
 
     async function submitInlineGroup(groupKey, singleId, inputId, draftKey) {
+      if (pendingProofUploads) { alert('截图正在上传，请上传完成后提交。'); return; }
       const inp = document.getElementById(inputId);
-      const val = (inp ? inp.value.trim() : '') || (inlineDrafts[draftKey] || '').trim();
+      const val = inp ? inp.value.trim() : '';
       const groupItems = singleId
         ? items.filter(x => x.id === singleId)
         : items.filter(x => x.groupKey === groupKey && x.track === 'offline_human_todo' && x.stage !== 'closed_passed');
       if (groupItems.length === 0) return;
 
-      const audit = runStrictAiAudit(groupItems[0], val, '正常', '日常合理范围偶发跟进', '');
+      const beforeSnapshot = snapshotSubmission(groupItems);
+      const proofList = (inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (groupItems[0].proofImages || [])).slice();
+      const audits = await Promise.all(groupItems.map(x => runStrictAiAudit(x, val, '正常', '日常合理范围偶发跟进', '', proofList)));
+      const audit = audits.find(x => !x.pass) || audits[0];
       if (!audit.pass) {
         groupItems.forEach(x => {
           x.staffResult = val;
+          x.proofImages = Array.from(new Set([...(x.proofImages || []), ...(x.doneSteps || []).flatMap(s => Array.isArray(s && s.proofImages) ? s.proofImages : []), ...proofList]));
+          x.lastUpdatedAt = new Date().toLocaleString('sv-SE');
           x.stage = 'offline_rejected';
           x.rejectReason = stripEmoji(audit.reason);
         });
-        saveAllItems();
+        if (!await saveSubmittedItems(groupItems, beforeSnapshot)) return;
         renderBoard();
         return;
       }
 
-      isSubmitting = true;
-      try {
-        const deptOwnerMap = {
-          '仓库部': '许培婷 / 吴行哲',
-          '市场部': '林丽媛 / 尤敏燕',
-          '运营部': '唐勇'
-        };
-        const curDeptName = resolveActiveSubmitDept(groupItems[0], val);
-        const nowTimeStr = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-        const coversBothWhMkt = /(仓库|补发|核实|盘点|发错)/.test(val) && /(客人|买家|客户|签收|安抚|回访|留言)/.test(val);
+      const deptOwnerMap = {
+        '仓库部': '许培婷 / 吴行哲',
+        '市场部': '林丽媛 / 尤敏燕',
+        '运营部': '唐勇'
+      };
+      const nowTimeStr = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 
-        const toSave = [];
-        for (const x of groupItems) {
-          if (!x.doneSteps) x.doneSteps = [];
-          x.doneSteps.push({
-            dept: curDeptName,
-            ownerNames: x.ownerNames || deptOwnerMap[curDeptName] || '',
-            result: val,
-            time: nowTimeStr
-          });
-          let remainingDepts = (x.depts || []).filter(d => d !== curDeptName);
-          if (coversBothWhMkt) {
-            remainingDepts = remainingDepts.filter(d => d !== '仓库部' && d !== '市场部');
-          }
-          if (remainingDepts.length > 0) {
-            const nextDept = remainingDepts[0];
-            x.depts = remainingDepts;
-            x.ownerNames = deptOwnerMap[nextDept] || nextDept;
-            x.stage = 'offline_todo';
-            x.staffResult = '';
-            x.rejectReason = '';
-          } else {
-            x.staffResult = x.doneSteps.map(s => '[' + s.dept + '] ' + s.result).join(' -> ');
-            x.stage = 'closed_passed';
-            x.rejectReason = '';
-          }
-          toSave.push(x);
+      for (const x of groupItems) {
+        const curDeptName = (x.depts || [])[0] || '本部门';
+        const stepProofs = currentDepartmentProofs(x, proofList, curDeptName);
+        if (!x.doneSteps) x.doneSteps = [];
+        x.doneSteps.push({
+          dept: curDeptName,
+          ownerNames: x.ownerNames || deptOwnerMap[curDeptName] || '',
+          result: val,
+          proofImages: stepProofs,
+          at: new Date().toLocaleString('sv-SE'),
+          time: nowTimeStr
+        });
+        const remainingDepts = (x.depts || []).slice(1);
+        x.proofImages = Array.from(new Set([...(x.proofImages || []), ...(x.doneSteps || []).flatMap(s => Array.isArray(s && s.proofImages) ? s.proofImages : []), ...proofList]));
+        if (remainingDepts.length > 0) {
+          const nextDept = remainingDepts[0];
+          x.depts = remainingDepts;
+          x.ownerNames = deptOwnerMap[nextDept] || nextDept;
+          x.stage = 'offline_todo';
+          x.staffResult = '';
+          x.rejectReason = '';
+        } else {
+          x.staffResult = x.doneSteps.map(s => '[' + s.dept + '] ' + s.result).join(' -> ');
+          x.stage = 'closed_passed';
+          x.archivedAt = new Date().toLocaleString('sv-SE');
+          x.rejectReason = '';
         }
-        delete inlineDrafts[draftKey];
-        openFolds.delete(draftKey);
-        items = filterActiveOnly(items);
-        renderBoard();
-        for (const x of toSave) {
-          await saveSingleItem(x);
-        }
-      } finally {
-        isSubmitting = false;
       }
-    }
-
-    function approveOnlineGroup(groupKey) {
-      const list = items.filter(x => x.groupKey === groupKey && x.track === 'online_ai_done');
-      list.forEach(x => {
-        x.stage = 'closed_passed';
-        saveSingleItem(x);
-      });
+      if (!await saveSubmittedItems(groupItems, beforeSnapshot)) return;
+      delete inlineDrafts[draftKey];
+      delete inlineProofDrafts[draftKey];
+      openFolds.delete(draftKey);
       items = filterActiveOnly(items);
       renderBoard();
     }
 
-    function approveAllOnlineGroups() {
-      const pending = items.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
-      pending.forEach(x => { x.stage = 'closed_passed'; });
-      saveAllItems();
+    async function approveOnlineGroup(groupKey) {
+      if (pendingProofUploads) { alert('截图正在上传，请上传完成后提交。'); return; }
+      const list = items.filter(x => x.groupKey === groupKey && x.track === 'online_ai_done');
+      if (!list.length) return;
+      const draftKey = 'ON_' + groupKey;
+      const proofs = inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (list[0].proofImages || []);
+      const validProofs = list.map(x => getValidClosingProofs(x, proofs));
+      if (validProofs.some(proofList => !proofList.length)) {
+        alert('退回：必须先上传或粘贴至少 1 张【处理完的截图凭证】后再点击通过！');
+        return;
+      }
+      const beforeSnapshot = snapshotSubmission(list);
+      const nowStr = new Date().toLocaleString('sv-SE');
+      list.forEach((x, idx) => {
+        const proofList = validProofs[idx];
+        const mergedProofs = [...new Set([...(x.proofImages || []), ...proofList])];
+        x.proofImages = mergedProofs;
+        if (!x.doneSteps) x.doneSteps = [];
+        appendOnlineApprovalSteps(x, proofList, nowStr);
+        x.lastUpdatedAt = nowStr;
+        x.archivedAt = nowStr;
+        x.stage = 'closed_passed';
+      });
+      if (!await saveSubmittedItems(list, beforeSnapshot)) return;
+      delete inlineProofDrafts[draftKey];
       renderBoard();
+    }
+
+    async function approveAllOnlineGroups() {
+      if (pendingProofUploads) { alert('截图正在上传，请上传完成后提交。'); return; }
+      const pending = items.filter(x => x.track === 'online_ai_done' && x.stage === 'online_pending_check');
+      if (!pending.length) return;
+      const groups = new Map();
+      pending.forEach(x => {
+        if (!groups.has(x.groupKey)) groups.set(x.groupKey, []);
+        groups.get(x.groupKey).push(x);
+      });
+      const proofsById = new Map();
+      for (const [groupKey, list] of groups) {
+        const draftKey = 'ON_' + groupKey;
+        const proofs = inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (list[0].proofImages || []);
+        for (const x of list) {
+          const proofList = getValidClosingProofs(x, proofs);
+          if (!proofList.length) {
+            alert('退回：必须先上传或粘贴至少 1 张【处理完的截图凭证】后再点击通过！');
+            return;
+          }
+          proofsById.set(x.id, proofList);
+        }
+      }
+      const beforeSnapshot = snapshotSubmission(pending);
+      const nowStr = new Date().toLocaleString('sv-SE');
+      pending.forEach(x => {
+        const proofList = proofsById.get(x.id);
+        const mergedProofs = [...new Set([...(x.proofImages || []), ...proofList])];
+        x.proofImages = mergedProofs;
+        if (!x.doneSteps) x.doneSteps = [];
+        appendOnlineApprovalSteps(x, proofList, nowStr);
+        x.lastUpdatedAt = nowStr;
+        x.archivedAt = nowStr;
+        x.stage = 'closed_passed';
+      });
+      if (!await saveSubmittedItems(pending, beforeSnapshot)) return;
+      for (const groupKey of groups.keys()) delete inlineProofDrafts['ON_' + groupKey];
+      renderBoard();
+    }
+
+    function appendOnlineApprovalSteps(x, closingProofs, nowStr) {
+      x.doneSteps.push({ dept: '线上AI确认', ownerNames: x.ownerNames || '陈晓娟', result: x.aiOnlineDone || '已确认探域机器人话术生效', time: nowStr, proofImages: closingProofs.slice() });
+    }
+
+    function hasValidProofUrls(item, proofs) {
+      const allowedIds = allowedTaskIds(item, completionHistory.get(item.id));
+      return Array.isArray(proofs) && proofs.every(u => validProofUrl(u, allowedIds)) &&
+        Array.isArray(item.doneSteps === undefined ? [] : item.doneSteps) && (item.doneSteps || []).every(step => step &&
+          Array.isArray(step.proofImages === undefined ? [] : step.proofImages) &&
+          (step.proofImages || []).every(u => validProofUrl(u, allowedIds)));
+    }
+
+    function getValidClosingProofs(item, proofs) {
+      if (!hasValidProofUrls(item, proofs)) return [];
+      const reqDepts = Array.from(new Set([...(item.originalDepts || []), ...(item.depts || [])].filter(Boolean)));
+      const missingDepts = reqDepts.filter(d => !(item.doneSteps || []).some(s => s.dept === d));
+      const finalDept = item.track === 'online_ai_done' ? '线上AI确认' : ((missingDepts.length ? missingDepts : reqDepts).slice(-1)[0] || '线上AI确认');
+      const previousProofs = new Set((item.doneSteps || []).filter(s => s.dept !== finalDept ||
+        s.proofKind === 'audit_summary' || s.auditReconciliation).flatMap(s => s.proofImages || []));
+      return proofs.filter(u => !isSummaryOnlyProof(u) && !previousProofs.has(u));
     }
 
     function openGroupModal(groupKey, singleId = null) {
@@ -1026,6 +1732,9 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         : items.filter(x => x.groupKey === groupKey && x.track === 'offline_human_todo');
       if (groupItems.length === 0) return;
       const first = groupItems[0];
+      const draftKey = singleId ? ('S_' + singleId) : ('G_' + groupKey);
+      modalProofDrafts = (inlineProofDrafts[draftKey] !== undefined ? inlineProofDrafts[draftKey] : (first.proofImages || [])).slice();
+      renderModalProofThumbs();
 
       document.getElementById('modalDeptTag').textContent = (first.depts || []).join(' + ') + ' · 负责人：' + first.ownerNames;
       document.getElementById('modalTitle').textContent = singleId
@@ -1040,7 +1749,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
             <div style="display:flex;align-items:center;gap:4px">
               <span class="small muted">订单号:</span>
               <input type="text" value="${escapeHtml(sub.orderId || '')}" placeholder="输入订单号自动保存"
-                onchange="updateItemOrderId('${sub.id}', this.value)"
+                onchange="updateItemOrderId('${escapeJsAttr(sub.id)}', this.value)"
                 class="input mono" style="height:24px;width:165px;font-size:11.5px" />
             </div>
           </div>
@@ -1055,7 +1764,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       const qfContainer = document.getElementById('quickFillButtons');
       const phrases = getQuickPhrasesForDepts(first.depts);
       qfContainer.innerHTML = phrases.map(p => `
-        <button type="button" onclick="fillQuickPhrase('${escapeHtml(p)}')" class="btn btn-sm">+ ${escapeHtml(p)}</button>
+        <button type="button" onclick="fillQuickPhrase('${escapeJsAttr(p)}')" class="btn btn-sm">+ ${escapeHtml(p)}</button>
       `).join('');
 
       const qBox = document.getElementById('qualityRatioBox');
@@ -1128,27 +1837,335 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       }
     }
 
-    function resolveActiveSubmitDept(firstItem, staffText) {
-      const depts = (firstItem && firstItem.depts) || [];
-      if (['仓库部', '市场部', '运营部'].includes(currentRole) && depts.includes(currentRole)) {
-        return currentRole;
+    function isSummaryOnlyProof(url) {
+      return typeof url === 'string' && /^\/proof_images\/proof_TASK-[A-Za-z0-9_-]+_(?:tanyu|ops_sku0|audit)_20261103\.png$/.test(url);
+    }
+    // Stored proof images are PNG only. CRC and pixel checks also run offline.
+    function parseProofPng(bytes) {
+      const fail = () => { throw new Error('Invalid PNG proof'); };
+      const n = bytes.length, view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+      const be32 = p => view.getUint32(p, false);
+      const tag = (p, size) => String.fromCharCode(...bytes.subarray(p, p + size));
+      if (n < 57 || tag(0, 8) !== '\x89PNG\r\n\x1a\n') fail();
+      let header = null, palette = null, trnsBytes = null, dataEnded = false, ended = false;
+      let plteBytes = new Uint8Array(0);
+      const idat = [];
+      for (let pos = 8; pos + 12 <= n;) {
+        const len = be32(pos), type = tag(pos + 4, 4), end = pos + 12 + len;
+        if (len > 0x7fffffff || end > n || !/^[A-Za-z]{2}[A-Z][A-Za-z]$/.test(type)) fail();
+        let crc = 0xffffffff;
+        for (let i = pos + 4; i < end - 4; i++) {
+          crc ^= bytes[i];
+          for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0);
+        }
+        if (((crc ^ 0xffffffff) >>> 0) !== be32(end - 4)) fail();
+        if (!header && type !== 'IHDR') fail();
+        if (type === 'IHDR') {
+          if (header || len !== 13) fail();
+          const width = be32(pos + 8), height = be32(pos + 12), depth = bytes[pos + 16], color = bytes[pos + 17];
+          const depths = { 0: [1, 2, 4, 8, 16], 2: [8, 16], 3: [1, 2, 4, 8], 4: [8, 16], 6: [8, 16] };
+          if (!width || !height || width > 0x7fffffff || height > 0x7fffffff || width * height > 32 * 1024 * 1024 ||
+              !(depths[color] || []).includes(depth) || bytes[pos + 18] || bytes[pos + 19] || bytes[pos + 20] > 1) fail();
+          header = { width, height, depth, color, interlace: bytes[pos + 20] };
+        } else if (type === 'PLTE') {
+          if (palette !== null || trnsBytes !== null || idat.length || [0, 4].includes(header.color) || !len || len % 3 || len > 768 ||
+              (header.color === 3 && len / 3 > (1 << header.depth))) fail();
+          palette = len / 3;
+          plteBytes = bytes.subarray(pos + 8, end - 4);
+        } else if (type === 'tRNS') {
+          if (trnsBytes !== null || idat.length || [4, 6].includes(header.color)) fail();
+          if ((header.color === 0 && len !== 2) || (header.color === 2 && len !== 6) ||
+              (header.color === 3 && (palette === null || !len || len > palette))) fail();
+          trnsBytes = bytes.subarray(pos + 8, end - 4);
+        } else if (type === 'IDAT') {
+          if (dataEnded || (header.color === 3 && palette === null)) fail();
+          idat.push(bytes.subarray(pos + 8, end - 4));
+        } else if (type === 'IEND') {
+          if (len || end !== n || !idat.length) fail();
+          ended = true;
+          break;
+        } else if (!(bytes[pos + 4] & 32)) fail();
+        if (idat.length && type !== 'IDAT') dataEnded = true;
+        pos = end;
       }
-      if (depts.length > 1 && staffText) {
-        if (depts.includes('市场部') && /(探域|知识库|话术|客服|回访|安抚|留言|材料|注册证|报价|客户|买家|测试|外包|补偿|换码|补发|签收)/.test(staffText) && !/(千牛|下架|详情页|SKU)/.test(staffText)) {
-          return '市场部';
-        }
-        if (depts.includes('仓库部') && /(仓库|盘点|批次|隔离|快递|单号|揽收)/.test(staffText)) {
-          return '仓库部';
-        }
-        if (depts.includes('运营部') && /(唐勇|运营|千牛|下架|详情|SKU|主图|尺寸表|后台|价格|券后价|活动|双11|双十一|立减|调价|配置)/.test(staffText)) {
-          return '运营部';
-        }
+      if (!ended) fail();
+      const { width, height, depth, color, interlace } = header;
+      const channels = { 0: 1, 2: 3, 3: 1, 4: 2, 6: 4 }[color];
+      const passes = interlace === 0 ? [[0, 0, 1, 1]] :
+        [[0, 0, 8, 8], [4, 0, 8, 8], [0, 4, 4, 8], [2, 0, 4, 4], [0, 2, 2, 4], [1, 0, 2, 2], [0, 1, 1, 2]];
+      const rows = [];
+      let expected = 0;
+      for (const [x, y, dx, dy] of passes) {
+        const w = Math.max(0, Math.ceil((width - x) / dx)), h = Math.max(0, Math.ceil((height - y) / dy));
+        if (!w || !h) continue;
+        const stride = Math.ceil(w * channels * depth / 8);
+        rows.push([stride, h, w, x, y, dx, dy]); expected += (stride + 1) * h;
       }
-      return depts[0] || '本部门';
+      if (!Number.isSafeInteger(expected) || expected > 256 * 1024 * 1024) fail();
+      return { ...header, palette, plteBytes, trnsBytes, idat, rows, expected, channels, bpp: Math.max(1, Math.ceil(channels * depth / 8)) };
     }
 
-    function runStrictAiAudit(firstItem, staffText, ratioVal, basisText, planText) {
+    function reconstructProofPng(decoded, png, pixelFingerprint = false) {
+      if (decoded.length !== png.expected) return false;
+      // Normalize decoded samples into canonical 16-bit RGBA pixels so padding bits or encoding differences never alter the fingerprint.
+      const headerBytes = pixelFingerprint ? Uint8Array.from(`${png.width}:${png.height}:`, c => c.charCodeAt(0)) : null;
+      const pixels = pixelFingerprint ? new Uint8Array(headerBytes.length + png.width * png.height * 8) : null;
+      if (pixels) pixels.set(headerBytes);
+      const baseOffset = headerBytes ? headerBytes.length : 0;
+      const scaleMul = { 1: 0xffff, 2: 0x5555, 4: 0x1111, 8: 0x0101, 16: 1 }[png.depth];
+      const mask = (1 << png.depth) - 1;
+      const trns0 = (png.trnsBytes && png.color === 0) ? (((png.trnsBytes[0] << 8) | png.trnsBytes[1]) & mask) : -1;
+      const trns2 = (png.trnsBytes && png.color === 2) ? [
+        ((png.trnsBytes[0] << 8) | png.trnsBytes[1]) & mask,
+        ((png.trnsBytes[2] << 8) | png.trnsBytes[3]) & mask,
+        ((png.trnsBytes[4] << 8) | png.trnsBytes[5]) & mask
+      ] : null;
+      let offset = 0;
+      for (const [stride, count, width, x0, y0, dx, dy] of png.rows) {
+        let previous = new Uint8Array(stride);
+        for (let y = 0; y < count; y++) {
+          const filter = decoded[offset++];
+          if (filter > 4) return false;
+          const row = new Uint8Array(decoded.subarray(offset, offset + stride));
+          offset += stride;
+          if (filter) {
+            for (let i = 0; i < stride; i++) {
+              const a = i >= png.bpp ? row[i - png.bpp] : 0, b = previous[i], c = i >= png.bpp ? previous[i - png.bpp] : 0;
+              let predictor = 0;
+              if (filter === 1) predictor = a;
+              else if (filter === 2) predictor = b;
+              else if (filter === 3) predictor = Math.floor((a + b) / 2);
+              else {
+                const p = a + b - c, pa = Math.abs(p - a), pb = Math.abs(p - b), pc = Math.abs(p - c);
+                predictor = pa <= pb && pa <= pc ? a : pb <= pc ? b : c;
+              }
+              row[i] = (row[i] + predictor) & 255;
+            }
+          }
+          if (png.color === 3) {
+            for (let x = 0; x < width; x++) {
+              const bit = x * png.depth;
+              if (((row[Math.floor(bit / 8)] >>> (8 - png.depth - bit % 8)) & mask) >= png.palette) return false;
+            }
+          }
+          if (pixels) {
+            for (let x = 0; x < width; x++) {
+              let s0 = 0, base = 0;
+              if (png.depth < 8) {
+                const bit = x * png.depth;
+                s0 = (row[bit >>> 3] >>> (8 - png.depth - (bit & 7))) & mask;
+              } else if (png.depth === 8) {
+                base = x * png.channels;
+                s0 = row[base];
+              } else {
+                base = x * png.channels * 2;
+                s0 = (row[base] << 8) | row[base + 1];
+              }
+              let r16 = 0, g16 = 0, b16 = 0, a16 = 0xffff;
+              if (png.color === 0) {
+                r16 = g16 = b16 = s0 * scaleMul;
+                if (s0 === trns0) a16 = 0;
+              } else if (png.color === 2) {
+                const sr = s0;
+                const sg = png.depth === 8 ? row[base + 1] : ((row[base + 2] << 8) | row[base + 3]);
+                const sb = png.depth === 8 ? row[base + 2] : ((row[base + 4] << 8) | row[base + 5]);
+                r16 = sr * scaleMul; g16 = sg * scaleMul; b16 = sb * scaleMul;
+                if (trns2 && sr === trns2[0] && sg === trns2[1] && sb === trns2[2]) a16 = 0;
+              } else if (png.color === 3) {
+                r16 = png.plteBytes[s0 * 3] * 0x0101;
+                g16 = png.plteBytes[s0 * 3 + 1] * 0x0101;
+                b16 = png.plteBytes[s0 * 3 + 2] * 0x0101;
+                const a8 = (png.trnsBytes && s0 < png.trnsBytes.length) ? png.trnsBytes[s0] : 255;
+                a16 = a8 * 0x0101;
+              } else if (png.color === 4) {
+                const sa = png.depth === 8 ? row[base + 1] : ((row[base + 2] << 8) | row[base + 3]);
+                r16 = g16 = b16 = s0 * scaleMul;
+                a16 = sa * scaleMul;
+              } else {
+                const sr = s0;
+                const sg = png.depth === 8 ? row[base + 1] : ((row[base + 2] << 8) | row[base + 3]);
+                const sb = png.depth === 8 ? row[base + 2] : ((row[base + 4] << 8) | row[base + 5]);
+                const sa = png.depth === 8 ? row[base + 3] : ((row[base + 6] << 8) | row[base + 7]);
+                r16 = sr * scaleMul; g16 = sg * scaleMul; b16 = sb * scaleMul; a16 = sa * scaleMul;
+              }
+              if (a16 === 0) r16 = g16 = b16 = 0;
+              const dst = baseOffset + ((y0 + y * dy) * png.width + (x0 + x * dx)) * 8;
+              pixels[dst] = r16 >>> 8; pixels[dst + 1] = r16 & 255;
+              pixels[dst + 2] = g16 >>> 8; pixels[dst + 3] = g16 & 255;
+              pixels[dst + 4] = b16 >>> 8; pixels[dst + 5] = b16 & 255;
+              pixels[dst + 6] = a16 >>> 8; pixels[dst + 7] = a16 & 255;
+            }
+          }
+          previous = row;
+        }
+      }
+      if (offset !== decoded.length) return false;
+      return pixels ? proofSha256(pixels) : true;
+    }
+    // RFC 1950/1951 synchronous inflater; no browser API or external dependency.
+    function inflateProofPng(input, expected) {
+      const fail = () => { throw new Error('Invalid PNG zlib stream'); };
+      if (input.length < 6 || (input[0] & 15) !== 8 || (input[0] >>> 4) > 7 ||
+          ((input[0] << 8) | input[1]) % 31 || (input[1] & 32)) fail();
+      const windowSize = 1 << ((input[0] >>> 4) + 8), limit = (input.length - 4) * 8;
+      let bit = 16, offset = 0;
+      const output = new Uint8Array(expected);
+      const read = count => {
+        if (bit + count > limit) fail();
+        let value = 0;
+        for (let i = 0; i < count; i++, bit++) value |= ((input[bit >>> 3] >>> (bit & 7)) & 1) << i;
+        return value;
+      };
+      const tree = (lengths, codeAlphabet = false) => {
+        const counts = new Uint16Array(16), symbols = [];
+        let max = 0;
+        for (const len of lengths) { if (len > 15) fail(); if (len) { counts[len]++; max = Math.max(max, len); } }
+        let left = 1;
+        for (let len = 1; len <= 15; len++) { left = (left << 1) - counts[len]; if (left < 0) fail(); }
+        // RFC permits a one-symbol literal/distance tree, and an unused empty distance tree.
+        if (left && (codeAlphabet || (max !== 0 && max !== 1))) fail();
+        for (let len = 1; len <= max; len++) for (let sym = 0; sym < lengths.length; sym++) if (lengths[sym] === len) symbols.push(sym);
+        return { counts, symbols, max };
+      };
+      const symbol = table => {
+        let code = 0, first = 0, index = 0;
+        for (let len = 1; len <= table.max; len++) {
+          code |= read(1);
+          const count = table.counts[len];
+          if (code >= first && code - first < count) return table.symbols[index + code - first];
+          index += count; first = (first + count) << 1; code <<= 1;
+        }
+        fail();
+      };
+      const lengthBase = [3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31, 35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258];
+      const lengthBits = [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0];
+      const distanceBase = [1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193, 257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145, 8193, 12289, 16385, 24577];
+      const distanceBits = [0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 13];
+      let final = false;
+      while (!final) {
+        final = !!read(1);
+        const type = read(2);
+        if (type === 0) {
+          bit = Math.ceil(bit / 8) * 8;
+          const len = read(16), inverse = read(16);
+          if ((len ^ inverse) !== 65535 || offset + len > expected || bit + len * 8 > limit) fail();
+          output.set(input.subarray(bit / 8, bit / 8 + len), offset);
+          offset += len; bit += len * 8;
+          continue;
+        }
+        let literal, distance;
+        if (type === 1) {
+          literal = tree(Array.from({ length: 288 }, (_, i) => i < 144 ? 8 : i < 256 ? 9 : i < 280 ? 7 : 8));
+          distance = tree(new Array(32).fill(5));
+        } else if (type === 2) {
+          const nlit = read(5) + 257, ndist = read(5) + 1, ncode = read(4) + 4;
+          if (nlit > 286 || ndist > 30) fail();
+          // Code length alphabet order from RFC 1951 section 3.2.7.
+          const codeOrder = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+          const codeLengths = new Array(19).fill(0);
+          for (let i = 0; i < ncode; i++) codeLengths[codeOrder[i]] = read(3);
+          const codes = tree(codeLengths, true), lengths = [];
+          while (lengths.length < nlit + ndist) {
+            const code = symbol(codes);
+            if (code < 16) lengths.push(code);
+            else {
+              if (code === 16 && !lengths.length) fail();
+              const repeat = code === 16 ? read(2) + 3 : code === 17 ? read(3) + 3 : read(7) + 11;
+              const value = code === 16 ? lengths[lengths.length - 1] : 0;
+              if (lengths.length + repeat > nlit + ndist) fail();
+              for (let i = 0; i < repeat; i++) lengths.push(value);
+            }
+          }
+          if (!lengths[256]) fail();
+          literal = tree(lengths.slice(0, nlit)); distance = tree(lengths.slice(nlit));
+        } else fail();
+        while (true) {
+          const code = symbol(literal);
+          if (code === 256) break;
+          if (code < 256) { if (offset >= expected) fail(); output[offset++] = code; continue; }
+          if (code > 285) fail();
+          const len = lengthBase[code - 257] + read(lengthBits[code - 257]), distCode = symbol(distance);
+          if (distCode > 29) fail();
+          const dist = distanceBase[distCode] + read(distanceBits[distCode]);
+          if (dist > offset || dist > windowSize || offset + len > expected) fail();
+          for (let i = 0; i < len; i++, offset++) output[offset] = output[offset - dist];
+        }
+      }
+      if (offset !== expected || Math.ceil(bit / 8) !== input.length - 4) fail();
+      let a = 1, b = 0;
+      for (const value of output) { a = (a + value) % 65521; b = (b + a) % 65521; }
+      const trailer = new DataView(input.buffer, input.byteOffset, input.byteLength).getUint32(input.length - 4, false);
+      if ((((b << 16) | a) >>> 0) !== trailer) fail();
+      return output;
+    }
+    function isStructurallyValidImage(bytes, subtype, pixelFingerprint = false) {
+      if (subtype !== 'png') return false;
+      try {
+        const png = parseProofPng(bytes);
+        const compressed = new Uint8Array(png.idat.reduce((n, chunk) => n + chunk.length, 0));
+        let offset = 0;
+        for (const chunk of png.idat) { compressed.set(chunk, offset); offset += chunk.length; }
+        return reconstructProofPng(inflateProofPng(compressed, png.expected), png, pixelFingerprint);
+      } catch (e) { return false; }
+    }
+    function validProofUrl(url, allowedIds) {
+      if (typeof url !== 'string') return false;
+      const inline = /^data:image\/(png);base64,([A-Za-z0-9+/=\s]+)$/.exec(url);
+      if (inline) {
+        const payload = inline[2].replace(/\s/g, '');
+        if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(payload)) return false;
+        try {
+          const bin = atob(payload);
+          return isStructurallyValidImage(Uint8Array.from(bin, c => c.charCodeAt(0)), inline[1]);
+        } catch (e) { return false; }
+      }
+      const local = /^\/proof_images\/([a-zA-Z0-9_-]+\.png)$/.exec(url);
+      allowedIds = allowedIds instanceof Set ? allowedIds : new Set(Array.isArray(allowedIds) ? allowedIds : [allowedIds]);
+      return !!local && local[0] === url
+        && !(local[1].match(/TASK-\d+/g) || []).some(id => !allowedIds.has(id));
+    }
+
+    function currentDepartmentProofs(item, proofList, curDeptName) {
+      const otherDeptFingerprints = new Set();
+      const add = url => {
+        otherDeptFingerprints.add(url);
+        otherDeptFingerprints.add(proofFingerprint(url) || url);
+      };
+      for (const step of item.doneSteps || []) {
+        if (step && (step.dept !== curDeptName || step.proofKind === 'audit_summary' || step.auditReconciliation)) {
+          (Array.isArray(step.proofImages) ? step.proofImages : []).forEach(add);
+        }
+      }
+      collectSummaryProofs(item, completionHistory.get(item.id)).forEach(add);
+      return proofList.filter(u => !isSummaryOnlyProof(u) &&
+        !otherDeptFingerprints.has(proofFingerprint(u) || u) && !otherDeptFingerprints.has(u));
+    }
+
+    async function runStrictAiAudit(firstItem, staffText, ratioVal, basisText, planText, proofImages) {
       const t = (staffText || '').trim();
+      const proofs = Array.isArray(proofImages) ? proofImages : (Array.isArray(firstItem && firstItem.proofImages) ? firstItem.proofImages : []);
+      if (proofs.length === 0) {
+        return { pass: false, reason: '退回：必须上传或粘贴至少 1 张【处理完的截图凭证】（如：千牛/拼多多回访买家聊天截图、打款/发票回执截图、探域词库发布截图、千牛SKU清零截图或仓库实物盘点隔离/补发面单照片），无截图凭证一律不予闭环！' };
+      }
+      if (!hasValidProofUrls(firstItem, proofs)) {
+        return { pass: false, reason: '退回：截图凭证无效或不属于本任务，请重新上传后提交。' };
+      }
+      const currentDept = (firstItem.depts || [])[0] || '本部门';
+      const stepProofs = currentDepartmentProofs(firstItem, proofs, currentDept);
+      if (!stepProofs.length) {
+        return { pass: false, reason: '退回：请上传本次处理完成的新截图；上一部门或探域审计汇总图不能代替本次处理凭证。' };
+      }
+      for (const url of stepProofs.filter(u => u.startsWith('/proof_images/'))) {
+        try {
+          const res = await fetch(normalizeProofUrl(url), { cache: 'no-store' });
+          if (!res.ok) throw new Error('Proof not found');
+        } catch (e) {
+          return { pass: false, reason: '退回：截图文件不存在或无法读取，请重新上传后提交。' };
+        }
+      }
+      if (/(需上级领导通过|待处理|稍后处理|还没|未处理)/.test(t)) {
+        return { pass: false, reason: '退回：检测到未实际完结的推脱表述，请实际执行完毕并上传截图凭证后再提交！' };
+      }
       if (!t || t.length < 4) {
         return { pass: false, reason: '退回：处理结果不能少于4个字，请写明具体执行动作。' };
       }
@@ -1156,15 +2173,15 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       if (perfunctoryRe.test(t)) {
         return { pass: false, reason: '退回：检测到只填了「' + t + '」空话，请写明具体处理动作（如：已去仓库核对批次、已在探域新增话术等）。' };
       }
-      const activeDept = resolveActiveSubmitDept(firstItem, t);
-      if (activeDept === '仓库部') {
-        if (!/(盘点|核对|清点|隔离|批次|库存|下架|补发|寄回|退回|单号|快递|拦截|仓库|现货|新批次|换款|尺码|发错|签收)/.test(t)) {
+      const depts = (firstItem.depts || []).slice(0, 1);
+      if (depts.includes('仓库部')) {
+        if (!/(盘点|核对|清点|隔离|批次|库存|下架|补发|寄回|退回|单号|快递|拦截|仓库|现货|新批次|换款)/.test(t)) {
           return { pass: false, reason: '退回：仓库部工单需写明实物库存清点、批次隔离或补发/退回快递核对结果。' };
         }
       }
-      if (activeDept === '运营部') {
-        if (!/(千牛|下架|后台|SKU|详情|主图|尺寸表|实拍|上传|修改|更新|库存|注册证|商品|链接|已查看|没有问题|核实|核查|核对|价格|券后价|活动|双11|双十一|立减|优惠|配置|设置|符合|正常|调价)/.test(t)) {
-          return { pass: false, reason: '退回：运营部工单需写明千牛后台SKU/库存调整、活动价格核实结论或详情页更新动作。' };
+      if (depts.includes('运营部')) {
+        if (!/(千牛|下架|后台|SKU|详情|主图|尺寸表|实拍|上传|修改|更新|库存)/.test(t)) {
+          return { pass: false, reason: '退回：运营部工单需写明千牛后台SKU下架或详情页/尺寸图更新动作。' };
         }
       }
       if (firstItem.groupKey === 'OFFLINE_MKT_QUALITY' && !ratioVal) {
@@ -1174,24 +2191,32 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
     }
 
     async function submitGroupAudit() {
+      if (pendingProofUploads) { alert('截图正在上传，请上传完成后提交。'); return; }
       if (!activeGroupKey && !activeSingleId) return;
       const groupItems = activeSingleId
         ? items.filter(x => x.id === activeSingleId)
         : items.filter(x => x.groupKey === activeGroupKey && x.track === 'offline_human_todo');
       if (groupItems.length === 0) return;
 
+      const beforeSnapshot = snapshotSubmission(groupItems);
       const staffText = document.getElementById('modalStaffInput').value;
       const checked = document.querySelector('input[name="ratioNormal"]:checked');
       const ratioVal = checked ? checked.value : '正常';
       const basisText = document.getElementById('modalRatioBasis').value || '常规偶发';
       const planText = document.getElementById('modalAbnormalPlan').value;
 
-      const audit = runStrictAiAudit(groupItems[0], staffText, ratioVal, basisText, planText);
+      const proofList = modalProofDrafts.slice();
+      const draftKey = activeSingleId ? ('S_' + activeSingleId) : ('G_' + activeGroupKey);
+      inlineProofDrafts[draftKey] = proofList.slice();
+      const audits = await Promise.all(groupItems.map(x => runStrictAiAudit(x, staffText, ratioVal, basisText, planText, proofList)));
+      const audit = audits.find(x => !x.pass) || audits[0];
       const fb = document.getElementById('aiAuditFeedback');
 
       if (!audit.pass) {
         groupItems.forEach(x => {
           x.staffResult = staffText.trim();
+          x.proofImages = Array.from(new Set([...(x.proofImages || []), ...(x.doneSteps || []).flatMap(s => Array.isArray(s && s.proofImages) ? s.proofImages : []), ...proofList]));
+          x.lastUpdatedAt = new Date().toLocaleString('sv-SE');
           x.isNormalRatio = ratioVal;
           x.normalRatioBasis = basisText.trim();
           x.abnormalPlan = planText.trim();
@@ -1200,7 +2225,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         });
         fb.classList.remove('is-hidden');
         fb.textContent = audit.reason;
-        saveAllItems();
+        if (!await saveSubmittedItems(groupItems, beforeSnapshot)) return;
         renderBoard();
         return;
       }
@@ -1210,19 +2235,22 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         '市场部': '林丽媛 / 尤敏燕',
         '运营部': '唐勇'
       };
-      const curDepts = groupItems[0].depts || [];
-      const curDeptName = curDepts[0] || '本部门';
       const nowTimeStr = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
 
       for (const x of groupItems) {
+        const curDeptName = (x.depts || [])[0] || '本部门';
+        const stepProofs = currentDepartmentProofs(x, proofList, curDeptName);
         if (!x.doneSteps) x.doneSteps = [];
         x.doneSteps.push({
           dept: curDeptName,
           ownerNames: x.ownerNames || deptOwnerMap[curDeptName] || '',
           result: staffText.trim(),
+          proofImages: stepProofs,
+          at: new Date().toLocaleString('sv-SE'),
           time: nowTimeStr
         });
 
+        x.proofImages = Array.from(new Set([...(x.proofImages || []), ...(x.doneSteps || []).flatMap(s => Array.isArray(s && s.proofImages) ? s.proofImages : []), ...proofList]));
         const remainingDepts = (x.depts || []).slice(1);
         if (remainingDepts.length > 0) {
           const nextDept = remainingDepts[0];
@@ -1231,20 +2259,20 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
           x.stage = 'offline_todo';
           x.staffResult = '';
           x.rejectReason = '';
-          await saveSingleItem(x);
         } else {
           x.staffResult = x.doneSteps.map(s => '[' + s.dept + '] ' + s.result).join(' -> ');
           x.isNormalRatio = ratioVal;
           x.normalRatioBasis = basisText.trim();
           x.abnormalPlan = planText.trim();
           x.stage = 'closed_passed';
+          x.archivedAt = new Date().toLocaleString('sv-SE');
           x.rejectReason = '';
-          await saveSingleItem(x);
         }
       }
 
-      items = filterActiveOnly(items);
+      if (!await saveSubmittedItems(groupItems, beforeSnapshot)) return;
       closeModal();
+      delete inlineProofDrafts[draftKey];
       renderBoard();
     }
 
@@ -1600,8 +2628,24 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
       a.click();
     }
 
+    function escapeJsAttr(str) {
+      return escapeHtml(String(str == null ? '' : str)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"')
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029')
+        .replace(/</g, '\\u003c')
+        .replace(/>/g, '\\u003e')
+        .replace(/&/g, '\\u0026'));
+    }
+
     function escapeHtml(str) {
-      return String(str || '')
+      // Raw template insertions are limited to static markup (including CHEVRON_SVG)
+      // and locally assembled fragments whose data leaves use these escape helpers.
+      return String(str == null ? '' : str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -1609,29 +2653,7 @@ window.__LIVE_CF_TUNNEL_URL = "https://gptweb.desheng.shop";
         .replace(/'/g, '&#39;');
     }
 
-    (function applyUrlRoleParam() {
-      try {
-        const params = new URLSearchParams(window.location.search || '');
-        const r = (params.get('role') || '').trim().toUpperCase();
-        if (r === 'P02' || r === '运营' || r === '运营部' || r === 'OPS') {
-          setRoleFilter('运营部');
-          return;
-        }
-        if (r === 'P03' || r === 'P04' || r === '市场' || r === '市场部' || r === 'MKT') {
-          setRoleFilter('市场部');
-          return;
-        }
-        if (r === 'P05' || r === 'P06' || r === '仓库' || r === '仓库部' || r === 'WH') {
-          setRoleFilter('仓库部');
-          return;
-        }
-        if (r === 'P01' || r === 'CHECKER') {
-          setRoleFilter('ALL');
-          return;
-        }
-      } catch (e) {}
-      renderBoard();
-    })();
+    renderBoard();
     syncFromBridge();
     loadServerConfig();
     setInterval(() => syncFromBridge(false), 3500);
